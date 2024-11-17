@@ -1,0 +1,151 @@
+﻿@model OnlineExamination.Models.QuestionMasterViewModel
+
+@{
+    ViewBag.Title = "Question Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <div class="card-body">
+
+        <div class="row gy-20">
+            <div class="col-xxl-12 col-md-12 col-sm-12">
+                <div class="row g-20">
+                    <div class="col-sm-12">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_Id)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Ques_Id)
+                            </dd>
+
+
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_SubName)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Ques_SubName)
+                            </dd>
+
+
+
+
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_ClassName)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Ques_ClassName)
+                            </dd>
+
+
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_TopName)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Ques_TopName)
+                            </dd>
+
+
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_PubName)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Ques_PubName)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_Mark)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Ques_Mark)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_JEEMark)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Ques_JEEMark)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_Negative)
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.Ques_Negative)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_Question)
+                            </dt>
+
+                            <dd>
+                                @Html.Raw(Model.Ques_Question)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_Answer)
+                            </dt>
+
+                            <dd>
+                                @Html.Raw(Model.Ques_Answer)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_OptionB)
+                            </dt>
+
+                            <dd>
+                                @Html.Raw(Model.Ques_OptionB)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_OptionC)
+                            </dt>
+
+                            <dd>
+                                @Html.Raw(Model.Ques_OptionC)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_OptionD)
+                            </dt>
+
+                            <dd>
+                                @Html.Raw(Model.Ques_OptionD)
+                            </dd>
+
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Ques_SolutionDetails)
+                            </dt>
+
+                            <dd>
+                                @Html.Raw(Model.Ques_SolutionDetails)
+                            </dd>
+
+                        </dl>
+                    </div>
+                    <p>
+                        @Html.ActionLink("Edit", "Edit", new {  id = Model.Ques_Id }) |
+                        @Html.ActionLink("Back to List", "Index")
+                    </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+

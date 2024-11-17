@@ -1,0 +1,57 @@
+﻿@{
+    var messageModel = TempData["MessageModel"] as OnlineExamination.Models.MessageModel;
+    var messageClass = "";
+    var modalTitle = "Message";
+
+    if (messageModel != null)
+    {
+        // Determine the alert class based on the type in messageModel using if-else
+        if (messageModel.Type != null)
+        {
+            if (messageModel.Type.ToLower() == "error")
+            {
+                messageClass = "alert-danger";
+                modalTitle = "Error";
+            }
+            else if (messageModel.Type.ToLower() == "info")
+            {
+                messageClass = "alert-info";
+                modalTitle = "Information";
+            }
+            else
+            {
+                messageClass = "alert-success";
+                modalTitle = "Success";
+            }
+        }
+    }
+}
+
+@if (messageModel != null)
+{
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">@modalTitle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert @messageClass">
+                        <p>@messageModel.Message</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Show the modal if messageModel exists
+            $('#messageModal').modal('show');
+        });
+    </script>
+}
