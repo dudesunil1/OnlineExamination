@@ -9,6 +9,8 @@ namespace OnlineExamination.Controllers
 {
     public class AdminController : Controller
     {
+
+
         // GET: Admin
         AdminService objAdminService = new AdminService();
         public ActionResult Login()
