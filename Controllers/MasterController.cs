@@ -16,5 +16,12 @@ namespace OnlineExamination.BLL
             List<TopicShowViewModel> objSubSubjects = topicsService.GetTopicsBySubjectClass(SubjectID, ClassID);
             return Json(objSubSubjects, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult GetSubjectsByClass(int ClassID)
+        {
+            SubjectService subjectsService = new SubjectService();
+            List<SubjectsViewModel> objSubSubjects = subjectsService.GetSubByClass(ClassID);
+            return Json(objSubSubjects, JsonRequestBehavior.AllowGet);
+        }
     }
 }

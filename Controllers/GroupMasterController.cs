@@ -17,6 +17,63 @@ namespace OnlineExamination.Controllers
             List<GroupViewModel> objGroups = objGroupService.GetGroups();
             return View(objGroups);
         }
+
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+            GroupViewModel objGroups = objGroupService.GetGroupsById(id).FirstOrDefault();
+
+            if (objGroups == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(objGroups);
+        }
+
+
+        public ActionResult Edit(GroupViewModel objGroups, string Action)
+        {
+            try
+            {
+
+                if (Action == "Cancel")
+                {
+                    return RedirectToAction("Index");
+                }
+                else if (Action == "Back To List")
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    if (ModelState.IsValid)
+                    {
+                        GroupViewModel res = objGroupService.Update(objGroups);
+
+                        if (res.Grp_Id > 0)
+                        {
+                            TempData["MessageModel"] = MessageModel.Success("Group saved successfully!");
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["MessageModel"] = MessageModel.Error("An error occurred while saving the Group.");
+
+                        }
+
+                    }
+
+                    return View(objGroups);
+                }
+            }
+            catch
+            {
+                TempData["MessageModel"] = MessageModel.Error("An unexpected error occurred.");
+                return View(objGroups); // Return view with the model on error
+            }
+        }
+
         public ActionResult Create()
         {
             GroupViewModel objGroup = new GroupViewModel();

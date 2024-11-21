@@ -1,0 +1,92 @@
+﻿@model OnlineExamination.Models.GroupDetailsViewModel
+
+@{
+    ViewBag.Title = "Create Group Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+        <!-- Breadcrumb Start -->
+        <div class="breadcrumb mb-24">
+            <ul class="flex-align gap-4">
+                <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
+                <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
+                <li><span class="text-main-600 fw-normal text-15">Create Group Details</span></li>
+            </ul>
+        </div>
+        <!-- Breadcrumb End -->
+    </div>
+
+    <!-- Group Details Form Start -->
+    <div class="card">
+        <div class="card-header border-bottom border-gray-100 flex-align gap-8">
+            <h5 class="mb-0">Group Details</h5>
+            <button type="button" class="text-main-600 text-md d-flex" data-bs-toggle="tooltip" data-bs-placement="top" title="Group Details Info">
+                <i class="ph-fill ph-question"></i>
+            </button>
+        </div>
+        <div class="card-body">
+
+            <div class="row gy-20">
+                <div class="col-xxl-12 col-md-12 col-sm-12">
+                    <div class="row g-20">
+                        <div class="col-sm-12">
+
+                            <label for="GroupId" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.GD_GrpId)
+                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
+                            </label>
+                            <div class="position-relative">
+                                @Html.DropDownListFor(
+                                    model => model.GD_GrpId,
+                                    new SelectList(ViewBag.GroupList, "Value", "Text"),
+                                    "Select Group",
+                                    new { @class = "form-control", id = "GroupDropdown" }
+                                )
+                                @Html.ValidationMessageFor(model => model.GD_GrpId, "", new { @class = "text-danger" })
+                            </div>
+
+                            <label for="SubjectId" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.GD_SubId)
+                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
+                            </label>
+                            <div class="position-relative">
+                                @Html.DropDownListFor(
+                                    model => model.GD_SubId,
+                                    new SelectList(ViewBag.SubjectList, "Value", "Text"),
+                                    "Select Subject",
+                                    new { @class = "form-control", id = "SubjectDropdown" }
+                                )
+                                @Html.ValidationMessageFor(model => model.GD_SubId, "", new { @class = "text-danger" })
+                            </div>
+
+                           
+                           
+
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-align justify-content-end gap-8">
+
+                    <input type="submit" name="Action" value="Back To List" class="btn btn-outline-main rounded-pill py-9" />
+                    <input type="submit" name="Action" value="Cancel" class="btn btn-outline-main rounded-pill py-9" />
+                    <input type="submit" name="Action" value="Continue" class="btn btn-main rounded-pill py-9" />
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Group Details Form End -->
+
+    <!-- Scripts -->
+    <script src="~/Content/assets/js/jquery-3.7.1.min.js"></script>
+    <script>
+        // If needed, add custom JavaScript for additional functionality, such as AJAX calls or UI enhancements.
+    </script>
+}

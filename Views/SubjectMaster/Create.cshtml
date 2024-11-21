@@ -1,0 +1,61 @@
+﻿@model OnlineExamination.Models.SubjectsViewModel
+
+@{
+    ViewBag.Title = "Create Subject";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+        <!-- Breadcrumb Start -->
+        <div class="breadcrumb mb-24">
+            <ul class="flex-align gap-4">
+                <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
+                <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
+                <li><span class="text-main-600 fw-normal text-15">Create Subject</span></li>
+            </ul>
+        </div>
+        <!-- Breadcrumb End -->
+    </div>
+
+    <!-- Subject Creation Form Start -->
+    <div class="card">
+        <div class="card-header border-bottom border-gray-100 flex-align gap-8">
+            <h5 class="mb-0">Subject Master</h5>
+            <button type="button" class="text-main-600 text-md d-flex" data-bs-toggle="tooltip" data-bs-placement="top" title="Subject Details">
+                <i class="ph-fill ph-question"></i>
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="row gy-20">
+                <div class="col-xxl-12 col-md-12 col-sm-12">
+                    <div class="row g-20">
+                        <!-- Sub_Name Field -->
+                        <div class="col-sm-12">
+                            <label for="subName" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Sub_Name)
+                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
+                            </label>
+                            <div class="position-relative">
+                                @Html.TextBoxFor(model => model.Sub_Name, new { @class = "text-counter placeholder-13 form-control py-11 pe-76" })
+                                @Html.ValidationMessageFor(model => model.Sub_Name, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex-align justify-content-end gap-8">
+                    <input type="submit" name="Action" value="Back To List" class="btn btn-outline-main rounded-pill py-9" />
+                    <input type="submit" name="Action" value="Cancel" class="btn btn-outline-main rounded-pill py-9" />
+                    <input type="submit" name="Action" value="Create" class="btn btn-main rounded-pill py-9" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+}

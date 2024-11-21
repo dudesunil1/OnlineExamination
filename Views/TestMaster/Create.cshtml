@@ -1,0 +1,528 @@
+﻿@model OnlineExamination.Models.TestMasterModel
+@{
+    ViewBag.Title = "Create Test";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2>Create Test</h2>
+    <hr />
+
+    <!-- Tab navigation -->
+    <ul class="nav nav-tabs" id="testTabs" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link @((ViewBag.ActiveTab == "test-details") ? "active" : "")" id="test-details-tab" data-bs-toggle="tab" data-bs-target="#test-details" type="button" role="tab" aria-controls="test-details" aria-selected="true">Test Details</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @((ViewBag.ActiveTab == "question-details") ? "active" : "")" id="question-details-tab" data-bs-toggle="tab" data-bs-target="#question-details" type="button" role="tab" aria-controls="question-details" aria-selected="false">Question Details</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @((ViewBag.ActiveTab == "paper-details") ? "active" : "")" id="paper-details-tab" data-bs-toggle="tab" data-bs-target="#paper-details" type="button" role="tab" aria-controls="paper-details" aria-selected="false">Question Paper Test Details</button>
+        </li>
+    </ul>
+    <!-- Tab content -->
+    <div class="tab-content" id="testTabContent">
+        <!-- Test Details Tab -->
+        <div class="tab-pane @((ViewBag.ActiveTab == "test-details") ? "active" : "")" id="test-details" role="tabpanel" aria-labelledby="test-details-tab">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row g-20">
+                    <!-- Test Name -->
+                    <div class="col-sm-6">
+                        <label class="h5 mb-8 fw-semibold font-heading">
+                            @Html.LabelFor(model => model.Test_Name)
+                            <span class="text-13 text-gray-400 fw-medium">(Required)</span>
+                        </label>
+                        <div class="position-relative">
+                            @Html.TextBoxFor(model => model.Test_Name, new { @class = "form-control py-11" })
+                            @Html.ValidationMessageFor(model => model.Test_Name, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <!-- Test Type -->
+                    <div class="col-sm-6">
+                        <label class="h5 mb-8 fw-semibold font-heading">
+                            @Html.LabelFor(model => model.Test_TypeId)
+                        </label>
+                        <div class="position-relative">
+                            @Html.DropDownListFor(
+                  model => model.Test_TypeId,
+                  new SelectList(ViewBag.Testtypelist, "Value", "Text"),
+                  "Select a Test Type", // Placeholder text for the first option
+                  new { @class = "form-control py-11" }
+              )
+                            @Html.ValidationMessageFor(model => model.Test_TypeId, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <label class="h5 mb-8 fw-semibold font-heading">
+                            Duration (in minutes)
+                        </label>
+                        <div class="position-relative">
+                            <input type="number" id="Duration" name="Test_Duration" class="form-control py-11" min="1" placeholder="Enter duration in minutes" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="h5 mb-8 fw-semibold font-heading">
+                            Start Time
+                        </label>
+                        <div class="position-relative">
+                            <input type="time" id="StartTime" name="Test_StartTime" class="form-control py-11" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="h5 mb-8 fw-semibold font-heading">
+                            End Time
+                        </label>
+                        <div class="position-relative">
+                            <input type="time" id="EndTime" name="Test_EndTime" class="form-control py-11" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="h5 mb-8 fw-semibold font-heading">Class</label>
+                        <div class="position-relative">
+                            <select name="Class" id="Class" class="form-control py-11">
+                                <option value="" selected disabled>Select a Class</option>
+                                @foreach (var item in ViewBag.ClassList as List<SelectListItem>)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+
+                            <span class="text-danger" id="ClassValidation"></span>
+                        </div>
+                    </div>
+
+                    <!-- Subject Checkbox List -->
+                    <div class="col-sm-6 mt-3">
+                        <label class="h5 mb-8 fw-semibold font-heading">Subjects</label>
+                        <div id="SubjectsContainer">
+                            @if (ViewBag.SubjectList != null)
+                            {
+                                foreach (var subject in ViewBag.SubjectList as List<SelectListItem>)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input subject-checkbox" type="checkbox" name="SelectedSubjects" id="subject_@subject.Value" value="@subject.Value">
+                                        <label class="form-check-label" for="subject_@subject.Value">
+                                            @subject.Text
+                                        </label>
+
+                                        <!-- Hidden TextBox for No of Questions (will be shown when checkbox is selected) -->
+                                        <div id="questionBox_@subject.Value" class="form-group" style="display: none;">
+                                            <label for="NoOfQuestions_@subject.Value">Enter Number of Questions</label>
+                                            <input type="number" name="NoOfQuestions_@subject.Value" id="NoOfQuestions_@subject.Value" class="form-control py-11" min="1" />
+                                        </div>
+                                    </div> }
+                            }
+                            else
+                            {
+                                <p>No subjects available.</p>}
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="col-sm-6">
+                        <label class="h5 mb-8 fw-semibold font-heading">
+                            Mark Per Question
+                            <span class="text-13 text-gray-400 fw-medium">(Required)</span>
+                        </label>
+                        <div class="position-relative">
+                            <input type="text" name="Subject" id="Subject" class="form-control py-11" />
+                            <span class="text-danger" id="SubjectValidation"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="h5 mb-8 fw-semibold font-heading">
+                            Total Question
+                        </label>
+                        <div class="position-relative">
+                            <input type="text" name="Question" id="Question" class="form-control py-11" />
+                        </div>
+                    </div>
+                    <!-- Total Marks -->
+                    <div class="col-sm-6">
+                        <label class="h5 mb-8 fw-semibold font-heading">
+                            Total Mark
+                        </label>
+                        <div class="position-relative">
+                            @Html.TextBoxFor(
+                  model => model.Test_Mark,
+                  new
+                  {
+                      @class = "form-control py-11",
+                      @readonly = "readonly",
+                      type = "number",
+                      id = "TotalMarks"
+                  })
+                        </div>
+                    </div>
+
+
+                    <!-- Subject -->
+
+
+
+                    <div class="col-sm-12 d-flex justify-content-end gap-8">
+                        <input type="submit" name="Action" value="Back To List" class="btn btn-outline-main rounded-pill py-9" />
+                        <input type="submit" name="Action" value="Cancel" class="btn btn-outline-main rounded-pill py-9" onclick="openInNewTab(event)" />
+                        <input type="submit" name="Action" value="Create" class="btn btn-main rounded-pill py-9" />
+                    </div>
+                </div>
+            }
+
+        </div>
+
+
+        <div class="tab-pane @((ViewBag.ActiveTab == "question-details") ? "show active" : "")" id="question-details" role="tabpanel" aria-labelledby="question-details-tab">
+
+            @using (Html.BeginForm("QuestionDetails", "TestMaster"))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label for="Class">Select Subject</label>
+                    @Html.DropDownList("Subject", (IEnumerable<SelectListItem>)ViewBag.SubjectDropdown,
+                        "Select a Subject", new { @class = "form-control py-11", id = "SubjectDropdown" })
+                </div>
+                <div class="form-group" id="TopicContainer">
+
+                </div>
+
+                <div id="QuestionContainer">
+                    <!-- Questions based on selected topics will appear here -->
+                </div>
+
+                @*<div class="form-group">
+                    <label for="NumQuestions">Number of Questions</label>
+                    <input type="text" id="NumQuestions" class="form-control" readonly />
+                </div>*@
+                @*<script type="text/javascript">
+                         var subjectData = @Html.Raw(Json.Encode(ViewBag.SubjectData));
+
+                         console.log("Subject Data:", subjectData);
+
+                        document.getElementById("SubjectDropdown").addEventListener("change", function () {
+                    var subjectId = this.value;
+
+                    if (subjectId && subjectData[subjectId] !== undefined) {
+
+                        document.getElementById("NumQuestions").value = subjectData[subjectId];
+                    } else {
+
+                        document.getElementById("NumQuestions").value = "";
+                    }
+                });
+                            </script>*@
+            }
+        </div>
+
+
+        <div class="buttons-container">
+            <button type="button" id="submitBtn" class="btn btn-primary">Submit</button>
+            <button type="button" id="nextBtn" class="btn btn-secondary">Next</button>
+        </div>s
+
+    </div>
+</div>
+
+<script>
+ 
+
+    $(document).ready(function () {
+        // When subject dropdown changes, fetch topics
+        $('#SubjectDropdown').change(function () {
+            var subjectId = $(this).val();
+
+            if (subjectId != "0") {  // Only fetch topics if a valid subject is selected
+                $.ajax({
+                    url: '@Url.Action("GetTopicsBySubjectId", "TestMaster")',
+                    data: { subjectId: subjectId },
+                    type: 'GET',
+                    success: function (data) {
+                        // Clear any existing topics
+                        $('#TopicContainer').empty();
+
+                        // If topics are found, render the checkboxes
+                        if (data.html) {
+                            $('#TopicContainer').html(data.html);
+                        } else {
+                            $('#TopicContainer').html('<p>No topics available for the selected subject.</p>');
+                        }
+                    },
+                    error: function () {
+                        $('#TopicContainer').html('<p>Error loading topics.</p>');
+                    }
+                });
+            } else {
+                $('#TopicContainer').empty(); // Clear topics if no subject is selected
+            }
+        });
+    });
+
+
+
+    document.querySelectorAll(".subject-checkbox").forEach(checkbox => {
+        checkbox.addEventListener("change", function () {
+            var subjectId = this.id.split('_')[1]; // Get the Subject ID from the checkbox ID
+            var questionBox = document.getElementById("questionBox_" + subjectId);
+
+            // Toggle the visibility of the number of questions input
+            if (this.checked) {
+                questionBox.style.display = "block";
+            } else {
+                questionBox.style.display = "none";
+                updateTotalQuestions(); // Recalculate total questions if the checkbox is unchecked
+                calculateTotalMarks();
+            }
+        });
+    });
+
+
+    document.querySelectorAll("[id^='NoOfQuestions_']").forEach(input => {
+        input.addEventListener("input", function () {
+            updateTotalQuestions();
+            calculateTotalMarks()
+        });
+    });
+
+    // Function to update the total number of questions
+    function updateTotalQuestions() {
+        let totalQuestions = 0;
+
+        // Loop through each subject and sum the number of questions if the subject checkbox is checked
+        document.querySelectorAll(".subject-checkbox:checked").forEach(checkbox => {
+            var subjectId = checkbox.id.split('_')[1]; // Get the Subject ID from the checkbox ID
+            var numQuestions = parseInt(document.getElementById("NoOfQuestions_" + subjectId).value) || 0;
+            totalQuestions += numQuestions;
+        });
+
+        // Set the total number of questions in the "Total Question" input
+        document.getElementById('Question').value = totalQuestions;
+    }
+
+
+
+
+    function calculateTotalMarks() {
+        var markPerQuestion = parseFloat(document.getElementById("Subject").value) || 0;
+        var totalQuestions = parseInt(document.getElementById("Question").value) || 0;
+
+        var totalMarks = markPerQuestion * totalQuestions;
+        document.getElementById("TotalMarks").value = totalMarks; // Display the result
+    }
+
+    // Trigger the calculation when user inputs in "Mark Per Question" or "Total Question"
+    document.getElementById("Subject").addEventListener("input", calculateTotalMarks);
+    document.getElementById("Question").addEventListener("input", calculateTotalMarks);
+
+
+    function updateTotalQuestionsProgrammatically(newTotalQuestions) {
+        document.getElementById("Question").value = newTotalQuestions;
+
+        // Manually trigger the input event after updating the value programmatically
+        var event = new Event('input', {
+            'bubbles': true,
+            'cancelable': true
+        });
+
+        document.getElementById("Question").dispatchEvent(event);
+        document.getElementById("TotalMarks").value = totalMarks;
+    }
+
+
+    $(document).ready(function () {
+        // Listen for changes in the topic checkboxes
+        $(document).on('change', '.topic-checkbox', function () {
+            var selectedTopicIds = [];
+            debugger;
+            // Collect the selected topic IDs
+            $('.topic-checkbox:checked').each(function () {
+                selectedTopicIds.push($(this).val());
+            });
+
+            // If at least one topic is selected, fetch the questions
+            if (selectedTopicIds.length > 0) {
+                // Clear the question container first
+                $('#QuestionContainer').html('<p></p>');
+
+                // Loop through each selected topicId and make an AJAX request
+                selectedTopicIds.forEach(function (topicId) {
+                    $.ajax({
+                        url: '/TestMaster/GetQuestionsByTopicId', // URL of the action
+                        type: 'GET',
+                        data: { topicId: topicId }, // Send one topicId at a time
+                        success: function (data) {
+                            // Insert the HTML content for questions into the container
+                            $('#QuestionContainer').append(data.html); // Append to avoid overwriting previous results
+                        },
+                        error: function () {
+                            // Handle errors (e.g., network failure, server error)
+                            $('#QuestionContainer').html('<p>Error fetching questions. Please try again.</p>');
+                        }
+                    });
+                });
+            } else {
+                // If no topics are selected, clear the question list
+                $('#QuestionContainer').html('<p>Please select at least one topic to see the questions.</p>');
+            }
+        });
+    });
+
+
+
+
+    // Function to add minutes to a given time
+        function addMinutesToTime(timeStr, minutes) {
+        const timeParts = timeStr.split(':');
+        let hours = parseInt(timeParts[0]);
+        let minutesPart = parseInt(timeParts[1]);
+
+        minutesPart += minutes; // Add the duration to minutes part
+
+        // Handle overflow of minutes
+        while (minutesPart >= 60) {
+            minutesPart -= 60;
+        hours++;
+        }
+
+        // Handle overflow of hours (24-hour format)
+        if (hours >= 24) {
+            hours -= 24;
+        }
+
+        // Ensure two-digit formatting
+        return `${String(hours).padStart(2, '0')}:${String(minutesPart).padStart(2, '0')}`;
+    }
+
+        // Listen for changes on Start Time and Duration
+        document.getElementById('StartTime').addEventListener('change', function() {
+            updateEndTime();
+    });
+
+        document.getElementById('Duration').addEventListener('input', function() {
+            updateEndTime();
+    });
+
+        // Function to update the End Time field
+        function updateEndTime() {
+        const startTime = document.getElementById('StartTime').value;
+        const duration = parseInt(document.getElementById('Duration').value);
+
+        // Check if both start time and duration are provided
+        if (startTime && !isNaN(duration) && duration > 0) {
+            const endTime = addMinutesToTime(startTime, duration);
+        document.getElementById('EndTime').value = endTime;
+        }
+    }
+
+
+
+   document.querySelectorAll("[id^='NoOfQuestions_']").forEach(input => {
+    input.addEventListener("input", function () {
+        // Extract the subject ID from the input field's ID
+        var subjectId = this.id.split('_')[1];
+
+        // Get the number of questions entered by the user (default to 0 if empty)
+        var numQuestions = this.value || 0;
+
+        // Check if the checkbox for the subject is checked
+        var isChecked = document.getElementById("subject_" + subjectId).checked;
+
+        // Fetch the subject name from the dropdown
+        var subjectName = getSubjectNameById(subjectId);
+
+        // Update the session with subject details (ID, name, checked state, and number of questions)
+        updateSessionData(subjectId, isChecked, numQuestions, subjectName);
+    });
+});
+
+    function getSubjectNameById(subjectId) {
+    // Find the checkbox by subjectId
+    var checkbox = document.getElementById('subject_' + subjectId);
+
+    // If the checkbox exists, get its associated label text
+    if (checkbox) {
+        // Find the label associated with the checkbox
+        var label = checkbox.nextElementSibling; // assuming the label is immediately after the checkbox
+        if (label) {
+            return label.textContent.trim(); // Return the text content of the label
+        }
+    }
+
+    return ''; // Return an empty string if subjectId is not found
+}
+// Function to update session data (with the subject name, id, checked state, and number of questions)
+function updateSessionData(subjectId, isChecked, numQuestions, subjectName) {
+    $.ajax({
+        type: "POST",
+        url: '@Url.Action("StoreSelectedSubjects", "TestMaster")', // Adjust this URL as needed
+        data: {
+        subjectId: subjectId,
+        isChecked: isChecked,
+        numQuestions: numQuestions,
+        subjectName: subjectName // Adding Subject Name to the data sent to the server
+        },
+        success: function (response) {
+        console.log("Selected subject data updated in session");
+        },
+        error: function (error) {
+        console.error("Error updating session", error);
+        }
+        });
+        }
+
+
+
+
+
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+        // Listen for the click on the 'Create' button
+        document.getElementById('Create').addEventListener('click', function (event) {
+
+        if (validateForm()) {
+        // Prevent the default form submission to allow switching the tab
+        event.preventDefault();
+
+        // Switch to the "question-details" tab
+        switchToQuestionDetailsTab();
+
+        // Submit the form after switching tabs
+        document.querySelector("form").submit();
+        }
+        });
+        });
+
+
+
+
+
+
+        // Function to switch to the "question-details" tab
+        function switchToQuestionDetailsTab() {
+        // First, remove the 'active' class from the current tab
+        document.querySelector('.nav-link.active').classList.remove('active');
+        document.querySelector('.tab-pane.active').classList.remove('show', 'active');
+
+        // Add the 'active' class to the "question-details" tab
+        document.getElementById('question-details-tab').classList.add('active');
+        document.getElementById('question-details').classList.add('show', 'active');
+        }
+
+        function validateForm() {
+
+        return true;
+        }
+
+
+</script>
+
+

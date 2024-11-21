@@ -53,4 +53,6 @@ namespace OnlineExamination.Models
         public int SubSubjectID { get; set; }
         public string SubSubjectName { get; set; }
     }
+
+    
 }

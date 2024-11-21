@@ -1,0 +1,127 @@
+﻿@model OnlineExamination.Models.StudentMasterModel
+
+@{
+    ViewBag.Title = "View Student";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb mb-24">
+        <ul class="flex-align gap-4">
+            <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
+            <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
+            <li><span class="text-main-600 fw-normal text-15">View Student</span></li>
+        </ul>
+    </div>
+    <!-- Breadcrumb End -->
+</div>
+
+<!-- Student Details Display Start -->
+<div class="card">
+    <div class="card-header border-bottom border-gray-100 flex-align gap-8">
+        <h5 class="mb-0">@ViewBag.Title</h5>
+    </div>
+    <div class="card-body">
+        <div class="row gy-20">
+            <div class="col-xxl-12 col-md-12 col-sm-12">
+                <div class="row g-20">
+                    <div class="col-sm-6">
+                        <label for="Stud_Name" class="h5 mb-8 fw-semibold font-heading">
+                            @Html.LabelFor(model => model.Stud_Name)
+                        </label>
+                        <div class="position-relative">
+                            <p class="form-control-plaintext">@Model.Stud_Name</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="Stud_Mobile" class="h5 mb-8 fw-semibold font-heading">
+                            @Html.LabelFor(model => model.Stud_Mobile)
+                        </label>
+                        <div class="position-relative">
+                            <p class="form-control-plaintext">@Model.Stud_Mobile</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="Stud_DOB" class="h5 mb-8 fw-semibold font-heading">
+                            @Html.LabelFor(model => model.Stud_DOB)
+                        </label>
+                        <div class="position-relative">
+                            <p class="form-control-plaintext">@Model.Stud_DOB.ToString("d")</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="Stud_Gender" class="h5 mb-8 fw-semibold font-heading">
+                            @Html.LabelFor(model => model.Stud_Gender)
+                        </label>
+                        <div class="position-relative">
+                            <p class="form-control-plaintext">@Model.Stud_Gender</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="Stud_Photo" class="h5 mb-8 fw-semibold font-heading">
+                            @Html.LabelFor(model => model.Stud_Photo)
+                        </label>
+                        <div class="position-relative">
+                            @if (!string.IsNullOrEmpty(Model.Stud_Photo))
+                            {
+                                <img src="@Url.Content("~/Content/StudentPhotos/"+Model.Stud_Id + Model.Stud_Photo)" alt="Student Photo" class="img-fluid" style="max-width: 150px; height: auto; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <p class="form-control-plaintext">No photo uploaded</p>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="Stud_UserName" class="h5 mb-8 fw-semibold font-heading">
+                            @Html.LabelFor(model => model.Stud_UserName)
+                        </label>
+                        <div class="position-relative">
+                            <p class="form-control-plaintext">@Model.Stud_UserName</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="Stud_Password" class="h5 mb-8 fw-semibold font-heading">
+                            @Html.LabelFor(model => model.Stud_Password)
+                        </label>
+                        <div class="position-relative">
+                            <p class="form-control-plaintext">**********</p> <!-- Hide password for security reasons -->
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="Stud_AdmissionDate" class="h5 mb-8 fw-semibold font-heading">
+                            @Html.LabelFor(model => model.Stud_AdmissionDate)
+                        </label>
+                        <div class="position-relative">
+                            <p class="form-control-plaintext">@Model.Stud_AdmissionDate.ToString("d")</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="Stud_Group" class="h5 mb-8 fw-semibold font-heading">
+                            @Html.LabelFor(model => model.Stud_Group)
+                        </label>
+                        <div class="position-relative">
+                            <p class="form-control-plaintext">@Model.Stud_Group</p>
+                        </div>
+                    </div>
+
+                    <div class="flex-align justify-content-end gap-8">
+                        <!-- Action buttons for "Back", "Cancel", or "Edit" -->
+                        <a href="@Url.Action("Index", "StudentMaster")" class="btn btn-outline-main rounded-pill py-9">Back To List</a>
+                        <a href="@Url.Action("Edit", "StudentMaster", new { id = Model.Stud_Id })" class="btn btn-outline-main rounded-pill py-9">Edit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

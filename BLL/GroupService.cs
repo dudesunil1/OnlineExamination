@@ -58,5 +58,55 @@ namespace OnlineExamination.BLL
                 return null;
             }
         }
+
+        public GroupViewModel Update(GroupViewModel objGroup)
+        {
+            string _errMsg;
+            try
+            {
+
+                Hashtable hashTable = new Hashtable();
+                hashTable.Add("@Grp_Id", objGroup.Grp_Id);
+                hashTable.Add("@Grp_Name", objGroup.Grp_Name);
+                bool IsUpdate = clsSunDAL.ExecuteDMLQuery("SP_GroupMaster_Update", hashTable);
+                _errMsg = clsSunDAL._errMsg;
+                if (IsUpdate)
+                {
+
+                    return objGroup;
+                }
+                return null;
+
+            }
+            catch (Exception Ex)
+            {
+                _errMsg = Ex.Message;
+                return null;
+            }
+        }
+
+        public List<GroupViewModel> GetGroupsById(int grpid)
+        {
+            try
+            {
+                Hashtable hash = new Hashtable();
+                hash.Add("@Grp_Id", grpid);
+                DataTable dt = ControlFill.FillDataTable("Sp_GroupMaster_Select", hash);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    List<GroupViewModel> list = ConversionFunctions.DataTableToList<GroupViewModel>(dt);
+                    return list;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception Ex)
+            {
+                return null;
+            }
+        }
+
     }
 }

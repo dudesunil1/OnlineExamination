@@ -9,6 +9,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
+<div class="dashboard-body">
 
     <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
         <!-- Breadcrumb Start -->
@@ -21,6 +22,7 @@
         </div>
         <!-- Breadcrumb End -->
     </div>
+
 
     <!-- Course Tab Start -->
     <div class="card">
@@ -35,7 +37,7 @@
             <div class="row gy-20">
                 <div class="col-xxl-12 col-md-12 col-sm-12">
                     <div class="row g-20">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
                                 Subject
                                 <span class="text-13 text-gray-400 fw-medium">(Required)</span>
@@ -45,10 +47,12 @@
                                  model => model.Ques_SubId,
                                  new SelectList(ViewBag.SubjectList, "Value", "Text"),
                                  "Select Subject",
-                                 new { @class = "form-control", id = "Ques_SubId" }
+                                 new { @class = "form-select py-9 placeholder-13 text-15", id = "Ques_SubId" }
                                  )
 
                             </div>
+                        </div>
+                        <div class="col-sm-6">
                             <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
                                 Class
                                 <span class="text-13 text-gray-400 fw-medium">(Required)</span>
@@ -58,10 +62,12 @@
                                 model => model.Ques_ClassId,
                                  new SelectList(ViewBag.ClassList, "Value", "Text"),
                                  "Select Class",
-                                 new { @class = "form-control", id = "Ques_ClassId" }
+                                 new { @class = "form-select py-9 placeholder-13 text-15", id = "Ques_ClassId" }
                                  )
                             </div>
+                        </div>
 
+                        <div class="col-sm-6">
                             <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
                                 Topic
                                 <span class="text-13 text-gray-400 fw-medium">(Required)</span>
@@ -69,11 +75,13 @@
                             <div class="position-relative">
                                 @Html.DropDownListFor(
                                  model => model.Ques_TopId,
-                                 new SelectList(""),
+                                 new SelectList(ViewBag.TopicList, "Value", "Text"),
                                  "Select Topic",
-                                 new { @class = "form-control", id = "Ques_TopId" }
+                                 new { @class = "form-select py-9 placeholder-13 text-15", id = "Ques_TopId" }
                                  )
                             </div>
+                        </div>
+                        <div class="col-sm-6">
 
                             <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
                                 Publication
@@ -84,10 +92,12 @@
                                  model => model.Ques_PubId,
                                  new SelectList(ViewBag.PublicationList, "Value", "Text"),
                                  "Select Publication",
-                                 new { @class = "form-control", id = "Ques_PubId" }
+                                 new { @class = "form-select py-9 placeholder-13 text-15", id = "Ques_PubId" }
                                  )
 
                             </div>
+                        </div>
+                        <div class="col-sm-4">
                             <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
                                 CET Marks
                                 <span class="text-13 text-gray-400 fw-medium">(Required)</span>
@@ -95,15 +105,19 @@
                             <div class="position-relative">
                                 @Html.TextBoxFor(model => model.Ques_Mark, new { type = "number", @class = "text-counter placeholder-13 form-control py-11 pe-76", id = "Ques_Mark" })
                             </div>
+                        </div>
+                        <div class="col-sm-4">
 
                             <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
                                 JEE Marks
                                 <span class="text-13 text-gray-400 fw-medium">(Required)</span>
                             </label>
                             <div class="position-relative">
-                                
+
                                 @Html.TextBoxFor(model => model.Ques_JEEMark, new { type = "number", @class = "text-counter placeholder-13 form-control py-11 pe-76", id = "Ques_JEEMark" })
                             </div>
+                        </div>
+                        <div class="col-sm-4">
 
                             <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
                                 Negative Marks
@@ -112,7 +126,11 @@
                             <div class="position-relative">
                                 @Html.TextBoxFor(model => model.Ques_Negative, new { type = "number", @class = "text-counter placeholder-13 form-control py-11 pe-76", id = "Ques_Negative" })
                             </div>
+                        </div>
+                        <div class="col-sm-6">
+                        </div>
 
+                        <div class="col-sm-12">
 
                             <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
                                 Enter Question
@@ -121,6 +139,8 @@
                             <div class="position-relative">
                                 <textarea id="Ques_Question" name="Ques_Question"> </textarea>
                             </div>
+                        </div>
+                        <div class="col-sm-12">
 
                             <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
                                 Answer
@@ -174,9 +194,12 @@
 
         </div>
     </div>
-    <script src="~/Content/assets/js/jquery-3.7.1.min.js"></script>
+
+</div>
+
+    @*<script src="~/Content/assets/js/jquery-3.7.1.min.js"></script>*@
     <script>
-       
+
 
         $(document).ready(function () {
             function fetchTopics() {
@@ -389,7 +412,7 @@
             ]
         });
     </script>
-   
+
 
 
 }

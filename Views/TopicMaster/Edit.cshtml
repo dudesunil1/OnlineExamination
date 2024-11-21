@@ -1,0 +1,87 @@
+﻿@model OnlineExamination.Models.TopicShowViewModel
+
+@{
+    ViewBag.Title = "Edit Topic";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Edit", "TopicMaster", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+        <div class="breadcrumb mb-24">
+            <ul class="flex-align gap-4">
+                <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
+                <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
+                <li><span class="text-main-600 fw-normal text-15">Edit Topic</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header border-bottom border-gray-100 flex-align gap-8">
+            <h5 class="mb-0">Edit Topic</h5>
+            <button type="button" class="text-main-600 text-md d-flex" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Topic Details">
+                <i class="ph-fill ph-question"></i>
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="row gy-20">
+                <div class="col-xxl-12 col-md-12 col-sm-12">
+                    <div class="row g-20">
+                        <div class="col-sm-12">
+                            <!-- Hidden field for Topic ID -->
+                            @Html.HiddenFor(model => model.Top_Id)
+
+                            <label for="topicName" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Top_Name)
+                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
+                            </label>
+                            <div class="position-relative">
+                                @Html.TextBoxFor(model => model.Top_Name, new { @class = "text-counter placeholder-13 form-control py-11 pe-76" })
+                                @Html.ValidationMessageFor(model => model.Top_Name, "", new { @class = "text-danger" })
+                            </div>
+
+                            <label for="subjectDropdown" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Top_SubId)
+                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
+                            </label>
+                            <div class="position-relative">
+                                @Html.DropDownListFor(
+                                    model => model.Top_SubId,
+                                    new SelectList(ViewBag.SubjectList, "Value", "Text", Model.Top_SubId),
+                                    "Select Subject",
+                                    new { @class = "form-control", id = "SubjectDropdown" }
+                                )
+                                @Html.ValidationMessageFor(model => model.Top_SubId, "", new { @class = "text-danger" })
+                            </div>
+
+                            <label for="classDropdown" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.Label("Class")
+                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
+                            </label>
+                            <div class="position-relative">
+                                @Html.DropDownListFor(
+                                    model => model.Top_ClassId,
+                                    new SelectList(ViewBag.ClassList, "Value", "Text", Model.Top_ClassId),
+                                    "Select Class",
+                                    new { @class = "form-control", id = "ClassDropdown" }
+                                )
+                                @Html.ValidationMessageFor(model => model.Top_ClassId, "", new { @class = "text-danger" })
+                            </div>
+
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-align justify-content-end gap-8">
+                    <input type="submit" name="Action" value="Back To List" class="btn btn-outline-main rounded-pill py-9" />
+                    <input type="submit" name="Action" value="Cancel" class="btn btn-outline-main rounded-pill py-9" />
+                    <input type="submit" name="Action" value="Save" class="btn btn-main rounded-pill py-9" />
+                </div>
+            </div>
+        </div>
+    </div>
+}

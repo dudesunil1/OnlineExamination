@@ -46,6 +46,8 @@ namespace OnlineExamination.BLL
                 DataTable dt = ControlFill.FillDataTable("Sel_QuestionMaster_Select", hash);
                 if (dt != null && dt.Rows.Count > 0)
                 {
+
+
                     List<QuestionMasterViewModel> list = ConversionFunctions.DataTableToList<QuestionMasterViewModel>(dt);
                     return list;
                 }

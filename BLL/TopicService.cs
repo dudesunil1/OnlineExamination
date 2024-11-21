@@ -90,5 +90,34 @@ namespace OnlineExamination.BLL
                 return null;
             }
         }
+
+        public TopicViewModel Update(TopicViewModel objTopic)
+        {
+            string _errMsg;
+            try
+            {
+
+                Hashtable hashTable = new Hashtable();
+                hashTable.Add("@Top_Id", objTopic.Top_Id);
+                hashTable.Add("@Top_Name", objTopic.Top_Name);
+                hashTable.Add("@Top_SubId", objTopic.Top_SubId);
+                hashTable.Add("@Top_ClassId", objTopic.Top_ClassId);
+                bool IsUpdate = clsSunDAL.ExecuteDMLQuery("SP_TopicMaster_Update", hashTable);
+                _errMsg = clsSunDAL._errMsg;
+                if (IsUpdate)
+                {
+
+                    return objTopic;
+                }
+                return null;
+
+            }
+            catch (Exception Ex)
+            {
+                _errMsg = Ex.Message;
+                return null;
+            }
+        }
+
     }
 }

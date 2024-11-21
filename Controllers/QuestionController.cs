@@ -17,12 +17,15 @@ namespace OnlineExamination.Controllers
         ApiKeyService apiKeyService = new ApiKeyService();
         public ActionResult Index()
         {
+            LoadData();
            List<QuestionMasterViewModel> objQuestions = objQuestionService.GetAllQuestions();
             return View(objQuestions);
-        }
-      
 
-      
+        }
+
+       
+
+
         QuestionMasterViewModel objQuestion;
         public ActionResult Create()
         {
@@ -147,7 +150,7 @@ namespace OnlineExamination.Controllers
             ViewBag.SubjectList =MasterService.GetSubjects();
             ViewBag.ClassList = MasterService.GetClass();
             ViewBag.PublicationList = MasterService.GetPublications();
-
+            ViewBag.TopicList = MasterService.GetTopics();
             ViewData["ApiKey"] = apiKeyService.GetAPIKey();
         }
 

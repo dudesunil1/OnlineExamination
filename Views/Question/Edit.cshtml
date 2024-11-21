@@ -6,7 +6,7 @@
 }
 <script src="https://cdn.tiny.cloud/1/@ViewData["ApiKey"]/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 
-<h2>Edit Question</h2>
+<h2>Edit Question</h2> 
 
 @using (Html.BeginForm())
 {
@@ -71,8 +71,8 @@
                             @Html.HiddenFor(model => model.Ques_TopId)
                             <div class="position-relative">
                                 @Html.DropDownListFor(
-                                 model => model.Ques_TopId,
-                                 new SelectList(""),
+                                 model => model.Ques_TopId, 
+                                 new SelectList(ViewBag.TopicList, "Value", "Text"),
                                  "Select Topic",
                                  new { @class = "form-control", id = "Ques_TopId" }
                                  )
@@ -188,12 +188,7 @@
                 loadTopics(0);
             });
 
-
-
-
-
-            //$("#Ques_SubId").change(fetchTopics);
-            //$("#Ques_ClassId").change(fetchTopics);
+            $("#Ques_TopId").val(@Model.Ques_TopId);
         })
 
         function loadTopics(topicid) {
@@ -208,8 +203,7 @@
 
             // Clear the sub-subject dropdown
          
-            alert(subjectID)
-            alert(classID)
+         
             if (subjectID > 0 && classID > 0) {
                 $topicsDropdown.empty();
                 $topicsDropdown.append('<option value="">Select Topics</option>');
@@ -228,9 +222,8 @@
                                     `<option value="${topic.Top_Id}">${topic.Top_Name}</option>`
                                 );
                             });
-                            $topicsDropdown.val(topicid)
-                            alert("Topic Id");
-                            $topicsDropdown.trigger('change');
+                           
+                           
                             
                         }
                     },

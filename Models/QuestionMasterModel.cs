@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
@@ -59,4 +60,27 @@ namespace OnlineExamination.Models
         public string Ques_SolutionDetails { get; set; }
 
     }
+
+
+
+    public class QuestionMasterFilterViewModel
+    {
+        public int? Ques_ClassId { get; set; }
+        public int? Ques_SubId { get; set; }
+        public int? Ques_TopId { get; set; }
+        public int Ques_Id { get; set; }
+        string Ques_Name { get; set; }
+
+        string Ques_SubName { get; set; }
+        public string Ques_Question { get; set; }
+        [AllowHtml]
+        [Required(ErrorMessage = "Answer is required")]
+        [Display(Name = "Answer")]
+        public string Ques_Answer { get; set; }
+
+
+        string Ques_TopName { get; set; }
+        public IEnumerable<QuestionMasterViewModel> Questions { get; set; }
+    }
+
 }

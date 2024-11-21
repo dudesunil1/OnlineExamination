@@ -18,11 +18,13 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>44357</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,13 +45,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>bin\Antlr3.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="stUtil">
-      <HintPath>C:\Users\Server\Desktop\OnlineExamination\Bin\stUtil.dll</HintPath>
+      <HintPath>bin\stUtil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -107,10 +113,6 @@
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
-    <Reference Include="Antlr3.Runtime">
-      <Private>True</Private>
-      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
@@ -125,7 +127,13 @@
     <Compile Include="BLL\APIKeyService.cs" />
     <Compile Include="BLL\ClassService.cs" />
     <Compile Include="BLL\ConversionFunctions.cs" />
+    <Compile Include="BLL\GroupDetailsService.cs" />
     <Compile Include="BLL\GroupService.cs" />
+    <Compile Include="BLL\StudentService.cs" />
+    <Compile Include="BLL\TestService.cs" />
+    <Compile Include="Controllers\TestMasterController.cs" />
+    <Compile Include="Models\TestMasterModel.cs" />
+    <Compile Include="Controllers\GroupDetailController.cs" />
     <Compile Include="Controllers\MasterController.cs" />
     <Compile Include="BLL\MasterService.cs" />
     <Compile Include="BLL\PublicationService.cs" />
@@ -138,7 +146,8 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PublicationMasterController.cs" />
     <Compile Include="Controllers\QuestionController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\StudentMasterController.cs" />
+    <Compile Include="Controllers\SubjectMasterController.cs" />
     <Compile Include="Controllers\TopicMasterController.cs" />
     <Compile Include="Database\clsSunDAL.cs" />
     <Compile Include="Database\ControlFill.cs" />
@@ -147,14 +156,17 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AdminModels.cs" />
+    <Compile Include="Models\GroupDetailsViewModel.cs" />
     <Compile Include="Models\GroupViewModel.cs" />
     <Compile Include="Models\MessageModel.cs" />
     <Compile Include="Models\PublicationModel.cs" />
     <Compile Include="Models\QuestionMasterModel.cs" />
+    <Compile Include="Models\StudentMasterModel.cs" />
     <Compile Include="Models\TopicViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Antlr3.Runtime.dll" />
     <Content Include="Content\assets\css\apexcharts.css" />
     <Content Include="Content\assets\css\bootstrap.min.css" />
     <Content Include="Content\assets\css\calendar.css" />
@@ -242,7 +254,6 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Login\Login.cshtml" />
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\PublicationMaster\Index.cshtml" />
@@ -256,9 +267,24 @@
     <Content Include="Views\Shared\_MessageModal.cshtml" />
     <Content Include="Views\Question\Details.cshtml" />
     <Content Include="Views\Question\Edit.cshtml" />
+    <Content Include="Views\SubjectMaster\Create.cshtml" />
+    <Content Include="Views\SubjectMaster\Edit.cshtml" />
+    <Content Include="Views\SubjectMaster\Index.cshtml" />
+    <Content Include="Views\GroupDetail\Create.cshtml" />
+    <Content Include="Views\GroupDetail\Edit.cshtml" />
+    <Content Include="Views\GroupDetail\Index.cshtml" />
+    <Content Include="Views\GroupMaster\Edit.cshtml" />
+    <Content Include="Views\PublicationMaster\Edit.cshtml" />
+    <Content Include="Views\TopicMaster\Edit.cshtml" />
+    <Content Include="Views\StudentMaster\Index.cshtml" />
+    <Content Include="Views\StudentMaster\Create.cshtml" />
+    <Content Include="Views\StudentMaster\Edit.cshtml" />
+    <Content Include="Views\StudentMaster\Details.cshtml" />
+    <Content Include="Views\TestMaster\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\StudentPhotos\" />
     <Folder Include="Views\Master\" />
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +342,12 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <!-- <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild"> -->
+    <!-- <PropertyGroup> -->
+      <!-- <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText> -->
+    <!-- </PropertyGroup> -->
+    <!-- <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" /> -->
+  <!-- </Target> -->
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

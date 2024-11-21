@@ -8,45 +8,46 @@ using System.Web.Mvc;
 
 namespace OnlineExamination.Controllers
 {
-    public class TopicMasterController : Controller
+    public class GroupDetailController : Controller
     {
-
-        TopicService objTopicService = new TopicService();
-
+        // GET: GroupDetails
+       
+        GroupDetailsService objgroupdetailsService = new GroupDetailsService();
+        [HttpGet]
         public ActionResult Index()
-        {    
+        {
 
-            List<TopicShowViewModel> objTopics = objTopicService.GetTopics();
-            return View(objTopics);
+            List<GroupDetailsShowViewModel> objGroups = objgroupdetailsService.GetGroups();
+            return View(objGroups);
         }
-
-
-
 
         [HttpGet]
         public ActionResult Edit(int id)
         {
             ViewBag.SubjectList = MasterService.GetSubjects();
-            ViewBag.ClassList = MasterService.GetClass();
-            TopicShowViewModel ObjTopic = objTopicService.GetTopicsList(id).FirstOrDefault();
+            ViewBag.grouplist = MasterService.GetGroups();
+            GroupDetailsShowViewModel objGroups = objgroupdetailsService.GetGroupsById(id).FirstOrDefault();
 
-            if (ObjTopic == null)
+            if (objGroups == null)
             {
                 return HttpNotFound();
             }
 
-            return View(ObjTopic);
+            return View(objGroups);
         }
 
 
-        public ActionResult Edit(TopicViewModel obiTopic, string Action)
+        public ActionResult Edit(GroupDetailsViewModel objGroups, string Action)
         {
             try
             {
 
                 if (Action == "Cancel")
                 {
-                    return RedirectToAction("Index");
+                    //objGroupDetails = new GroupDetailsViewModel();
+                    //return View(objGroupDetails);
+
+                    return RedirectToAction("Create");
                 }
                 else if (Action == "Back To List")
                 {
@@ -56,9 +57,9 @@ namespace OnlineExamination.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        TopicViewModel res = objTopicService.Update(obiTopic);
+                        GroupDetailsViewModel res = objgroupdetailsService.Update(objGroups);
 
-                        if (res.Top_Id > 0)
+                        if (res.GD_Id > 0)
                         {
                             TempData["MessageModel"] = MessageModel.Success("Group Details saved successfully!");
                             return RedirectToAction("Index");
@@ -71,40 +72,42 @@ namespace OnlineExamination.Controllers
 
                     }
 
-                    return View(obiTopic);
+                    return View(objGroups);
                 }
             }
             catch
             {
                 TempData["MessageModel"] = MessageModel.Error("An unexpected error occurred.");
-                return View(obiTopic); // Return view with the model on error
+                return View(objGroups); // Return view with the model on error
             }
         }
 
-
         public ActionResult Create()
-        {            
-            
-            ViewBag.SubjectList =MasterService.GetSubjects();
-            ViewBag.ClassList = MasterService.GetClass();
+        {
 
-          
+            ViewBag.SubjectList = MasterService.GetSubjects();
+            ViewBag.grouplist = MasterService.GetGroups();
 
-            TopicViewModel objTopic = new TopicViewModel();
-            return View(objTopic);
+
+
+            GroupDetailsViewModel objGroupDetails = new GroupDetailsViewModel();
+            return View(objGroupDetails);
         }
 
         [HttpPost]
-        public ActionResult Create(TopicViewModel objTopic, string Action)
+        public ActionResult Create(GroupDetailsViewModel objGroupDetails, string Action)
         {
             try
             {
                 ViewBag.SubjectList = MasterService.GetSubjects();
-                ViewBag.ClassList = MasterService.GetClass();
+                ViewBag.grouplist = MasterService.GetGroups();
+
                 if (Action == "Cancel")
                 {
-                    objTopic = new TopicViewModel();
-                    return View(objTopic);
+                    //objGroupDetails = new GroupDetailsViewModel();
+                    //return View(objGroupDetails);
+
+                    return RedirectToAction("Create");
                 }
                 else if (Action == "Back To List")
                 {
@@ -114,30 +117,28 @@ namespace OnlineExamination.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        TopicViewModel res = objTopicService.Add(objTopic);
-                        if (res.Top_Id > 0)
+                        GroupDetailsViewModel res = objgroupdetailsService.Add(objGroupDetails);
+                        if (res.GD_Id > 0)
                         {
-                            TempData["MessageModel"] = MessageModel.Success("Topid saved successfully!");
+                            TempData["MessageModel"] = MessageModel.Success("Group Details saved successfully!");
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["MessageModel"] = MessageModel.Error("An error occurred while saving the topic.");
-                            return RedirectToAction("Index");
+                            TempData["MessageModel"] = MessageModel.Error("An error occurred while saving the Group Details.");
                         }
                     }
-                   
 
-                    return View(objTopic);
+
+                    return View(objGroupDetails);
                 }
             }
             catch
             {
                 TempData["MessageModel"] = MessageModel.Error("An unexpected error occurred.");
-                return View(objTopic);
+                return View(objGroupDetails);
             }
         }
 
     }
-
 }

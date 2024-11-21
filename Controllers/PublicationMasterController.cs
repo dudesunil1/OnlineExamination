@@ -23,6 +23,64 @@ namespace OnlineExamination.Controllers
             return View(objPublication);
         }
 
+
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+            PublicationViewModel objPublication = objPublicationService.GetPublicationsById(id).FirstOrDefault();
+
+            if (objPublication == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(objPublication);
+        }
+
+
+        public ActionResult Edit(PublicationViewModel objpublication, string Action)
+        {
+            try
+            {
+
+                if (Action == "Cancel")
+                {
+                    return RedirectToAction("Index");
+                }
+                else if (Action == "Back To List")
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    if (ModelState.IsValid)
+                    {
+                        PublicationViewModel res = objPublicationService.Update(objpublication);
+
+                        if (res.Pub_Id > 0)
+                        {
+                            TempData["MessageModel"] = MessageModel.Success("Publication saved successfully!");
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["MessageModel"] = MessageModel.Error("An error occurred while saving the Publication.");
+
+                        }
+
+                    }
+                    
+                    return View(objpublication);
+                }
+            }
+            catch
+            {
+                TempData["MessageModel"] = MessageModel.Error("An unexpected error occurred.");
+                 return View(objpublication); // Return view with the model on error
+            }
+        }
+
+
         [HttpPost]
         public ActionResult Create(PublicationViewModel objPublication, string Action)
         {

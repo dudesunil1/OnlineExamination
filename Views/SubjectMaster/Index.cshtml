@@ -1,0 +1,58 @@
+﻿@model IEnumerable<OnlineExamination.Models.SubjectsViewModel>
+
+@{
+    ViewBag.Title = "List of Subjects";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb mb-24">
+        <ul class="flex-align gap-4">
+            <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
+            <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
+            <li><span class="text-main-600 fw-normal text-15">List of Subjects</span></li>
+        </ul>
+    </div>
+    <!-- Breadcrumb End -->
+</div>
+
+<div class="card">
+    <div class="card-header border-bottom border-gray-100 flex-align gap-8">
+        <h5 class="mb-0">Subject Master</h5>
+        <button type="button" class="text-main-600 text-md d-flex" data-bs-toggle="tooltip" data-bs-placement="top" title="Subject Details">
+            <i class="ph-fill ph-question"></i>
+        </button>
+
+        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-main rounded-pill py-9" })
+    </div>
+    <div class="card-body">
+        <div class="row gy-20">
+            <div class="col-xxl-12 col-md-12 col-sm-12">
+                <table class="table table-striped table-borderless custom-tbl text-center">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.First().Sub_Id)</th>
+                            <th>@Html.DisplayNameFor(model => model.First().Sub_Name)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.Sub_Id)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Sub_Name)</td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.Sub_Id } )
+                                   
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
