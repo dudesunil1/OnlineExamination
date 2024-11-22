@@ -10,7 +10,7 @@ namespace OnlineExamination.Controllers
 {
     public class GroupDetailController : Controller
     {
-        // GET: GroupDetails
+        // GET: GroupDetails-Controller
        
         GroupDetailsService objgroupdetailsService = new GroupDetailsService();
         [HttpGet]
