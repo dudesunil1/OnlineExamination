@@ -27,7 +27,17 @@ namespace OnlineExamination.Models
         public int TT_Id { get; set; }      // Maps to TT_Id in the database
         public string TT_Name { get; set; } // Maps to TT_Name in the database
     }
-}
+
+
+    public class TestQuestion
+    {
+        public int TQ_Id { get; set; }
+        public int TQ_TestId { get; set; }
+        public int TQ_QuesId { get; set; }
+    }
+
+
+    }
 
 
 

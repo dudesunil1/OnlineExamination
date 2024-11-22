@@ -131,6 +131,7 @@
     <Compile Include="BLL\GroupService.cs" />
     <Compile Include="BLL\StudentService.cs" />
     <Compile Include="BLL\TestService.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\TestMasterController.cs" />
     <Compile Include="Models\TestMasterModel.cs" />
     <Compile Include="Controllers\GroupDetailController.cs" />
@@ -281,6 +282,8 @@
     <Content Include="Views\StudentMaster\Edit.cshtml" />
     <Content Include="Views\StudentMaster\Details.cshtml" />
     <Content Include="Views\TestMaster\Create.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\TestMaster\AssignTest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -343,10 +346,10 @@
     </VisualStudio>
   </ProjectExtensions>
   <!-- <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild"> -->
-    <!-- <PropertyGroup> -->
-      <!-- <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText> -->
-    <!-- </PropertyGroup> -->
-    <!-- <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" /> -->
+  <!-- <PropertyGroup> -->
+  <!-- <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText> -->
+  <!-- </PropertyGroup> -->
+  <!-- <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" /> -->
   <!-- </Target> -->
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

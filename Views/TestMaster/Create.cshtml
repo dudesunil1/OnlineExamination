@@ -189,197 +189,254 @@
                 <div class="form-group">
                     <label for="Class">Select Subject</label>
                     @Html.DropDownList("Subject", (IEnumerable<SelectListItem>)ViewBag.SubjectDropdown,
-                        "Select a Subject", new { @class = "form-control py-11", id = "SubjectDropdown" })
+                         "Select a Subject", new { @class = "form-control py-11", id = "SubjectDropdown" })
                 </div>
+
+
+
+                <input type="hidden" id="TestIdHiddenField" name="TestId" value="@ViewBag.TestId" />
+
+
                 <div class="form-group" id="TopicContainer">
 
                 </div>
+                <input type="hidden" id="SelectedTopicIds" name="SelectedTopicIds" />
 
                 <div id="QuestionContainer">
                     <!-- Questions based on selected topics will appear here -->
                 </div>
 
-                @*<div class="form-group">
-                    <label for="NumQuestions">Number of Questions</label>
-                    <input type="text" id="NumQuestions" class="form-control" readonly />
-                </div>*@
-                @*<script type="text/javascript">
-                         var subjectData = @Html.Raw(Json.Encode(ViewBag.SubjectData));
-
-                         console.log("Subject Data:", subjectData);
-
-                        document.getElementById("SubjectDropdown").addEventListener("change", function () {
-                    var subjectId = this.value;
-
-                    if (subjectId && subjectData[subjectId] !== undefined) {
-
-                        document.getElementById("NumQuestions").value = subjectData[subjectId];
-                    } else {
-
-                        document.getElementById("NumQuestions").value = "";
-                    }
-                });
-                            </script>*@
+                <div class="buttons-container">
+                    <input type="submit" name="Action" id="submitForm" value="Show" class="btn btn-main rounded-pill py-9" />
+                    <button type="button" id="nextBtn" class="btn btn-secondary">Next</button>
+                </div>
             }
         </div>
 
+        <div class="tab-pane @((ViewBag.ActiveTab == "paper-details") ? "show active" : "")" id="paper-details" role="tabpanel" aria-labelledby="paper-details-tab">
+            </div>
 
-        <div class="buttons-container">
-            <button type="button" id="submitBtn" class="btn btn-primary">Submit</button>
-            <button type="button" id="nextBtn" class="btn btn-secondary">Next</button>
-        </div>s
+        <script>
 
-    </div>
-</div>
 
-<script>
- 
+         $(document).ready(function () {
+    // Store selected topic IDs for each subject
+    var selectedTopicsBySubject = {};
 
-    $(document).ready(function () {
-        // When subject dropdown changes, fetch topics
-        $('#SubjectDropdown').change(function () {
-            var subjectId = $(this).val();
+    // Function to update selected topics for a subject
+    function updateSelectedTopicsForSubject(subjectId) {
+        var selectedTopicIds = [];
+        $('.topic-checkbox:checked').each(function () {
+            selectedTopicIds.push($(this).val());
+        });
 
-            if (subjectId != "0") {  // Only fetch topics if a valid subject is selected
-                $.ajax({
-                    url: '@Url.Action("GetTopicsBySubjectId", "TestMaster")',
-                    data: { subjectId: subjectId },
-                    type: 'GET',
-                    success: function (data) {
-                        // Clear any existing topics
-                        $('#TopicContainer').empty();
+        // Store the selected topics for the subject
+        selectedTopicsBySubject[subjectId] = selectedTopicIds;
 
-                        // If topics are found, render the checkboxes
-                        if (data.html) {
-                            $('#TopicContainer').html(data.html);
-                        } else {
-                            $('#TopicContainer').html('<p>No topics available for the selected subject.</p>');
-                        }
-                    },
-                    error: function () {
-                        $('#TopicContainer').html('<p>Error loading topics.</p>');
+        // Store the updated selected topics in the hidden input field
+        $('#SelectedTopicIds').val(JSON.stringify(selectedTopicsBySubject));
+    }
+
+    // When a checkbox is checked or unchecked, update the selected topics
+    $(document).on('change', '.topic-checkbox', function () {
+        var subjectId = $('#SubjectDropdown').val();
+        updateSelectedTopicsForSubject(subjectId);
+    });
+
+    // When the subject dropdown changes, load the topics and pass the previously selected topic IDs
+    $('#SubjectDropdown').change(function () {
+        var subjectId = $(this).val();
+        var selectedTopicIds = $('#SelectedTopicIds').val(); // Get all selected topics from the hidden input field
+
+        if (subjectId != "0") {
+            $.ajax({
+                url: '@Url.Action("GetTopicsBySubjectId", "TestMaster")',
+                data: { subjectId: subjectId, selectedTopicIds: selectedTopicIds }, // Pass all selected topics
+                type: 'GET',
+                success: function (response) {
+                    // Update the topic container with new checkboxes
+                    $('#TopicContainer').html(response.html);
+
+                    // Re-check previously selected topics for the subject
+                    if (selectedTopicsBySubject[subjectId]) {
+                        selectedTopicsBySubject[subjectId].forEach(function (topicId) {
+                            $('#topic' + topicId).prop('checked', true);
+                            loadQuestionsForSelectedTopics();
+                        });
                     }
-                });
-            } else {
-                $('#TopicContainer').empty(); // Clear topics if no subject is selected
-            }
-        });
+                },
+                error: function () {
+                    $('#TopicContainer').html('<p>Error loading topics.</p>');
+                }
+            });
+        }
     });
 
+    // Initialize the selected topics when the page loads (if any)
+    updateSelectedTopicsForSubject($('#SubjectDropdown').val());
+ });
 
-
-    document.querySelectorAll(".subject-checkbox").forEach(checkbox => {
-        checkbox.addEventListener("change", function () {
-            var subjectId = this.id.split('_')[1]; // Get the Subject ID from the checkbox ID
-            var questionBox = document.getElementById("questionBox_" + subjectId);
-
-            // Toggle the visibility of the number of questions input
-            if (this.checked) {
-                questionBox.style.display = "block";
-            } else {
-                questionBox.style.display = "none";
-                updateTotalQuestions(); // Recalculate total questions if the checkbox is unchecked
-                calculateTotalMarks();
-            }
-        });
-    });
-
-
-    document.querySelectorAll("[id^='NoOfQuestions_']").forEach(input => {
-        input.addEventListener("input", function () {
-            updateTotalQuestions();
-            calculateTotalMarks()
-        });
-    });
-
-    // Function to update the total number of questions
-    function updateTotalQuestions() {
-        let totalQuestions = 0;
-
-        // Loop through each subject and sum the number of questions if the subject checkbox is checked
-        document.querySelectorAll(".subject-checkbox:checked").forEach(checkbox => {
-            var subjectId = checkbox.id.split('_')[1]; // Get the Subject ID from the checkbox ID
-            var numQuestions = parseInt(document.getElementById("NoOfQuestions_" + subjectId).value) || 0;
-            totalQuestions += numQuestions;
-        });
-
-        // Set the total number of questions in the "Total Question" input
-        document.getElementById('Question').value = totalQuestions;
-    }
-
-
-
-
-    function calculateTotalMarks() {
-        var markPerQuestion = parseFloat(document.getElementById("Subject").value) || 0;
-        var totalQuestions = parseInt(document.getElementById("Question").value) || 0;
-
-        var totalMarks = markPerQuestion * totalQuestions;
-        document.getElementById("TotalMarks").value = totalMarks; // Display the result
-    }
-
-    // Trigger the calculation when user inputs in "Mark Per Question" or "Total Question"
-    document.getElementById("Subject").addEventListener("input", calculateTotalMarks);
-    document.getElementById("Question").addEventListener("input", calculateTotalMarks);
-
-
-    function updateTotalQuestionsProgrammatically(newTotalQuestions) {
-        document.getElementById("Question").value = newTotalQuestions;
-
-        // Manually trigger the input event after updating the value programmatically
-        var event = new Event('input', {
-            'bubbles': true,
-            'cancelable': true
-        });
-
-        document.getElementById("Question").dispatchEvent(event);
-        document.getElementById("TotalMarks").value = totalMarks;
-    }
-
-
-    $(document).ready(function () {
-        // Listen for changes in the topic checkboxes
-        $(document).on('change', '.topic-checkbox', function () {
-            var selectedTopicIds = [];
-            debugger;
-            // Collect the selected topic IDs
-            $('.topic-checkbox:checked').each(function () {
-                selectedTopicIds.push($(this).val());
+            $(document).on('change', '.topic-checkbox', function () {
+                // When a topic checkbox is checked or unchecked, update the questions list
+                loadQuestionsForSelectedTopics();
             });
 
-            // If at least one topic is selected, fetch the questions
-            if (selectedTopicIds.length > 0) {
-                // Clear the question container first
-                $('#QuestionContainer').html('<p></p>');
+            // Function to load questions based on the selected topics
+            function loadQuestionsForSelectedTopics() {
+                var selectedTopicIds = [];
 
-                // Loop through each selected topicId and make an AJAX request
-                selectedTopicIds.forEach(function (topicId) {
-                    $.ajax({
-                        url: '/TestMaster/GetQuestionsByTopicId', // URL of the action
-                        type: 'GET',
-                        data: { topicId: topicId }, // Send one topicId at a time
-                        success: function (data) {
-                            // Insert the HTML content for questions into the container
-                            $('#QuestionContainer').append(data.html); // Append to avoid overwriting previous results
-                        },
-                        error: function () {
-                            // Handle errors (e.g., network failure, server error)
-                            $('#QuestionContainer').html('<p>Error fetching questions. Please try again.</p>');
-                        }
-                    });
+                // Collect the selected topic IDs
+                $('.topic-checkbox:checked').each(function () {
+                    selectedTopicIds.push($(this).val());
                 });
-            } else {
-                // If no topics are selected, clear the question list
-                $('#QuestionContainer').html('<p>Please select at least one topic to see the questions.</p>');
+
+                // If at least one topic is selected, fetch the questions
+                if (selectedTopicIds.length > 0) {
+                    $('#QuestionContainer').html('<p>Loading questions...</p>');  // Clear existing questions
+
+                    // Loop through each selected topicId and make an AJAX request for the questions
+                    selectedTopicIds.forEach(function (topicId) {
+                        $.ajax({
+                            url: '/TestMaster/GetQuestionsByTopicId', // URL to fetch questions based on the topicId
+                            type: 'GET',
+                            data: { topicId: topicId },  // Send one topicId at a time
+                            success: function (data) {
+                                // Append the HTML content for questions into the container
+                                $('#QuestionContainer').append(data.html);  // Append to avoid overwriting previous results
+                            },
+                            error: function () {
+                                $('#QuestionContainer').html('<p>Error fetching questions. Please try again.</p>');
+                            }
+                        });
+                    });
+                } else {
+                    // If no topics are selected, display a message
+                    $('#QuestionContainer').html('<p>Please select at least one topic to see the questions.</p>');
+                }
             }
+
+
+
+
+
+
+      document.querySelectorAll(".subject-checkbox").forEach(checkbox => {
+          checkbox.addEventListener("change", function () {
+              var subjectId = this.id.split('_')[1]; // Get the Subject ID from the checkbox ID
+              var questionBox = document.getElementById("questionBox_" + subjectId);
+
+              // Toggle the visibility of the number of questions input
+              if (this.checked) {
+                  questionBox.style.display = "block"; // Show the question box
+              } else {
+                  questionBox.style.display = "none"; // Hide the question box when unchecked
+                  updateTotalQuestions(); // Recalculate total questions if the checkbox is unchecked
+                  calculateTotalMarks();  // Recalculate total marks if necessary
+              }
+          });
+      });
+
+      function calculateTotalMarks() {
+          var markPerQuestion = parseFloat(document.getElementById("Subject").value) || 0;
+          var totalQuestions = parseInt(document.getElementById("Question").value) || 0;
+
+          var totalMarks = markPerQuestion * totalQuestions;
+          document.getElementById("TotalMarks").value = totalMarks; // Display the result
+      }
+
+      // Trigger the calculation when user inputs in "Mark Per Question" or "Total Question"
+      document.getElementById("Subject").addEventListener("input", calculateTotalMarks);
+      document.getElementById("Question").addEventListener("input", calculateTotalMarks);
+
+
+      function updateTotalQuestionsProgrammatically(newTotalQuestions) {
+          document.getElementById("Question").value = newTotalQuestions;
+
+          // Manually trigger the input event after updating the value programmatically
+          var event = new Event('input', {
+              'bubbles': true,
+              'cancelable': true
+          });
+
+          document.getElementById("Question").dispatchEvent(event);
+          document.getElementById("TotalMarks").value = totalMarks;
+      }
+
+    document.querySelectorAll("[id^='NoOfQuestions_']").forEach(input => {
+            input.addEventListener("input", function() {
+                updateTotalQuestions();
+                calculateTotalMarks()
+           });
         });
-    });
+
+    // Function to update the total number of questions
+    function updateTotalQuestions()
+        {
+            let totalQuestions = 0;
+
+            // Loop through each subject and sum the number of questions if the subject checkbox is checked
+            document.querySelectorAll(".subject-checkbox:checked").forEach(checkbox =>
+            {
+                var subjectId = checkbox.id.split('_')[1]; // Get the Subject ID from the checkbox ID
+                var numQuestions = parseInt(document.getElementById("NoOfQuestions_" + subjectId).value) || 0;
+                totalQuestions += numQuestions;
+            });
+
+            // Set the total number of questions in the "Total Question" input
+            document.getElementById('Question').value = totalQuestions;
+        }
+      $(document).ready(function () {
+          $('#submitForm').click(function (e) {
+              e.preventDefault();
+
+              // Collect selected question IDs
+              var selectedQuestionIds = [];
+              $('.question-checkbox:checked').each(function () {
+                  selectedQuestionIds.push($(this).val());
+              });
+
+              // Get the TestId from the hidden field
+              var testId = $('#TestIdHiddenField').val(); // Grabbing the value from the hidden field
+
+              if (selectedQuestionIds.length > 0) {
+                  $.ajax({
+                      url: '/TestMaster/SubmitSelectedQuestions', // URL for the action that will process the selected questions
+                      type: 'POST',
+                      data: {
+                          selectedQuestions: selectedQuestionIds, // Send the array of selected question IDs
+                          TestId: testId // Include the TestId from the hidden field
+                      },
+                      success: function (response) {
+                          // Handle success (e.g., show a success message or redirect)
+                          alert('Questions submitted successfully!');
+                          window.open('/TestMaster/Create#paper-details', '_blank');
+
+                      },
+                      error: function () {
+                          // Handle error
+                          alert('Error submitting questions.');
+                      }
+                  });
+              } else {
+                  alert('Please select at least one question.');
+              }
+          });
+      });
+
+
+
+
+
+
+
+  
 
 
 
 
     // Function to add minutes to a given time
-        function addMinutesToTime(timeStr, minutes) {
+        function addMinutesToTime(timeStr, minutes)
+    {
         const timeParts = timeStr.split(':');
         let hours = parseInt(timeParts[0]);
         let minutesPart = parseInt(timeParts[1]);
@@ -387,119 +444,128 @@
         minutesPart += minutes; // Add the duration to minutes part
 
         // Handle overflow of minutes
-        while (minutesPart >= 60) {
+        while (minutesPart >= 60)
+        {
             minutesPart -= 60;
-        hours++;
+            hours++;
         }
 
         // Handle overflow of hours (24-hour format)
-        if (hours >= 24) {
+        if (hours >= 24)
+        {
             hours -= 24;
         }
 
         // Ensure two-digit formatting
-        return `${String(hours).padStart(2, '0')}:${String(minutesPart).padStart(2, '0')}`;
+        return `${ String(hours).padStart(2, '0')}:${ String(minutesPart).padStart(2, '0')}`;
     }
 
-        // Listen for changes on Start Time and Duration
-        document.getElementById('StartTime').addEventListener('change', function() {
-            updateEndTime();
+    // Listen for changes on Start Time and Duration
+    document.getElementById('StartTime').addEventListener('change', function() {
+        updateEndTime();
     });
 
         document.getElementById('Duration').addEventListener('input', function() {
-            updateEndTime();
+        updateEndTime();
     });
 
         // Function to update the End Time field
-        function updateEndTime() {
+        function updateEndTime()
+    {
         const startTime = document.getElementById('StartTime').value;
         const duration = parseInt(document.getElementById('Duration').value);
 
         // Check if both start time and duration are provided
-        if (startTime && !isNaN(duration) && duration > 0) {
+        if (startTime && !isNaN(duration) && duration > 0)
+        {
             const endTime = addMinutesToTime(startTime, duration);
-        document.getElementById('EndTime').value = endTime;
+            document.getElementById('EndTime').value = endTime;
         }
     }
 
 
 
-   document.querySelectorAll("[id^='NoOfQuestions_']").forEach(input => {
-    input.addEventListener("input", function () {
-        // Extract the subject ID from the input field's ID
-        var subjectId = this.id.split('_')[1];
+    document.querySelectorAll("[id^='NoOfQuestions_']").forEach(input => {
+        input.addEventListener("input", function() {
+            // Extract the subject ID from the input field's ID
+            var subjectId = this.id.split('_')[1];
 
-        // Get the number of questions entered by the user (default to 0 if empty)
-        var numQuestions = this.value || 0;
+            // Get the number of questions entered by the user (default to 0 if empty)
+            var numQuestions = this.value || 0;
 
-        // Check if the checkbox for the subject is checked
-        var isChecked = document.getElementById("subject_" + subjectId).checked;
+            // Check if the checkbox for the subject is checked
+            var isChecked = document.getElementById("subject_" + subjectId).checked;
 
-        // Fetch the subject name from the dropdown
-        var subjectName = getSubjectNameById(subjectId);
+            // Fetch the subject name from the dropdown
+            var subjectName = getSubjectNameById(subjectId);
 
-        // Update the session with subject details (ID, name, checked state, and number of questions)
-        updateSessionData(subjectId, isChecked, numQuestions, subjectName);
-    });
-});
+            // Update the session with subject details (ID, name, checked state, and number of questions)
+            updateSessionData(subjectId, isChecked, numQuestions, subjectName);
+            });
+        });
 
-    function getSubjectNameById(subjectId) {
-    // Find the checkbox by subjectId
-    var checkbox = document.getElementById('subject_' + subjectId);
+        function getSubjectNameById(subjectId)
+        {
+            // Find the checkbox by subjectId
+            var checkbox = document.getElementById('subject_' + subjectId);
 
-    // If the checkbox exists, get its associated label text
-    if (checkbox) {
-        // Find the label associated with the checkbox
-        var label = checkbox.nextElementSibling; // assuming the label is immediately after the checkbox
-        if (label) {
-            return label.textContent.trim(); // Return the text content of the label
+            // If the checkbox exists, get its associated label text
+            if (checkbox)
+            {
+                // Find the label associated with the checkbox
+                var label = checkbox.nextElementSibling; // assuming the label is immediately after the checkbox
+                if (label)
+                {
+                    return label.textContent.trim(); // Return the text content of the label
+                }
+            }
+
+            return ''; // Return an empty string if subjectId is not found
         }
-    }
+        // Function to update session data (with the subject name, id, checked state, and number of questions)
 
-    return ''; // Return an empty string if subjectId is not found
-}
-// Function to update session data (with the subject name, id, checked state, and number of questions)
-function updateSessionData(subjectId, isChecked, numQuestions, subjectName) {
+
+      function updateSessionData(subjectId, isChecked, numQuestions, subjectName)
+        {
     $.ajax({
-        type: "POST",
+            type: "POST",
         url: '@Url.Action("StoreSelectedSubjects", "TestMaster")', // Adjust this URL as needed
-        data: {
-        subjectId: subjectId,
+        data:
+                {
+                subjectId: subjectId,
         isChecked: isChecked,
         numQuestions: numQuestions,
         subjectName: subjectName // Adding Subject Name to the data sent to the server
         },
-        success: function (response) {
-        console.log("Selected subject data updated in session");
-        },
-        error: function (error) {
-        console.error("Error updating session", error);
-        }
-        });
-        }
+        success: function(response) {
+                    console.log("Selected subject data updated in session");
+                },
+        error: function(error) {
+                    console.error("Error updating session", error);
+                }
+            });
+    }
 
 
 
-
-
-
-
-        document.addEventListener('DOMContentLoaded', function () {
+      document.addEventListener('DOMContentLoaded', function ()
+    {
         // Listen for the click on the 'Create' button
-        document.getElementById('Create').addEventListener('click', function (event) {
+        document.getElementById('Create').addEventListener('click', function(event) {
 
-        if (validateForm()) {
+            if (validateForm())
+            {
         // Prevent the default form submission to allow switching the tab
         event.preventDefault();
 
-        // Switch to the "question-details" tab
-        switchToQuestionDetailsTab();
+                // Switch to the "question-details" tab
+                switchToQuestionDetailsTab();
 
-        // Submit the form after switching tabs
-        document.querySelector("form").submit();
-        }
+                // Submit the form after switching tabs
+                document.querySelector("form").submit();
+            }
         });
-        });
+    });
 
 
 
@@ -507,7 +573,8 @@ function updateSessionData(subjectId, isChecked, numQuestions, subjectName) {
 
 
         // Function to switch to the "question-details" tab
-        function switchToQuestionDetailsTab() {
+        function switchToQuestionDetailsTab()
+    {
         // First, remove the 'active' class from the current tab
         document.querySelector('.nav-link.active').classList.remove('active');
         document.querySelector('.tab-pane.active').classList.remove('show', 'active');
@@ -515,14 +582,15 @@ function updateSessionData(subjectId, isChecked, numQuestions, subjectName) {
         // Add the 'active' class to the "question-details" tab
         document.getElementById('question-details-tab').classList.add('active');
         document.getElementById('question-details').classList.add('show', 'active');
-        }
+    }
 
-        function validateForm() {
+    function validateForm()
+    {
 
         return true;
-        }
+    }
 
 
-</script>
+        </script>
 
 

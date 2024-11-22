@@ -72,5 +72,40 @@ namespace OnlineExamination.BLL
             }
         }
 
+
+
+        public TestQuestion addQuestiontest(TestQuestion objTest)
+        {
+            string _errMsg;
+            try
+            {
+                //TimeSpan testDuration = TimeSpan.FromMinutes(objTest.Test_Duration); // model.Test_Duration is the int (in minutes)
+
+                Hashtable hashTable = new Hashtable();
+                hashTable.Add("@TQ_QuesId", objTest.TQ_QuesId);
+               hashTable.Add("@TQ_TestId", objTest.TQ_TestId);
+
+
+                DataTable dt = clsSunDAL.FillDataTable("Sp_Insert_TestQuestion", hashTable);
+                _errMsg = clsSunDAL._errMsg;
+
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+
+                    objTest.TQ_Id = Convert.ToInt32(dt.Rows[0]["TQ_Id"]);
+                    return objTest;
+                }
+
+                return null;
+
+            }
+            catch (Exception Ex)
+            {
+                _errMsg = Ex.Message;
+                return null;  // Return null if an error occurs
+            }
+        }
+
     }
 }

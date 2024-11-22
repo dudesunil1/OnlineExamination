@@ -1,4 +1,5 @@
-﻿using OnlineExamination.BLL;
+﻿using Newtonsoft.Json;
+using OnlineExamination.BLL;
 using OnlineExamination.Models;
 using System;
 using System.Collections.Generic;
@@ -98,15 +99,16 @@ namespace OnlineExamination.Controllers
                         TestMasterModel res = objtestService.AddTestMaster(objTest);
                         if (res.Test_Id > 0)
                         {
+
+                            ViewBag.TestId = res.Test_Id;
                             ViewBag.ActiveTab = "question-details";
                             var selectedSubjects = Session["SelectedSubjects"] as Dictionary<string, (bool isChecked, int numQuestions, string subjectName)>;
-                            
+
                             ViewBag.SubjectDropdown = selectedSubjects.Select(subject => new SelectListItem
                             {
                                 Value = subject.Key, // Subject ID
-                                Text = $" {subject.Value.subjectName}" // Display both subject ID and name
+                                Text = $"{subject.Value.subjectName} ({subject.Value.numQuestions} questions)" // Display subject name and number of questions
                             }).ToList();
-
                             ViewBag.SubjectData = selectedSubjects;
                             LoadData();
                             return View(res);
@@ -125,6 +127,65 @@ namespace OnlineExamination.Controllers
                 return View();
             }
         }
+
+
+        [HttpPost]
+        public ActionResult SubmitSelectedQuestions(List<int> selectedQuestions, int TestId)
+        {
+            // Check if questions are selected
+            if (selectedQuestions != null && selectedQuestions.Any())
+            {
+                // For example, you can save the selected questions to a database, 
+                // associate them with the provided TestId, or perform other logic
+                foreach (var questionId in selectedQuestions)
+                {
+                    // Example logic: Save the selected question for the specific test
+                    // Assuming you have a method to associate questions with tests
+                    bool isSaved = SaveQuestionToTest(questionId, TestId);
+
+                    if (!isSaved)
+                    {
+                        // If saving fails, return a failure message
+                        return Json(new { success = false, message = "An error occurred while saving questions." });
+                    }
+                }
+
+                // Return a success response
+                return Json(new { success = true, message = "Questions submitted successfully!" });
+            }
+            else
+            {
+                // Return an error message if no questions are selected
+                return Json(new { success = false, message = "No questions selected." });
+            }
+        }
+
+        
+        private bool SaveQuestionToTest(int questionId, int testId)
+        {
+            try
+            {
+                // Assuming you have a method to add questions to a test in your database
+                // For example, add to a "TestQuestion" table:
+                var testQuestion = new TestQuestion
+                {
+                    TQ_TestId = testId,
+                    TQ_QuesId = questionId
+                };
+
+                // You can replace this with actual database logic (e.g., using Entity Framework)
+                TestService testservice = new TestService();
+                testservice.addQuestiontest(testQuestion);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log the error if needed and return false
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+    
 
         public ActionResult GetQuestionsByTopicId(int topicId)
         {
@@ -163,46 +224,75 @@ namespace OnlineExamination.Controllers
             return Json(new { html = htmlContent }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult GetTopicsBySubjectId(int subjectId)
+        public ActionResult GetTopicsBySubjectId(int subjectId, string selectedTopicIds)
         {
+            // Create instance of TopicService to retrieve topics
             TopicService topicService = new TopicService();
-            var topics = topicService.GetTopicsBySubjectId(subjectId); // Retrieve topics for the subject
+            var topics = topicService.GetTopicsBySubjectId(subjectId); // Retrieve topics for the selected subject
 
-            // Create HTML for the checkbox list
+            // Initialize an empty dictionary to hold selected topic IDs by subject
+            Dictionary<int, List<int>> selectedTopicsBySubject = new Dictionary<int, List<int>>();
+
+            // Check if selectedTopicIds is not null or empty
+            if (!string.IsNullOrEmpty(selectedTopicIds))
+            {
+                try
+                {
+                    // Deserialize the selected topic IDs JSON string into a dictionary
+                    selectedTopicsBySubject = JsonConvert.DeserializeObject<Dictionary<int, List<int>>>(selectedTopicIds);
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception (optional)
+                    // For now, just make sure to handle any deserialization errors gracefully.
+                    Console.WriteLine("Error deserializing selectedTopicIds: " + ex.Message);
+                }
+            }
+
+            // Initialize the list to hold the selected topic IDs for this subject
+            List<int> selectedIdsForSubject = selectedTopicsBySubject.ContainsKey(subjectId)
+                ? selectedTopicsBySubject[subjectId]
+                : new List<int>();
+
+            // Create a variable to hold the generated HTML content
             string htmlContent = string.Empty;
 
+            // Check if there are any topics
             if (topics != null && topics.Any())
             {
-                // Start the container for checkboxes
+                // Start the container for the checkboxes
                 htmlContent += "<div class='checkbox-list'>";
 
                 foreach (var topic in topics)
                 {
-                    // Add each topic as a checkbox
+                    // Check if the current topic's ID is in the selected list for this subject
+                    bool isChecked = selectedIdsForSubject.Contains(topic.Top_Id);
+
+                    // Add a checkbox input and check it if it's in the selected topic IDs
                     htmlContent += $@"
-                <div class='form-check'>
-                    <input type='checkbox' class='topic-checkbox' id='topic{topic.Top_Id}' name='SelectedTopics' value='{topic.Top_Id}'>
-                    <label class='form-check-label' for='topic{topic.Top_Id}'>
-                        {topic.Top_Name}
-                    </label>
-                </div>";
+            <div class='form-check'>
+                <input type='checkbox' class='topic-checkbox' id='topic{topic.Top_Id}' name='SelectedTopics' value='{topic.Top_Id}' {(isChecked ? "checked" : "")}>
+                <label class='form-check-label' for='topic{topic.Top_Id}'>
+                    {topic.Top_Name}
+                </label>
+            </div>";
                 }
 
-                htmlContent += "</div>"; // End the container
+                // Close the checkbox list container
+                htmlContent += "</div>";
             }
             else
             {
+                // If no topics are available for the selected subject
                 htmlContent = "<p>No topics available for the selected subject.</p>";
             }
 
-            // Return the HTML as JSON
+            // Return the generated HTML as JSON to be used by the frontend
             return Json(new { html = htmlContent }, JsonRequestBehavior.AllowGet);
         }
 
-
-
         [HttpGet]
-            public ActionResult QuestionDetails()
+         public ActionResult QuestionDetails()
             {
                 // Retrieve the selected subjects and their question numbers from the session
                 var selectedSubjects = Session["SelectedSubjects"] as Dictionary<string, int>;
