@@ -7,9 +7,10 @@ using System.Web.Mvc;
 using OnlineExamination.BLL;
 namespace OnlineExamination.Controllers
 {
+    //Test Conflict
     public class AdminController : Controller
     {
-        // GET: Admin
+        // GET: Admin-Controller
         AdminService objAdminService = new AdminService();
         public ActionResult Login()
         {
