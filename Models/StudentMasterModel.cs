@@ -42,6 +42,8 @@ namespace OnlineExamination.Models
 
         [Required(ErrorMessage = "Group is required")]
         public string Stud_Group { get; set; }
+        [Required(ErrorMessage = "Class is required")]
+        public int Stud_Class { get; set; }
 
         public string Stud_Photo { get; set; }  // Path or URL to the photo
 

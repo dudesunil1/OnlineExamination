@@ -79,7 +79,7 @@ namespace OnlineExamination.BLL
                 hashTable.Add("@Stud_Password", objStudent.Stud_Password);
                 hashTable.Add("@Stud_AdmissionDate", objStudent.Stud_AdmissionDate);
                 hashTable.Add("@Stud_Group", objStudent.Stud_Group);
-                
+                hashTable.Add("@Stud_Class", objStudent.Stud_Class);
                 hashTable.Add("@Stud_Photo", extension);
 
 
@@ -120,6 +120,7 @@ namespace OnlineExamination.BLL
                 hashTable.Add("@Stud_AdmissionDate", objStudent.Stud_AdmissionDate);
                 hashTable.Add("@Stud_Group", objStudent.Stud_Group);
                 hashTable.Add("@Stud_Photo", extension);
+                hashTable.Add("@Stud_Class", objStudent.Stud_Class);
                 //   hashTable.Add("@Stud_IsActive", objStudent.Stud_IsActive);
                 DataTable dt = clsSunDAL.FillDataTable("SP_StudentMaster_Update", hashTable);
                 _errMsg = clsSunDAL._errMsg;

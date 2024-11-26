@@ -111,6 +111,7 @@ namespace OnlineExamination.Controllers
         public ActionResult Edit(int id)
         {
             ViewBag.grouplist = MasterService.GetGroups();
+            ViewBag.Classlist = MasterService.GetClass();
             StudentMasterModel objPublication = objStudentService.GetStudentById(id).FirstOrDefault();
 
 
@@ -127,6 +128,7 @@ namespace OnlineExamination.Controllers
         public ActionResult Create()
         {
             ViewBag.grouplist = MasterService.GetGroups();
+            ViewBag.classlist= MasterService.GetClass();
             StudentMasterModel objStudent = new StudentMasterModel();
             return View(objStudent);
         }
@@ -184,7 +186,9 @@ namespace OnlineExamination.Controllers
                             TempData["MessageModel"] = MessageModel.Error("please enter image");
                         }
                     }
+                   
                     ViewBag.grouplist = MasterService.GetGroups();
+                    ViewBag.classlist = MasterService.GetClass();
                     return View();
                 }
             }

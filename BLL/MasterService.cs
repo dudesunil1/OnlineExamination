@@ -30,10 +30,10 @@ namespace OnlineExamination.BLL
         public static List<SelectListItem> GetGroups()
         {
             GroupService groupService = new GroupService();
-            List<GroupViewModel> objClass = groupService.GetGroups();
-            if (objClass.Count > 0)
+            List<GroupViewModel> objgroup = groupService.GetGroups();
+            if (objgroup.Count > 0)
             {
-                return objClass.Select(s => new SelectListItem
+                return objgroup.Select(s => new SelectListItem
                 {
                     Value = s.Grp_Id.ToString(),  // Use appropriate property for Value
                     Text = s.Grp_Name             // Use appropriate property for Text

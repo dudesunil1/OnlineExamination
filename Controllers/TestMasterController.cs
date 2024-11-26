@@ -4,6 +4,8 @@ using OnlineExamination.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -224,96 +226,29 @@ namespace OnlineExamination.Controllers
             return Json(new { html = htmlContent }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult GetTopicsBySubjectId(int subjectId, string selectedTopicIds)
+        [HttpGet]
+        public ActionResult GetTopicsBySubject(int subjectId)
         {
-            // Create instance of TopicService to retrieve topics
             TopicService topicService = new TopicService();
-            var topics = topicService.GetTopicsBySubjectId(subjectId); // Retrieve topics for the selected subject
+            // Fetch topics based on subjectId from your service or database
+            List<TopicShowViewModel> topics = topicService.GetTopicsBySubjectId(subjectId);
 
-            // Initialize an empty dictionary to hold selected topic IDs by subject
-            Dictionary<int, List<int>> selectedTopicsBySubject = new Dictionary<int, List<int>>();
-
-            // Check if selectedTopicIds is not null or empty
-            if (!string.IsNullOrEmpty(selectedTopicIds))
-            {
-                try
-                {
-                    // Deserialize the selected topic IDs JSON string into a dictionary
-                    selectedTopicsBySubject = JsonConvert.DeserializeObject<Dictionary<int, List<int>>>(selectedTopicIds);
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception (optional)
-                    // For now, just make sure to handle any deserialization errors gracefully.
-                    Console.WriteLine("Error deserializing selectedTopicIds: " + ex.Message);
-                }
-            }
-
-            // Initialize the list to hold the selected topic IDs for this subject
-            List<int> selectedIdsForSubject = selectedTopicsBySubject.ContainsKey(subjectId)
-                ? selectedTopicsBySubject[subjectId]
-                : new List<int>();
-
-            // Create a variable to hold the generated HTML content
-            string htmlContent = string.Empty;
-
-            // Check if there are any topics
             if (topics != null && topics.Any())
             {
-                // Start the container for the checkboxes
-                htmlContent += "<div class='checkbox-list'>";
-
-                foreach (var topic in topics)
-                {
-                    // Check if the current topic's ID is in the selected list for this subject
-                    bool isChecked = selectedIdsForSubject.Contains(topic.Top_Id);
-
-                    // Add a checkbox input and check it if it's in the selected topic IDs
-                    htmlContent += $@"
-            <div class='form-check'>
-                <input type='checkbox' class='topic-checkbox' id='topic{topic.Top_Id}' name='SelectedTopics' value='{topic.Top_Id}' {(isChecked ? "checked" : "")}>
-                <label class='form-check-label' for='topic{topic.Top_Id}'>
-                    {topic.Top_Name}
-                </label>
-            </div>";
-                }
-
-                // Close the checkbox list container
-                htmlContent += "</div>";
-            }
-            else
-            {
-                // If no topics are available for the selected subject
-                htmlContent = "<p>No topics available for the selected subject.</p>";
+                // If topics are found, return them as JSON
+                return Json(topics);
             }
 
-            // Return the generated HTML as JSON to be used by the frontend
-            return Json(new { html = htmlContent }, JsonRequestBehavior.AllowGet);
+            // If no topics found, return an empty list
+            return Json(new List<TopicShowViewModel>());
         }
-
-        [HttpGet]
-         public ActionResult QuestionDetails()
-            {
-                // Retrieve the selected subjects and their question numbers from the session
-                var selectedSubjects = Session["SelectedSubjects"] as Dictionary<string, int>;
-
-                // Initialize if the session is null or empty
-                if (selectedSubjects == null)
-                {
-                    selectedSubjects = new Dictionary<string, int>();
-                }
-
-                // Pass the selected subjects to the view as separate values
-                ViewBag.SubjectIds = selectedSubjects.Keys.ToList(); // List of Subject IDs
-                ViewBag.NumQuestions = selectedSubjects.Values.ToList(); // List of corresponding numQuestions
-
-
-                return View();
-            }
-
-        
     }
 
 
 
+
 }
+
+
+
+

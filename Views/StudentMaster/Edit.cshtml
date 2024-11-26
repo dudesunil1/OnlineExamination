@@ -152,7 +152,28 @@
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             </div>
                         </div>
+                        <div class="col-sm-6">
+                            <label for="GroupId" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Stud_Class)
 
+                            </label>
+                            <div class="position-relative">
+
+                                @if (ViewBag.Classlist != null)
+                                {
+                                    @Html.DropDownListFor(
+                                        model => model.Stud_Class,
+                                        new SelectList(ViewBag.Classlist, "Value", "Text"),
+                                        "Select Class",
+                                        new { @class = "form-select py-9 placeholder-13 text-15", id = "ClassDropdown" }
+                                    ) }
+                                else
+                                {
+                                    <p>No classes available.</p>}
+                                @Html.ValidationMessageFor(model => model.Stud_Class, "", new { @class = "text-danger" })
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
                         <div class="flex-align justify-content-end gap-8">
                             <input type="submit" name="Action" value="Back To List" class="btn btn-outline-main rounded-pill py-9" />
                             <input type="submit" name="Action" value="Cancel" class="btn btn-outline-main rounded-pill py-9" />
