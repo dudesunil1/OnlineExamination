@@ -36,8 +36,21 @@ namespace OnlineExamination.Models
         public int TQ_QuesId { get; set; }
     }
 
-
+    public class TestStudent
+    {
+        public int TS_Id { get; set; }            // Primary key for TestStudent
+        public int TS_TestId { get; set; }        // The ID of the test
+        public int TS_StudId { get; set; }        // The ID of the student
+        public bool TS_IsAttempted { get; set; }  // Whether the student has attempted the test
+        public DateTime TS_StartTime { get; set; }  // The start time of the test
+        public DateTime TS_End_Time { get; set; }  // The end time of the test
+        public DateTime TS_Expected_Date { get; set; } // Expected date of the test
+        public DateTime TS_AddTime { get; set; }  // The time when the record was added
+        public TimeSpan TS_BreakFrom { get; set; }  // Break start time during the test
+        public TimeSpan TS_BreakTo { get; set; }    // Break end time during the test
+        public double TS_Mark { get; set; }         // The marks scored by the student
     }
+}
 
 
 

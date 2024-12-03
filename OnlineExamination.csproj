@@ -133,6 +133,7 @@
     <Compile Include="BLL\TestService.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\TestMasterController.cs" />
+    <Compile Include="Models\AssignTestController.cs" />
     <Compile Include="Models\TestMasterModel.cs" />
     <Compile Include="Controllers\GroupDetailController.cs" />
     <Compile Include="Controllers\MasterController.cs" />
@@ -344,7 +345,7 @@
     <Content Include="Views\StudentMaster\Details.cshtml" />
     <Content Include="Views\TestMaster\Create.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
-    <Content Include="Views\TestMaster\AssignTest.cshtml" />
+    <Content Include="Views\AssignTest\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

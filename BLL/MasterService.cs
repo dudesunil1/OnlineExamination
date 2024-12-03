@@ -45,6 +45,26 @@ namespace OnlineExamination.BLL
                 return null;
             }
         }
+
+        public static List<SelectListItem> GetTest()
+        {
+            TestService testService = new TestService();
+            List<TestMasterModel > objgroup = testService.GetTests();
+            if (objgroup.Count > 0)
+            {
+                return objgroup.Select(s => new SelectListItem
+                {
+                    Value = s.Test_Id.ToString(),  // Use appropriate property for Value
+                    Text = s.Test_Name             // Use appropriate property for Text
+                }).ToList();
+
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public static List<SelectListItem> GetSubjects()
         {
             SubjectService subjectService = new SubjectService();

@@ -72,7 +72,66 @@ namespace OnlineExamination.BLL
             }
         }
 
+        public bool AssignTest(int SelectedTestId, int selectedStudentId)
+        {
+            string _errMsg;
+            try
+            {
+                // Create a hashtable to pass parameters to the stored procedure
+                Hashtable hashTable = new Hashtable();
+                hashTable.Add("@TS_TestId", SelectedTestId);
+                hashTable.Add("@TS_StudId", selectedStudentId);
 
+                
+                DataTable dt = clsSunDAL.FillDataTable("SP_TestStudent_Insert", hashTable);
+                _errMsg = clsSunDAL._errMsg;
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    
+                    int tsId = Convert.ToInt32(dt.Rows[0]["TS_Id"]);
+
+                    
+
+                    return true;
+                }
+
+                
+                return false;
+            }
+            catch (Exception Ex)
+            {
+                _errMsg = Ex.Message;
+
+                // Log the error if needed, or simply return false
+                return false; // Return false if an exception occurs
+            }
+        }
+
+
+
+        public List<TestMasterModel> GetTests()
+        {
+            try
+            {
+                Hashtable hash = new Hashtable();
+
+                DataTable dt = ControlFill.FillDataTable("SP_TestMaster_Select", hash);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    List<TestMasterModel> list = ConversionFunctions.DataTableToList<TestMasterModel>(dt);
+                    return list;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception Ex)
+            {
+                return null;
+            }
+        }
 
         public TestQuestion addQuestiontest(TestQuestion objTest)
         {

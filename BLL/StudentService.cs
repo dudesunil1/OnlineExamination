@@ -35,6 +35,30 @@ namespace OnlineExamination.BLL
                 return null;
             }
         }
+        public List<StudentMasterModel> GetStudentByClassId(int id)
+        {
+            try
+            {
+                Hashtable hashTable = new Hashtable();
+                hashTable.Add("@ClassName", id);
+
+                DataTable dt = ControlFill.FillDataTable("SP_GetStudentsByClass", hashTable);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    List<StudentMasterModel> list = ConversionFunctions.DataTableToList<StudentMasterModel>(dt);
+                    return list;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception Ex)
+            {
+                return null;
+            }
+        }
 
         public List<StudentMasterModel> GetStudentById(int id)
         {
