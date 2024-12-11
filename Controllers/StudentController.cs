@@ -1,31 +1,29 @@
-﻿using OnlineExamination.Models;
+﻿using OnlineExamination.BLL;
+using OnlineExamination.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using OnlineExamination.BLL;
+
 namespace OnlineExamination.Controllers
 {
-    //Test Conflict
-    public class AdminController : Controller
+    public class StudentController : Controller
     {
-        
-        AdminService objAdminService = new AdminService();
+        StudentService objstudentservices = new StudentService();
         public ActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Login(AdminLoginViewModel objAdminLogin)
+        public ActionResult Login(StudentMasterModel objstudlogin)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    
-                    bool isLogin = objAdminService.Login(objAdminLogin.UserName, objAdminLogin.Password);
+                
+
+                    bool isLogin = objstudentservices.Login(objstudlogin.Stud_UserName, objstudlogin.Stud_Password);
                     if (isLogin)
                     {
                         return RedirectToAction("Index", "Home");
@@ -34,8 +32,8 @@ namespace OnlineExamination.Controllers
                     {
                         return RedirectToAction("Login");
                     }
-                }
-                return View(objAdminLogin);
+                
+                
             }
             catch
             {

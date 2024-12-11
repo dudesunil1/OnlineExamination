@@ -131,6 +131,7 @@
     <Compile Include="BLL\GroupService.cs" />
     <Compile Include="BLL\StudentService.cs" />
     <Compile Include="BLL\TestService.cs" />
+    <Compile Include="Controllers\StudentController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\TestMasterController.cs" />
     <Compile Include="Models\AssignTestController.cs" />
@@ -317,7 +318,7 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Login\Login.cshtml" />
+    <Content Include="Views\Student\Login.cshtml" />
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\PublicationMaster\Index.cshtml" />
     <Content Include="Views\PublicationMaster\Create.cshtml" />

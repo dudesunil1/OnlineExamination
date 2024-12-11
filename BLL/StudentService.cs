@@ -13,6 +13,37 @@ namespace OnlineExamination.BLL
 {
     public class StudentService
     {
+
+        public bool Login(string userName, string password)
+        {
+            try
+            {
+                Hashtable hash = new Hashtable();
+                hash.Add("@UserName", userName);
+                hash.Add("@Password", password);
+                DataTable dtData = ControlFill.FillDataTable("Sp_Student_Login", hash);
+                if (dtData != null && dtData.Rows.Count > 0)
+                {
+                    HttpContext.Current.Session["UserData"] = dtData;
+                    HttpContext.Current.Session["UserRole"] = "STUDENT";
+                    return true;
+                    //Response.Redirect("Dashboard.aspx", false);
+                }
+                else
+                {
+                    return false;
+                    //lblError.Text = "Please enter a valid username and password.";
+                    //lblError.Visible = true;
+                }
+
+            }
+            catch (Exception Ex)
+            {
+                return false;
+
+                //Response.Write(Ex.Message);
+            }
+        }
         public List<StudentMasterModel> GetStudent()
         {
             try

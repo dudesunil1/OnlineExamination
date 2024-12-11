@@ -71,196 +71,117 @@
         <div class="sidebar-menu-wrapper overflow-y-auto scroll-sm">
             <div class="p-20 pt-10">
                 <ul class="sidebar-menu">
-                    <li class="sidebar-menu__item has-dropdown">
-                        <a href="javascript:void(0)" class="sidebar-menu__link">
-                            <span class="icon"><i class="ph ph-squares-four"></i></span>
-                            <span class="text">Dashboard</span>
-                            <span class="link-badge">3</span>
-                        </a>
-                        <!-- Submenu start -->
-                        <ul class="sidebar-submenu">
-                            <li class="sidebar-submenu__item">
-                                <a href="index.html" class="sidebar-submenu__link"> Dashboard One </a>
-                            </li>
-                            <li class="sidebar-submenu__item">
-                                <a href="index-2.html" class="sidebar-submenu__link"> Dashboard Two </a>
-                            </li>
-                            <li class="sidebar-submenu__item">
-                                <a href="index-3.html" class="sidebar-submenu__link"> Dashboard Three </a>
-                            </li>
-                        </ul>
-                        <!-- Submenu End -->
-                    </li>
-                    <li class="sidebar-menu__item has-dropdown">
-                        <a href="javascript:void(0)" class="sidebar-menu__link">
-                            <span class="icon"><i class="ph ph-graduation-cap"></i></span>
-                            <span class="text">Master</span>
-                        </a>
-                        <!-- Submenu start -->
-                        <ul class="sidebar-submenu">
-                            <li class="sidebar-submenu__item">
-                                @Html.ActionLink("Publication", "Index", "PublicationMaster", null, new { @class = "sidebar-submenu__link" })
-                            </li>
-                            <li class="sidebar-submenu__item">
-                                @Html.ActionLink("Subject Master", "Index", "SubjectMaster", null, new { @class = "sidebar-submenu__link" })
-                            </li>
-
-                            <li class="sidebar-submenu__item">
-                                @Html.ActionLink("Group Master", "Index", "GroupMaster", null, new { @class = "sidebar-submenu__link" })
-                            </li>
-                            <li class="sidebar-submenu__item">
-                                @Html.ActionLink("Group Detail", "Index", "GroupDetail", null, new { @class = "sidebar-submenu__link" })
-                            </li>
-                            <li class="sidebar-submenu__item">
-                                @Html.ActionLink("Topic Master", "Index", "TopicMaster", null, new { @class = "sidebar-submenu__link" })
-                            </li>
-                        </ul>
-                        <!-- Submenu End -->
-                    </li>
-                    <li class="sidebar-menu__item has-dropdown">
-                        <a href="javascript:void(0)" class="sidebar-menu__link">
-                            <span class="icon"><i class="ph ph-graduation-cap"></i></span>
-                            <span class="text">Student</span>
-                        </a>
-                        <!-- Submenu start -->
-                        <ul class="sidebar-submenu">
-                            <li class="sidebar-submenu__item">
-                                @Html.ActionLink("Student List", "Index", "StudentMaster", null, new { @class = "sidebar-submenu__link" })
-                            </li>
-                            <li class="sidebar-submenu__item">
-                                @Html.ActionLink("Create Student", "Create", "StudentMaster", null, new { @class = "sidebar-submenu__link" })
-                            </li>
-
-                        </ul>
-                        <!-- Submenu End -->
-                    </li>
-                    <li class="sidebar-menu__item has-dropdown">
-                        <a href="javascript:void(0)" class="sidebar-menu__link">
-                            <span class="icon"><i class="ph ph-graduation-cap"></i></span>
-                            <span class="text">Question</span>
-                        </a>
-                        <!-- Submenu start -->
-                        <ul class="sidebar-submenu">
-                            <li class="sidebar-submenu__item">
-                                @Html.ActionLink("Question List", "Index", "Question", null, new { @class = "sidebar-submenu__link" })
-                            </li>
-                            <li class="sidebar-submenu__item">
-                                @Html.ActionLink("Create Question", "Create", "Question", null, new { @class = "sidebar-submenu__link" })
-                            </li>
-
-                        </ul>
-                        <!-- Submenu End -->
-                    </li>
-
-                    <li class="sidebar-menu__item has-dropdown">
-                        <a href="javascript:void(0)" class="sidebar-menu__link">
-                            <span class="icon"><i class="ph ph-graduation-cap"></i></span>
-                            <span class="text">Test</span>
-                        </a>
-                        <!-- Submenu start -->
-                        <ul class="sidebar-submenu">
-                            <li class="sidebar-submenu__item">
-                                @Html.ActionLink("Assign Test", "Create", "AssignTest", null, new { @class = "sidebar-submenu__link" })
-                            </li>
-                            <li class="sidebar-submenu__item">
-                                @Html.ActionLink("Create Test", "Create", "TestMaster", null, new { @class = "sidebar-submenu__link" })
-                            </li>
-
-                        </ul>
-                        <!-- Submenu End -->
-                    </li>
-                    <!--<li class="sidebar-menu__item">
-        <a href="assignment.html" class="sidebar-menu__link">
-            <span class="icon"><i class="ph ph-clipboard-text"></i></span>
-            <span class="text">Assignments</span>
-        </a>
-    </li>
-    <li class="sidebar-menu__item">
-        <a href="mentors.html" class="sidebar-menu__link">
-            <span class="icon"><i class="ph ph-users"></i></span>
-            <span class="text">Mentors</span>
-        </a>
-    </li>
-    <li class="sidebar-menu__item">
-        <a href="resources.html" class="sidebar-menu__link">
-            <span class="icon"><i class="ph ph-bookmarks"></i></span>
-            <span class="text">Resources</span>
-        </a>
-    </li>
-    <li class="sidebar-menu__item">
-        <a href="message.html" class="sidebar-menu__link">
-            <span class="icon"><i class="ph ph-chats-teardrop"></i></span>
-            <span class="text">Messages</span>
-        </a>
-    </li>
-    <li class="sidebar-menu__item">
-        <a href="analytics.html" class="sidebar-menu__link">
-            <span class="icon"><i class="ph ph-chart-bar"></i></span>
-            <span class="text">Analytics</span>
-        </a>
-    </li>
-    <li class="sidebar-menu__item">
-        <a href="event.html" class="sidebar-menu__link">
-            <span class="icon"><i class="ph ph-calendar-dots"></i></span>
-            <span class="text">Events</span>
-        </a>
-    </li>
-    <li class="sidebar-menu__item">
-        <a href="library.html" class="sidebar-menu__link">
-            <span class="icon"><i class="ph ph-books"></i></span>
-            <span class="text">Library</span>
-        </a>
-    </li>
-    <li class="sidebar-menu__item">
-        <a href="pricing-plan.html" class="sidebar-menu__link">
-            <span class="icon"><i class="ph ph-coins"></i></span>
-            <span class="text">Pricing</span>
-        </a>
-    </li>
-
-    <li class="sidebar-menu__item">
-        <span class="text-gray-300 text-sm px-20 pt-20 fw-semibold border-top border-gray-100 d-block text-uppercase">Settings</span>
-    </li>
-    <li class="sidebar-menu__item">
-        <a href="setting.html" class="sidebar-menu__link">
-            <span class="icon"><i class="ph ph-gear"></i></span>
-            <span class="text">Account Settings</span>
-        </a>
-    </li>
-
-    <li class="sidebar-menu__item has-dropdown">
-        <a href="javascript:void(0)" class="sidebar-menu__link">
-            <span class="icon"><i class="ph ph-shield-check"></i></span>
-            <span class="text">Authetication</span>
-        </a>-->
-                    <!-- Submenu start -->
-                    <!--<ul class="sidebar-submenu">
-        <li class="sidebar-submenu__item">
-            <a href="sign-in.html" class="sidebar-submenu__link">Sign In</a>
-        </li>
-        <li class="sidebar-submenu__item">
-            <a href="sign-up.html" class="sidebar-submenu__link">Sign Up</a>
-        </li>
-        <li class="sidebar-submenu__item">
-            <a href="forgot-password.html" class="sidebar-submenu__link">Forgot Password</a>
-        </li>
-        <li class="sidebar-submenu__item">
-            <a href="reset-password.html" class="sidebar-submenu__link">Reset Password</a>
-        </li>
-        <li class="sidebar-submenu__item">
-            <a href="verify-email.html" class="sidebar-submenu__link">Verify Email</a>
-        </li>
-        <li class="sidebar-submenu__item">
-            <a href="two-step-verification.html" class="sidebar-submenu__link">Two Step Verification</a>
-        </li>
-    </ul>-->
-                    <!-- Submenu End -->
-                    <!--</li>-->
-
+                    @if (ViewBag.UserRole == "ADMIN")
+                    {
+                        <!-- Admin Menu -->
+                        <li class="sidebar-menu__item has-dropdown">
+                            <a href="javascript:void(0)" class="sidebar-menu__link">
+                                <span class="icon"><i class="ph ph-graduation-cap"></i></span>
+                                <span class="text">Master</span>
+                            </a>
+                            <!-- Submenu start -->
+                            <ul class="sidebar-submenu">
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Publication", "Index", "PublicationMaster", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Subject Master", "Index", "SubjectMaster", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Group Master", "Index", "GroupMaster", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Group Detail", "Index", "GroupDetail", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Topic Master", "Index", "TopicMaster", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                            </ul>
+                            <!-- Submenu End -->
+                        </li>
+                        <li class="sidebar-menu__item has-dropdown">
+                            <a href="javascript:void(0)" class="sidebar-menu__link">
+                                <span class="icon"><i class="ph ph-graduation-cap"></i></span>
+                                <span class="text">Student</span>
+                            </a>
+                            <!-- Submenu start -->
+                            <ul class="sidebar-submenu">
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Student List", "Index", "StudentMaster", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Create Student", "Create", "StudentMaster", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                            </ul>
+                            <!-- Submenu End -->
+                        </li>
+                        <li class="sidebar-menu__item has-dropdown">
+                            <a href="javascript:void(0)" class="sidebar-menu__link">
+                                <span class="icon"><i class="ph ph-graduation-cap"></i></span>
+                                <span class="text">Question</span>
+                            </a>
+                            <!-- Submenu start -->
+                            <ul class="sidebar-submenu">
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Question List", "Index", "Question", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Create Question", "Create", "Question", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                            </ul>
+                            <!-- Submenu End -->
+                        </li>
+                        <li class="sidebar-menu__item has-dropdown">
+                            <a href="javascript:void(0)" class="sidebar-menu__link">
+                                <span class="icon"><i class="ph ph-graduation-cap"></i></span>
+                                <span class="text">Test</span>
+                            </a>
+                            <!-- Submenu start -->
+                            <ul class="sidebar-submenu">
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Assign Test", "Create", "AssignTest", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Create Test", "Create", "TestMaster", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                            </ul>
+                            <!-- Submenu End -->
+                        </li>
+                    }
+                    else if (ViewBag.UserRole == "STUDENT")
+                    {
+                        <!-- Student Menu -->
+                        <li class="sidebar-menu__item has-dropdown">
+                            <a href="javascript:void(0)" class="sidebar-menu__link">
+                                <span class="icon"><i class="ph ph-graduation-cap"></i></span>
+                                <span class="text">Test</span>
+                            </a>
+                            <!-- Submenu start -->
+                            <ul class="sidebar-submenu">
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("Test List", "Index", "Test", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                            </ul>
+                            <!-- Submenu End -->
+                        </li>
+                        <li class="sidebar-menu__item has-dropdown">
+                            <a href="javascript:void(0)" class="sidebar-menu__link">
+                                <span class="icon"><i class="ph ph-graduation-cap"></i></span>
+                                <span class="text">Profile</span>
+                            </a>
+                            <!-- Submenu start -->
+                            <ul class="sidebar-submenu">
+                                <li class="sidebar-submenu__item">
+                                    @Html.ActionLink("My Profile", "Profile", "StudentMaster", null, new { @class = "sidebar-submenu__link" })
+                                </li>
+                            </ul>
+                            <!-- Submenu End -->
+                        </li>
+                    }
                 </ul>
             </div>
-
         </div>
+
 
     </aside>
     <!-- ============================ Sidebar End  ============================ -->

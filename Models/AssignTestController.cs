@@ -55,8 +55,11 @@ namespace OnlineExamination.Models
                 }
             }
 
-            // After all assignments are done, redirect to a confirmation page or another action
-            return RedirectToAction("AssignmentConfirmation", new { testId = SelectedTestId });
+            // If all students are successfully assigned, store a success message in TempData
+            TempData["SuccessMessage"] = "Test successfully assigned to selected students.";
+
+            // Redirect to the same page for a new assignment
+            return RedirectToAction("Create", "AssignTest"); // Assuming Index is the method that renders the assignment page
         }
 
 

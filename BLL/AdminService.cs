@@ -19,7 +19,8 @@ namespace OnlineExamination.BLL
                 DataTable dtData = ControlFill.FillDataTable("Sp_Company_Login", hash);
                 if (dtData != null && dtData.Rows.Count > 0)
                 {
-                    HttpContext.Current.Session["ADMIN"] = dtData;
+                    HttpContext.Current.Session["UserData"] = dtData;
+                    HttpContext.Current.Session["UserRole"] = "ADMIN";
                     return true;
                     //Response.Redirect("Dashboard.aspx", false);
                 }

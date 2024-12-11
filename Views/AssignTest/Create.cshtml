@@ -2,12 +2,20 @@
 
 <div class="card">
     <div class="card-header border-bottom border-gray-100 flex-align gap-8">
-        <h5 class="mb-0">Assign Test</h5>
+        <h5 class="mb-0">Create Student</h5>
     </div>
     <div class="card-body">
         <div class="row gy-20">
             <div class="col-xxl-12 col-md-12 col-sm-12">
                 <div class="row g-20">
+
+                    <!-- Display Success Message -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
 
                     <!-- Dropdown to select test -->
                     <div class="col-sm-4">
