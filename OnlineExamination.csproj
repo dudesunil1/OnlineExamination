@@ -345,7 +345,6 @@
     <Content Include="Views\StudentMaster\Edit.cshtml" />
     <Content Include="Views\StudentMaster\Details.cshtml" />
     <Content Include="Views\TestMaster\Create.cshtml" />
-    <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\AssignTest\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>

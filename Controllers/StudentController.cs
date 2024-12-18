@@ -10,6 +10,7 @@ namespace OnlineExamination.Controllers
 {
     public class StudentController : Controller
     {
+        StudentService objStudentService = new StudentService();
         StudentService objstudentservices = new StudentService();
         public ActionResult Login()
         {
@@ -40,5 +41,8 @@ namespace OnlineExamination.Controllers
                 return View();
             }
         }
+
+
+      
     }
 }

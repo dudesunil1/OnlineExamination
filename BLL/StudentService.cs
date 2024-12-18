@@ -24,7 +24,10 @@ namespace OnlineExamination.BLL
                 DataTable dtData = ControlFill.FillDataTable("Sp_Student_Login", hash);
                 if (dtData != null && dtData.Rows.Count > 0)
                 {
+
+                    var studId = dtData.Rows[0]["stud_Id"].ToString();
                     HttpContext.Current.Session["UserData"] = dtData;
+                    HttpContext.Current.Session["StudentId"] = studId;
                     HttpContext.Current.Session["UserRole"] = "STUDENT";
                     return true;
                     //Response.Redirect("Dashboard.aspx", false);

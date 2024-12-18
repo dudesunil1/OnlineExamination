@@ -40,6 +40,8 @@ namespace OnlineExamination.Models
     {
         public int TS_Id { get; set; }            // Primary key for TestStudent
         public int TS_TestId { get; set; }        // The ID of the test
+        
+        public string TS_TestName { get; set; }
         public int TS_StudId { get; set; }        // The ID of the student
         public bool TS_IsAttempted { get; set; }  // Whether the student has attempted the test
         public DateTime TS_StartTime { get; set; }  // The start time of the test
