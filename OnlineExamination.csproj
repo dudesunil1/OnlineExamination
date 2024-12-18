@@ -130,11 +130,12 @@
     <Compile Include="BLL\GroupDetailsService.cs" />
     <Compile Include="BLL\GroupService.cs" />
     <Compile Include="BLL\StudentService.cs" />
+    <Compile Include="BLL\TestResultService.cs" />
     <Compile Include="BLL\TestService.cs" />
     <Compile Include="Controllers\StudentController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\TestMasterController.cs" />
-    <Compile Include="Models\AssignTestController.cs" />
+    <Compile Include="Controllers\AssignTestController.cs" />
+    <Compile Include="Controllers\TestResultController.cs" />
     <Compile Include="Models\TestMasterModel.cs" />
     <Compile Include="Controllers\GroupDetailController.cs" />
     <Compile Include="Controllers\MasterController.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Models\PublicationModel.cs" />
     <Compile Include="Models\QuestionMasterModel.cs" />
     <Compile Include="Models\StudentMasterModel.cs" />
+    <Compile Include="Models\TestResultModel.cs" />
     <Compile Include="Models\TopicViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -346,6 +348,8 @@
     <Content Include="Views\StudentMaster\Details.cshtml" />
     <Content Include="Views\TestMaster\Create.cshtml" />
     <Content Include="Views\AssignTest\Create.cshtml" />
+    <Content Include="Views\Student\Profile.cshtml" />
+    <Content Include="Views\TestResult\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
