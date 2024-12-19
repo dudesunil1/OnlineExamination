@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace OnlineExamination.Controllers
 {
@@ -22,9 +23,9 @@ namespace OnlineExamination.Controllers
         {
             try
             {
-                
 
-                    bool isLogin = objstudentservices.Login(objstudlogin.Stud_UserName, objstudlogin.Stud_Password);
+                
+                bool isLogin = objstudentservices.Login(objstudlogin.Stud_UserName, objstudlogin.Stud_Password);
                     if (isLogin)
                     {
                         return RedirectToAction("Index", "Home");
@@ -42,7 +43,31 @@ namespace OnlineExamination.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult Profile()
+        {
+            string studId = Session["StudentId"] as string;
+            
+            if (string.IsNullOrEmpty(studId))
+            {
+                return RedirectToAction("Login", "Account"); // Redirect to login if not found
+            }
 
-      
+            int studentId = int.Parse(studId);
+
+            ViewBag.grouplist = MasterService.GetGroups();
+            ViewBag.Classlist = MasterService.GetClass();
+            StudentMasterModel objPublication = objStudentService.GetStudentById(studentId).FirstOrDefault();
+
+
+            if (objPublication == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(objPublication);
+        }
+
+
     }
 }

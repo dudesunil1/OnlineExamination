@@ -1,8 +1,193 @@
-﻿
+﻿@model OnlineExamination.Models.StudentMasterModel
+
 @{
-    ViewBag.Title = "Profile";
+    ViewBag.Title = "Edit Student";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Profile</h2>
+@using (Html.BeginForm("Edit", "StudentMaster", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
 
+    <!-- Hidden Field for Student ID -->
+    @Html.HiddenFor(model => model.Stud_Id)
+
+
+    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+        <!-- Breadcrumb Start -->
+        <div class="breadcrumb mb-24">
+            <ul class="flex-align gap-4">
+                <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
+                <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
+                <li><span class="text-main-600 fw-normal text-15">Edit Student</span></li>
+            </ul>
+        </div>
+        <!-- Breadcrumb End -->
+    </div>
+    @Html.HiddenFor(model => model.Stud_Photo)
+    <!-- Student Form Start -->
+    <div class="card">
+        <div class="card-header border-bottom border-gray-100 flex-align gap-8">
+            <h5 class="mb-0">@ViewBag.Title</h5>
+        </div>
+        <div class="card-body">
+            <div class="row gy-20">
+                <div class="col-xxl-12 col-md-12 col-sm-12">
+                    <div class="row g-20">
+                        <div class="col-sm-6">
+                            <label for="Stud_Name" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Stud_Name)
+                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
+                            </label>
+                            <div class="position-relative">
+                                @Html.TextBoxFor(model => model.Stud_Name, new { htmlAttributes = new { @class = "form-control py-11" } })
+                                @Html.ValidationMessageFor(model => model.Stud_Name, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="Stud_Mobile" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Stud_Mobile)
+                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
+                            </label>
+                            <div class="position-relative">
+                                @Html.TextBoxFor(model => model.Stud_Mobile, new { htmlAttributes = new { @class = "form-control py-11" } })
+                                @Html.ValidationMessageFor(model => model.Stud_Mobile, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="Stud_DOB" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Stud_DOB)
+                            </label>
+                            <div class="position-relative">
+                                @Html.TextBoxFor(m => m.Stud_DOB, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Stud_DOB, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="Stud_Gender" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Stud_Gender)
+                            </label>
+                            <div class="position-relative">
+                                @Html.DropDownListFor(model => model.Stud_Gender, new SelectList(new[] { "Male", "Female", "Other" }), "- Select Gender -", new { @class = "form-control py-11" })
+                                @Html.ValidationMessageFor(model => model.Stud_Gender, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="Stud_Photo" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Stud_Photo)
+                            </label>
+                            <div class="position-relative">
+                                @Html.LabelFor(model => model.Stud_Photo, "Upload Photo", new { @class = "form-control-label" })
+                                <input type="file" class="form-control" id="imageUpload" name="Stud_Photo" accept="image/*">
+                                @Html.ValidationMessageFor(model => model.Stud_Photo, "", new { @class = "text-danger" })
+                            </div>
+
+
+                            @if (!string.IsNullOrEmpty(Model.Stud_Photo))
+                            {
+                                <div class="mb-3">
+                                    <label for="imagePreview" class="form-label">Current Image</label>
+                                    <img id="imagePreview" src="@Url.Content("~/Content/Studentphotos/"+Model.Stud_Id + Model.Stud_Photo)" alt="Image Preview" style="width: 150px; height: 150px; object-fit: cover;">
+
+
+                                </div>
+                            }
+                            else
+                            {
+                                <p>No photo uploaded</p>
+
+                            }
+
+
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="Stud_UserName" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Stud_UserName)
+                            </label>
+                            <div class="position-relative">
+                                @Html.TextBoxFor(model => model.Stud_UserName, new { htmlAttributes = new { @class = "form-control py-11" } })
+                                @Html.ValidationMessageFor(model => model.Stud_UserName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="Stud_Password" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Stud_Password)
+                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
+                            </label>
+                            <div class="position-relative">
+                                @Html.TextBoxFor(model => model.Stud_Password, new { htmlAttributes = new { @class = "form-control py-11" } })
+                                @Html.ValidationMessageFor(model => model.Stud_Password, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="Stud_AdmissionDate" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Stud_AdmissionDate)
+                            </label>
+                            <div class="position-relative">
+                                @Html.TextBoxFor(m => m.Stud_AdmissionDate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Stud_AdmissionDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        
+                        <div class="col-sm-6">
+                            <label for="GroupId" class="h5 mb-8 fw-semibold font-heading">
+                                @Html.LabelFor(model => model.Stud_Class)
+
+                            </label>
+                            <div class="position-relative">
+
+                                @if (ViewBag.Classlist != null)
+                                {
+                                    @Html.DropDownListFor(
+                                        model => model.Stud_Class,
+                                        new SelectList(ViewBag.Classlist, "Value", "Text"),
+                                        "Select Class",
+                                        new { @class = "form-select py-9 placeholder-13 text-15", id = "ClassDropdown" }
+                                    ) }
+                                else
+                                {
+                                    <p>No classes available.</p>}
+                                @Html.ValidationMessageFor(model => model.Stud_Class, "", new { @class = "text-danger" })
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="flex-align justify-content-end gap-8">
+                            <input type="submit" name="Action" value="Back To List" class="btn btn-outline-main rounded-pill py-9" />
+                            <input type="submit" name="Action" value="Cancel" class="btn btn-outline-main rounded-pill py-9" />
+                            <input type="submit" name="Action" value="Update" class="btn btn-main rounded-pill py-9" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <script>
+        // Function to display image preview when the file is selected
+        document.getElementById('imageUpload').addEventListener('change', function (event) {
+            const file = event.target.files[0]; // Get the selected file
+            if (file) {
+                const reader = new FileReader();
+
+                // Event listener for when the file is read
+                reader.onload = function (e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result; // Set the image source to the file data URL
+                    preview.style.display = 'block'; // Show the image preview
+                };
+
+                reader.readAsDataURL(file); // Read the file as a Data URL
+            }
+        });
+    </script>
+}
