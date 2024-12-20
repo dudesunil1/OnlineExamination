@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNetCore.Http;
+using PagedList;
 
 namespace OnlineExamination.Controllers
 {
@@ -68,7 +69,7 @@ namespace OnlineExamination.Controllers
             return View(objtestStudent);
         }
         [HttpGet]
-        public ActionResult ShowTestQuestion(int id)
+        public ActionResult ShowTestQuestion(int id, int? page)
         {
             QuestionMasterService objTestService = new QuestionMasterService();
             string studId = Session["StudentId"] as string;
@@ -81,14 +82,18 @@ namespace OnlineExamination.Controllers
             int studentId = int.Parse(studId);
 
             List<TestQuestionViewModel> objtestquestion = objTestService.GetTestQuestions(id);
+            int pageSize = 1; // Show one question per page
+            int pageNumber = (page ?? 1); // Default to page 1 if no page is specified
 
+            // Pass the paginated result to the view
+            
 
             if (objtestquestion == null)
             {
                 return HttpNotFound();
             }
 
-            return View(objtestquestion);
+            return View(objtestquestion.ToPagedList(pageNumber, pageSize));
         }
 
 

@@ -1,49 +1,155 @@
-﻿@model IEnumerable<OnlineExamination.Models.TestQuestionViewModel>
+﻿@model PagedList.IPagedList<OnlineExamination.Models.TestQuestionViewModel>
+@using PagedList.Mvc
 
 @{
     ViewBag.Title = "Show Test Questions";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    int pageSize = Model.PageSize; // Number of questions per page
+    int currentPage = Model.PageNumber; // Current page number
+    int totalQuestions = Model.TotalItemCount; // Total number of questions
+    int totalPages = Model.PageCount; // Total number of pages
 }
 
 <h2>Show Test Questions</h2>
 
-<p>
-    @Html.ActionLink("Create New Question", "Create", null, new { @class = "btn btn-primary" })
-</p>
+<div class="row">
+    <!-- Left Section - Questions and Options -->
+    <div class="col-md-10">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Question</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        int globalIndex = (currentPage - 1) * pageSize + (Model.ToList().IndexOf(item) + 1);
+                        <tr>
+                            <td><strong>Question @globalIndex:</strong> @item.Ques_Question</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ul class="list-group">
+                                    <!-- Radio Buttons for the Options -->
+                                    <li class="list-group-item">
+                                        <label>
+                                            <input type="radio" name="Ques_@item.Ques_Id" value="A" onchange="updatePageButtonStatus(@item.Ques_Id)" />
+                                            <strong>A:</strong> @item.Ques_Answer
+                                        </label>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <label>
+                                            <input type="radio" name="Ques_@item.Ques_Id" value="B" onchange="updatePageButtonStatus(@item.Ques_Id)" />
+                                            <strong>B:</strong> @item.Ques_OptionB
+                                        </label>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <label>
+                                            <input type="radio" name="Ques_@item.Ques_Id" value="C" onchange="updatePageButtonStatus(@item.Ques_Id)" />
+                                            <strong>C:</strong> @item.Ques_OptionC
+                                        </label>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <label>
+                                            <input type="radio" name="Ques_@item.Ques_Id" value="D" onchange="updatePageButtonStatus(@item.Ques_Id)" />
+                                            <strong>D:</strong> @item.Ques_OptionD
+                                        </label>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-<div class="table-responsive">
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Question ID</th>
-                <th>Question</th>
-                <th>Options</th>
-                <th>Marks</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Ques_Id</td>
-                    <td>@item.Ques_Question</td>
-                    <td>
-                        <ul class="list-group">
-                            <li class="list-group-item"><strong>A:</strong> @item.Ques_Answer</li>
-                            <li class="list-group-item"><strong>B:</strong> @item.Ques_OptionB</li>
-                            <li class="list-group-item"><strong>C:</strong> @item.Ques_OptionC</li>
-                            <li class="list-group-item"><strong>D:</strong> @item.Ques_OptionD</li>
-                        </ul>
-                    </td>
-                    <td>@item.Ques_Mark</td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.Ques_Id }, new { @class = "btn btn-warning btn-sm" }) |
-                        @Html.ActionLink("Details", "Details", new { id = item.Ques_Id }, new { @class = "btn btn-info btn-sm" }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.Ques_Id }, new { @class = "btn btn-danger btn-sm" })
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <!-- Right Section - List of Buttons for Each Page -->
+    <div class="col-md-2">
+        <div class="list-group">
+            <div class="row">
+                <!-- Iterate through each page and show a small button with page number -->
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    // Set initial button color to red (danger) for unattempted pages
+                    string buttonClass = i == currentPage ? "btn btn-warning btn-sm" : "btn btn-danger btn-sm";  // Red for unattempted pages, yellow for current page
+                    string buttonText = i.ToString(); // Show only the page number
+
+                    <div class="col-2 mb-1">
+                        <button id="btn_page_@i" class="btn btn-block list-group-item-action @buttonClass" onclick="navigateToPage(@i)">
+                            @buttonText
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<!-- Pagination controls -->
+<div class="pagination">
+    @Html.PagedListPager(Model, page => Url.Action("ShowTestQuestion", new { page }))
+</div>
+
+<!-- JavaScript for changing button color dynamically -->
+<script type="text/javascript">
+    // Function to handle the status of the page button when a question on that page is attempted
+    function updatePageButtonStatus(questionId) {
+        // Get the page buttons (buttons for each page)
+        var pageButtons = document.querySelectorAll('.list-group-item-action');
+
+        // Iterate through each page button
+        pageButtons.forEach(function (btn) {
+            var pageNumber = btn.id.split('_')[2]; // Extract the page number from button ID
+            var radios = document.getElementsByName('Ques_' + questionId);
+
+            // Check if any radio button in the current page is selected
+            var isAttempted = Array.from(radios).some(radio => radio.checked);
+
+            // If attempted, update the button color to green, otherwise keep it red
+            if (isAttempted) {
+                btn.classList.remove('btn-danger');
+                btn.classList.add('btn-success');  // Green when answered
+            } else {
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-danger');   // Red when not answered
+            }
+        });
+    }
+
+    // Function to navigate to a specific page
+    function navigateToPage(pageNumber) {
+        window.location.href = '@Url.Action("ShowTestQuestion", new { page = "__page__" })'.replace('__page__', pageNumber);
+    }
+</script>
+
+<!-- Custom CSS for styling -->
+<style>
+    .list-group-item-action {
+        font-size: 14px;
+        padding: 5px 10px;
+        margin: 2px 0;
+        text-align: center;
+    }
+
+    .table th, .table td {
+        vertical-align: middle;
+    }
+
+    .table-responsive {
+        margin-bottom: 20px;
+    }
+
+    /* Hover effect for the buttons */
+   
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+</style>
