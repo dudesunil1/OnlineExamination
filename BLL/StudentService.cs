@@ -69,6 +69,8 @@ namespace OnlineExamination.BLL
                 return null;
             }
         }
+
+
         public List<StudentMasterModel> GetStudentByClassId(int id)
         {
             try
@@ -119,7 +121,7 @@ namespace OnlineExamination.BLL
             }
         }
 
-
+     
         public StudentMasterModel Add(StudentMasterModel objStudent, string extension)
         {
             string _errMsg;

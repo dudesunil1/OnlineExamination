@@ -13,7 +13,7 @@ namespace OnlineExamination.Models
 
        
             public int Test_Id { get; set; }
-            public string Test_Name { get; set; } // Assuming it's nvarchar, adjust if needed.
+            public string Test_Name { get; set; } 
             public int Test_GrpId { get; set; }
             public int Test_Duration { get; set; }
             public int Test_Mark { get; set; }
@@ -41,8 +41,10 @@ namespace OnlineExamination.Models
         public int TS_Id { get; set; }            // Primary key for TestStudent
         public int TS_TestId { get; set; }        // The ID of the test
         
-        public string TS_TestName { get; set; }
+        public string Test_Name { get; set; }
+        public int Test_Duration { get; set; }
         public int TS_StudId { get; set; }        // The ID of the student
+        public string TS_StudName { get; set; }
         public bool TS_IsAttempted { get; set; }  // Whether the student has attempted the test
         public DateTime TS_StartTime { get; set; }  // The start time of the test
         public DateTime TS_End_Time { get; set; }  // The end time of the test
@@ -51,6 +53,20 @@ namespace OnlineExamination.Models
         public TimeSpan TS_BreakFrom { get; set; }  // Break start time during the test
         public TimeSpan TS_BreakTo { get; set; }    // Break end time during the test
         public double TS_Mark { get; set; }         // The marks scored by the student
+
+        
+    }
+
+    public class TestSubjectDetailsModel
+    {
+        public int TS_Id { get; set; }
+        public int TestID { get; set; }
+        public string SubjectName { get; set; }       
+        public int TestDuration { get; set; }          
+        public DateTime TestStartTime { get; set; }    
+        public DateTime TestEndTime { get; set; }      
+        public int TestMark { get; set; }              
+        public int NumberOfQuestions { get; set; }     
     }
 }
 

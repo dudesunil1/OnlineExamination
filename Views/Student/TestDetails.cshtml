@@ -1,0 +1,147 @@
+﻿@model OnlineExamination.Models.TestSubjectDetailsModel
+
+@{
+    ViewBag.Title = "CET Exam Instructions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="exam-instructions">
+    <!-- Exam Name -->
+    <div class="exam-header">
+        <h2>@Model.SubjectName</h2>
+        @*<h4>Test Name: @Model.TestName</h4>*@
+    </div>
+
+    <!-- Exam Time, Marks, and Duration -->
+    <div class="exam-details">
+        <h3>Exam Details</h3>
+        <div class="exam-time-info">
+            <span><strong>Start Time:</strong> @Model.TestStartTime.ToString("MMMM dd, yyyy hh:mm tt")</span>
+            <span class="separator">|</span>
+            <span><strong>End Time:</strong> @Model.TestEndTime.ToString("MMMM dd, yyyy hh:mm tt")</span>
+            <span class="separator">|</span>
+            <span><strong>Duration:</strong> @Model.TestDuration</span>
+        </div>
+        <ul class="exam-details-list">
+            <li><strong>Total Marks:</strong> @Model.TestMark</li>
+            <li><strong>Number of Questions:</strong> @Model.NumberOfQuestions</li>
+        </ul>
+    </div>
+
+    <!-- Instructions -->
+    <div class="exam-instructions-section">
+        <h3>Instructions</h3>
+        <p>The exam will consist of multiple choice questions. Please read the instructions carefully.</p>
+    </div>
+
+    <!-- Rules -->
+    <div class="exam-rules-section">
+        <h3>Rules</h3>
+        
+    </div>
+
+    <!-- Start Exam Button -->
+    <div class="start-button">
+        <a href="@Url.Action("ShowTestQuestion", "Student", new { id = @Model.TestID })" class="btn btn-success btn-sm">Start Test</a>
+    </div>
+</div>
+
+<style>
+    .exam-instructions {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+    }
+
+    .exam-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+        .exam-header h2 {
+            font-size: 2em;
+            color: #007BFF;
+        }
+
+        .exam-header h4 {
+            font-size: 1.2em;
+            color: #333;
+        }
+
+    .exam-details {
+        margin-bottom: 20px;
+    }
+
+        .exam-details h3 {
+            font-size: 1.5em;
+            color: #333;
+        }
+
+    .exam-time-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+        color: #555;
+    }
+
+        .exam-time-info span {
+            margin-right: 15px;
+        }
+
+    .separator {
+        margin: 0 15px;
+        font-weight: bold;
+        color: #007BFF;
+    }
+
+    .exam-details-list {
+        list-style-type: none;
+        padding-left: 0;
+        font-size: 1.1em;
+    }
+
+        .exam-details-list li {
+            margin: 10px 0;
+        }
+
+    .exam-instructions-section, .exam-rules-section {
+        margin-top: 30px;
+    }
+
+        .exam-instructions-section h3, .exam-rules-section h3 {
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .exam-instructions-section p, .exam-rules-section ul {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .exam-instructions-section ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+    .start-button {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+        .start-button .btn {
+            padding: 12px 30px;
+            font-size: 18px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+            .start-button .btn:hover {
+                background-color: #218838;
+            }
+</style>

@@ -1,0 +1,49 @@
+﻿@model IEnumerable<OnlineExamination.Models.TestQuestionViewModel>
+
+@{
+    ViewBag.Title = "Show Test Questions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Show Test Questions</h2>
+
+<p>
+    @Html.ActionLink("Create New Question", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Question ID</th>
+                <th>Question</th>
+                <th>Options</th>
+                <th>Marks</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Ques_Id</td>
+                    <td>@item.Ques_Question</td>
+                    <td>
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>A:</strong> @item.Ques_Answer</li>
+                            <li class="list-group-item"><strong>B:</strong> @item.Ques_OptionB</li>
+                            <li class="list-group-item"><strong>C:</strong> @item.Ques_OptionC</li>
+                            <li class="list-group-item"><strong>D:</strong> @item.Ques_OptionD</li>
+                        </ul>
+                    </td>
+                    <td>@item.Ques_Mark</td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Ques_Id }, new { @class = "btn btn-warning btn-sm" }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.Ques_Id }, new { @class = "btn btn-info btn-sm" }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Ques_Id }, new { @class = "btn btn-danger btn-sm" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

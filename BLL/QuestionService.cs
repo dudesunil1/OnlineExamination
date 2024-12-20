@@ -63,6 +63,36 @@ namespace OnlineExamination.BLL
             }
         }
 
+        public List<TestQuestionViewModel> GetTestQuestions(int TestID)
+        {
+            try
+            {
+                Hashtable hash = new Hashtable();
+
+                hash.Add("@TestId", TestID);
+                
+
+                DataTable dt = ControlFill.FillDataTable("SP_GetTestQuestionsAndOptions", hash);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+
+
+                    List<TestQuestionViewModel> list = ConversionFunctions.DataTableToList<TestQuestionViewModel>(dt);
+                    return list;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception Ex)
+            {
+                return null;
+            }
+        }
+
+
         public QuestionMasterViewModel Add(QuestionMasterViewModel objQuestion)
         {
             string _errMsg;

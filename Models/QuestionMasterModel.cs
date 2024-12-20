@@ -61,6 +61,29 @@ namespace OnlineExamination.Models
 
     }
 
+    public class TestQuestionViewModel
+    {
+        
+        public int TQ_TestId { get; set; }
+        public int Ques_Id { get; set; } // Question ID
+        public int Ques_SubId { get; set; } // Subject ID
+        public string Ques_SubName { get; set; } // Subject Name
+        public int Ques_ClassId { get; set; } // Class ID
+        public string Ques_ClassName { get; set; } // Class Name
+        public int Ques_TopId { get; set; } // Topic ID
+        public string Ques_TopName { get; set; } // Topic Name
+        public int Ques_PubId { get; set; } // Publication ID
+        public string Ques_PubName { get; set; } // Publication Name
+        public int Ques_Mark { get; set; } // Question Mark
+        public int Ques_JEEMark { get; set; } // JEE Mark
+        public int Ques_Negative { get; set; } // Negative Mark
+        public string Ques_Question { get; set; } // Question Text
+        public string Ques_Answer { get; set; } // Correct Answer
+        public string Ques_OptionB { get; set; } // Option B
+        public string Ques_OptionC { get; set; } // Option C
+        public string Ques_OptionD { get; set; } // Option D
+        public string Ques_SolutionDetails { get; set; } // Solution Details
+    }
 
 
     public class QuestionMasterFilterViewModel
