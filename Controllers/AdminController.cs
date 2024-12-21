@@ -28,7 +28,7 @@ namespace OnlineExamination.Controllers
                     bool isLogin = objAdminService.Login(objAdminLogin.UserName, objAdminLogin.Password);
                     if (isLogin)
                     {
-                        return RedirectToAction("Dashboard", "Home");
+                        return RedirectToAction("Index", "Home");
                     }
                     else
                     {

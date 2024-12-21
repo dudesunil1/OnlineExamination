@@ -20,9 +20,9 @@ namespace OnlineExamination.Models
     public class DashboardStats
     {
         
-        public int TotalStudents { get; set; }
-        public int TotalClasses { get; set; }
-        public int TodaysExams { get; set; }
+        public int total_students { get; set; }
+        public int total_classes { get; set; }
+        public int todays_exams { get; set; }
 
     }
     }
