@@ -179,7 +179,6 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\GroupMasterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PublicationMasterController.cs" />
     <Compile Include="Controllers\QuestionController.cs" />
     <Compile Include="Controllers\StudentMasterController.cs" />
@@ -386,6 +385,7 @@
     <Content Include="Views\Student\TestList.cshtml" />
     <Content Include="Views\Student\TestDetails.cshtml" />
     <Content Include="Views\Student\ShowTestQuestion.cshtml" />
+    <Content Include="Views\Student\Dashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -19,11 +19,7 @@ namespace OnlineExamination
                 defaults: new { controller = "Admin", action = "Login", id = UrlParameter.Optional }
             );
 
-            routes.MapRoute(
-            name: "TopicMaster",
-            url: "TopicMasterController/GetSubSubjects/{SubjectID}",
-            defaults: new { controller = "TopicMaster", action = "GetSubSubjects", SubjectID = UrlParameter.Optional }
-            );
+          
         }
     }
 }

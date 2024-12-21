@@ -27,14 +27,16 @@ namespace OnlineExamination.Controllers
                     return RedirectToAction("Login", "Student");
                 }
 
-                // Dynamically load data based on the role
+                
                 if (userRole == "STUDENT")
                 {
-                    // If student, get student-specific data
+                   
                     ViewBag.UserRole = "STUDENT";
                     ViewBag.UserData = userData;
+                AdminService objadmindashbord = new AdminService();
+                DashboardStats objdashboard = objadmindashbord.AdminDashboard().FirstOrDefault();
 
-                         return View();
+                return View(objdashboard);
             }
                 else if (userRole == "ADMIN")
                 {

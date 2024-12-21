@@ -30,7 +30,7 @@ namespace OnlineExamination.BLL
                     HttpContext.Current.Session["StudentId"] = studId;
                     HttpContext.Current.Session["UserRole"] = "STUDENT";
                     return true;
-                    //Response.Redirect("Dashboard.aspx", false);
+                    
                 }
                 else
                 {
