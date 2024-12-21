@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineExamination.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -39,5 +40,28 @@ namespace OnlineExamination.BLL
                 //Response.Write(Ex.Message);
             }
         }
+        public List<DashboardStats> AdminDashboard()
+        {
+            try
+            {
+                Hashtable hash = new Hashtable();
+                DataTable dt = ControlFill.FillDataTable("SP_GetDashboardStats", hash);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    List<DashboardStats> list = ConversionFunctions.DataTableToList<DashboardStats>(dt);
+                    return list;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception Ex)
+            {
+                return null;
+            }
+        }
+
     }
 }

@@ -10,6 +10,7 @@ using PagedList;
 
 namespace OnlineExamination.Controllers
 {
+        [CheckSessionRole]
     public class StudentController : Controller
     {
         StudentService objStudentService = new StudentService();

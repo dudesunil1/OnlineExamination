@@ -1,5 +1,52 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@model OnlineExamination.Models.DashboardStats
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
- 
+<div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+    <!-- Breadcrumb Start -->
+    <div class="breadcrumb mb-24">
+        <ul class="flex-align gap-4">
+            <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
+            <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
+            <li><span class="text-main-600 fw-normal text-15">Admin Dashboard</span></li>
+        </ul>
+    </div>
+    <!-- Breadcrumb End -->
+</div>
+
+<div class="card">
+    <div class="card-header border-bottom border-gray-100 flex-align gap-8">
+        <h5 class="mb-0">Admin Dashboard</h5>
+    </div>
+
+    <div class="card-body">
+        <div class="row gy-20">
+            <div class="col-sm-4">
+                <div class="card bg-primary text-white text-center">
+                    <div class="card-body">
+                        <h5>@Model.TotalStudents</h5>
+                        <p>Total Students</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card bg-success text-white text-center">
+                    <div class="card-body">
+                        <h5>@Model.TotalClasses</h5>
+                        <p>Total Classes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card bg-info text-white text-center">
+                    <div class="card-body">
+                        <h5>@Model.TodaysExams</h5>
+                        <p>Today's Exams</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

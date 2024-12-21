@@ -162,6 +162,7 @@
     <Compile Include="BLL\StudentService.cs" />
     <Compile Include="BLL\TestResultService.cs" />
     <Compile Include="BLL\TestService.cs" />
+    <Compile Include="CheckSessionRoleAttribute.cs" />
     <Compile Include="Controllers\StudentController.cs" />
     <Compile Include="Controllers\TestMasterController.cs" />
     <Compile Include="Controllers\AssignTestController.cs" />

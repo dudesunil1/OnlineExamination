@@ -9,6 +9,7 @@ using System.Web.Mvc;
 
 namespace OnlineExamination.Controllers
 {
+    [CheckSessionRole]
     public class QuestionController : Controller
     {
         QuestionMasterService objQuestionService = new QuestionMasterService();

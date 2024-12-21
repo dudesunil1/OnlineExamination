@@ -8,12 +8,14 @@ using System.Web.Mvc;
 
 namespace OnlineExamination.Controllers
 {
+    [CheckSessionRole]
     public class GroupMasterController : Controller
     {
         GroupService objGroupService = new GroupService();
 
         public ActionResult Index()
         {
+           
             List<GroupViewModel> objGroups = objGroupService.GetGroups();
             return View(objGroups);
         }

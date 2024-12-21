@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace OnlineExamination.Models
 {
+    [CheckSessionRole]
     public class AssignTestController : Controller
     {
         
@@ -15,7 +16,8 @@ namespace OnlineExamination.Models
         [HttpGet]
         public ActionResult Create()
         {
-           
+            
+
             LoadData();
            
             List<StudentMasterModel> objstudent = objStudentService.GetStudent();

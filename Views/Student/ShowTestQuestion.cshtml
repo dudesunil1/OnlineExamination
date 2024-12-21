@@ -28,7 +28,7 @@
                     {
                         int globalIndex = (currentPage - 1) * pageSize + (Model.ToList().IndexOf(item) + 1);
                         <tr>
-                            <td><strong>Question @globalIndex:</strong> @item.Ques_Question</td>
+                            <td><strong>Question @globalIndex:</strong>@Html.Raw(item.Ques_Question)</td>
                         </tr>
                         <tr>
                             <td>
@@ -37,25 +37,25 @@
                                     <li class="list-group-item">
                                         <label>
                                             <input type="radio" name="Ques_@item.Ques_Id" value="A" onchange="updatePageButtonStatus(@item.Ques_Id)" />
-                                            <strong>A:</strong> @item.Ques_Answer
+                                            <strong>A:</strong> @Html.Raw(item.Ques_Answer)
                                         </label>
                                     </li>
                                     <li class="list-group-item">
                                         <label>
                                             <input type="radio" name="Ques_@item.Ques_Id" value="B" onchange="updatePageButtonStatus(@item.Ques_Id)" />
-                                            <strong>B:</strong> @item.Ques_OptionB
+                                            <strong>B:</strong>@Html.Raw(item.Ques_OptionB)
                                         </label>
                                     </li>
                                     <li class="list-group-item">
                                         <label>
                                             <input type="radio" name="Ques_@item.Ques_Id" value="C" onchange="updatePageButtonStatus(@item.Ques_Id)" />
-                                            <strong>C:</strong> @item.Ques_OptionC
+                                            <strong>C:</strong> @Html.Raw(item.Ques_OptionC)
                                         </label>
                                     </li>
                                     <li class="list-group-item">
                                         <label>
                                             <input type="radio" name="Ques_@item.Ques_Id" value="D" onchange="updatePageButtonStatus(@item.Ques_Id)" />
-                                            <strong>D:</strong> @item.Ques_OptionD
+                                            <strong>D:</strong>@Html.Raw(item.Ques_OptionD)
                                         </label>
                                     </li>
                                 </ul>
@@ -110,13 +110,13 @@
             // Check if any radio button in the current page is selected
             var isAttempted = Array.from(radios).some(radio => radio.checked);
 
-            // If attempted, update the button color to green, otherwise keep it red
+          
             if (isAttempted) {
                 btn.classList.remove('btn-danger');
-                btn.classList.add('btn-success');  // Green when answered
+                btn.classList.add('btn-success');  
             } else {
                 btn.classList.remove('btn-success');
-                btn.classList.add('btn-danger');   // Red when not answered
+                btn.classList.add('btn-danger');   
             }
         });
     }

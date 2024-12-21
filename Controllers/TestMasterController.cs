@@ -11,6 +11,7 @@ using System.Web.Mvc;
 
 namespace OnlineExamination.Controllers
 {
+    [CheckSessionRole]
     public class TestMasterController : Controller
     {
         TestService objtestService = new TestService();

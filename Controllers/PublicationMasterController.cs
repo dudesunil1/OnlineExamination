@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace OnlineExamination.Controllers
 {
+    [CheckSessionRole]
     public class PublicationMasterController : Controller
     {
         PublicationService objPublicationService = new PublicationService();

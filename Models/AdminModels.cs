@@ -17,4 +17,12 @@ namespace OnlineExamination.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
     }
-}
+    public class DashboardStats
+    {
+        
+        public int TotalStudents { get; set; }
+        public int TotalClasses { get; set; }
+        public int TodaysExams { get; set; }
+
+    }
+    }

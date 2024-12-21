@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace OnlineExamination.Controllers
 {
+    [CheckSessionRole]
     public class SubjectMasterController : Controller
     {
         SubjectService objSubjectMasterService = new SubjectService();
@@ -15,12 +16,15 @@ namespace OnlineExamination.Controllers
        
         public ActionResult Index()
         {
+           
             
             List<SubjectsViewModel> objSubjects = objSubjectMasterService.GetSubjects();
             return View(objSubjects);
         }
 
-        // Action to display the create view
+
+
+      
         public ActionResult Create()
         {
            
@@ -32,7 +36,7 @@ namespace OnlineExamination.Controllers
         [HttpGet]
         public ActionResult Edit(int id)
         {
-            // Get the subject by ID using the service
+            
             SubjectsViewModel objSubject = objSubjectMasterService.GetSubjectsById(id).FirstOrDefault();
 
             if (objSubject == null)
@@ -45,6 +49,7 @@ namespace OnlineExamination.Controllers
 
         
         [HttpPost]
+      
         public ActionResult Edit(SubjectsViewModel objSubject, string Action)
         {
             try
@@ -63,6 +68,7 @@ namespace OnlineExamination.Controllers
                     // If the model is valid, update the subject
                     if (ModelState.IsValid)
                     {
+                        
                         SubjectsViewModel res = objSubjectMasterService.Update(objSubject);
 
                         if (res.Sub_Id > 0)
@@ -87,6 +93,7 @@ namespace OnlineExamination.Controllers
 
         // POST action for creating a new subject
         [HttpPost]
+    
         public ActionResult Create(SubjectsViewModel objSubject, string Action)
         {
             try
@@ -102,9 +109,10 @@ namespace OnlineExamination.Controllers
                 }
                 else
                 {
-                    // If the model is valid, add the new subject
+                   
                     if (ModelState.IsValid)
                     {
+                        
                         SubjectsViewModel res = objSubjectMasterService.AddSubject(objSubject);
 
                         if (res.Sub_Id > 0)

@@ -9,6 +9,7 @@ using System.Web.Mvc;
 
 namespace OnlineExamination.Controllers
 {
+    [CheckSessionRole]
     public class StudentMasterController : Controller
     {
 

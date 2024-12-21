@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace OnlineExamination.Controllers
 {
+    [CheckSessionRole]
     public class GroupDetailController : Controller
     {
         // GET: GroupDetails-Controller
@@ -16,7 +17,7 @@ namespace OnlineExamination.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-
+          
             List<GroupDetailsShowViewModel> objGroups = objgroupdetailsService.GetGroups();
             return View(objGroups);
         }

@@ -1,4 +1,5 @@
-﻿using OnlineExamination.Models;
+﻿using OnlineExamination.BLL;
+using OnlineExamination.Models;
 using SunTech.Util;
 using System;
 using System.Collections;
@@ -23,7 +24,7 @@ namespace OnlineExamination.Controllers
                 // Check for null session or expired session data
                 if (string.IsNullOrEmpty(userRole) || userData == null)
                 {
-                    return RedirectToAction("Login", "Account");
+                    return RedirectToAction("Login", "Student");
                 }
 
                 // Dynamically load data based on the role
@@ -31,25 +32,30 @@ namespace OnlineExamination.Controllers
                 {
                     // If student, get student-specific data
                     ViewBag.UserRole = "STUDENT";
-                    ViewBag.UserData = userData;  // Send student data to the view
-                }
+                    ViewBag.UserData = userData;
+
+                         return View();
+            }
                 else if (userRole == "ADMIN")
                 {
-                    // If admin, get admin-specific data
-                    ViewBag.UserRole = "ADMIN";
-                    ViewBag.UserData = userData;  // Send admin data to the view
-                }
+                AdminService objadmindashbord = new AdminService();
+                DashboardStats objdashboard = objadmindashbord.AdminDashboard().FirstOrDefault();
+
+                ViewBag.UserRole = "ADMIN";
+                    ViewBag.UserData = userData;
+                return View(objdashboard);
+            }
                 else
                 {
-                    return RedirectToAction("Login", "Account");
+                    return RedirectToAction("Login", "Student");
                 }
 
-                return View();
+                
             
         }
 
-    
 
+       
 
 
 
