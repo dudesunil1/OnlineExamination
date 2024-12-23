@@ -45,7 +45,7 @@ namespace OnlineExamination.BLL
                 hashTable.Add("@Test_Name", objTest.Test_Name);
                // hashTable.Add("@Test_GrpId", objTest.Test_GrpId);
                 hashTable.Add("@Test_Duration", objTest.Test_Duration); 
-                hashTable.Add("@Test_Mark", objTest.Test_Mark);
+                hashTable.Add("@Test_Mark", 0);
                 hashTable.Add("@Test_StartTime", objTest.Test_StartTime);
                 hashTable.Add("@Test_EndTime", objTest.Test_EndTime);
                 hashTable.Add("@Test_TypeId", objTest.Test_TypeId);

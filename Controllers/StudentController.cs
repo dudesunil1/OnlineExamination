@@ -10,47 +10,18 @@ using PagedList;
 
 namespace OnlineExamination.Controllers
 {
-       
+    [CheckSessionRole]
     public class StudentController : Controller
     {
         StudentService objStudentService = new StudentService();
         
         StudentTestService objTestService = new StudentTestService();
-        [HttpGet]
-        public ActionResult Login()
-        {
-            return View();
-        }
+       
 
-        
-        [HttpPost]
-        public ActionResult Login(StudentMasterModel objstudlogin)
-        {
-            try
-            {
-
-                
-                bool isLogin = objStudentService.Login(objstudlogin.Stud_UserName, objstudlogin.Stud_Password);
-                    if (isLogin)
-                    {
-                    return RedirectToAction("Index", "Home");
-                }
-                    else
-                    {
-                        return RedirectToAction("Login");
-                    }
-                
-                
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
+      
 
         [HttpGet]
-        [CheckSessionRole]
+      
         public ActionResult TestList()
         {
             string studId = Session["StudentId"] as string;
@@ -65,10 +36,6 @@ namespace OnlineExamination.Controllers
             List<TestStudent> objtestStudent = objTestService.GetstudetTest(studentId);
 
 
-            if (objtestStudent == null)
-            {
-                return HttpNotFound();
-            }
 
             return View(objtestStudent);
         }
@@ -102,7 +69,7 @@ namespace OnlineExamination.Controllers
 
 
         [HttpGet]
-        [CheckSessionRole]
+      
         public ActionResult TestDetails(int id)
         {
             string studId = Session["StudentId"] as string;
@@ -124,7 +91,7 @@ namespace OnlineExamination.Controllers
         }
 
         [HttpGet]
-        [CheckSessionRole]
+        
         public ActionResult Profile()
         {
             string studId = Session["StudentId"] as string;

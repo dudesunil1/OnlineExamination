@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using Web.SunTechDB;
 
 namespace OnlineExamination.Controllers
@@ -17,51 +18,73 @@ namespace OnlineExamination.Controllers
     {
         public ActionResult Index()
         {
-
-                string userRole = Session["UserRole"] as string;
-                var userData = Session["UserData"];
-
-                // Check for null session or expired session data
-                if (string.IsNullOrEmpty(userRole) || userData == null)
-                {
-                    return RedirectToAction("Login", "Student");
-                }
-
-                
-                if (userRole == "STUDENT")
-                {
-                   
-                    ViewBag.UserRole = "STUDENT";
-                    ViewBag.UserData = userData;
-                AdminService objadmindashbord = new AdminService();
-                DashboardStats objdashboard = objadmindashbord.AdminDashboard().FirstOrDefault();
-
-                return View(objdashboard);
+            string userRole = Session["UserRole"] as string;
+            var userData = Session["UserData"];
+            int studid = 0;  
+            if (Session["StudentId"] != null)
+            {
+                studid = Convert.ToInt32(Session["StudentId"]);
             }
-                else if (userRole == "ADMIN")
-                {
-                AdminService objadmindashbord = new AdminService();
-                DashboardStats objdashboard = objadmindashbord.AdminDashboard().FirstOrDefault();
 
+
+            if (string.IsNullOrEmpty(userRole) || userData == null)
+            {
+                return RedirectToAction("Login", "Student");
+            }
+
+            if (userRole == "STUDENT")
+            {
+                ViewBag.UserRole = "STUDENT";
+                ViewBag.UserData = userData;
+                StudentService objStudentService = new StudentService();
+                StudentDashboardCountData objstudDash = objStudentService.StudentDashboard(studid).FirstOrDefault();
+                return View("~/Views/Dashboard/StudentDashboard.cshtml", objstudDash);
+            }
+            else if (userRole == "ADMIN")
+            {
                 ViewBag.UserRole = "ADMIN";
-                    ViewBag.UserData = userData;
-                return View(objdashboard);
-            }
-                else
-                {
-                    return RedirectToAction("Login", "Student");
-                }
+                ViewBag.UserData = userData;
+                AdminService adminService = new AdminService();
+                DashboardStats Objadmin = adminService.AdminDashboard().FirstOrDefault();
+                return View("~/Views/Dashboard/AdminDashboard.cshtml", Objadmin);
 
                 
+            }
+            else
+            {
+                return RedirectToAction("Login", "Student");
+            }
             
         }
 
 
-       
 
 
 
-    public ActionResult About()
+
+        public ActionResult Logout()
+        {
+            string userRole = Session["UserRole"] as string;
+            if (userRole == "ADMIN")
+            {
+
+                Session.Clear();
+                FormsAuthentication.SignOut();
+                return RedirectToAction("Login", "Admin");
+            }
+            else
+            {
+                Session.Clear();
+                FormsAuthentication.SignOut();
+                return RedirectToAction("Login", "Login");
+
+            }
+        }
+        
+
+
+
+        public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
 

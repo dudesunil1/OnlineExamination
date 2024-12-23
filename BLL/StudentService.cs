@@ -199,5 +199,30 @@ namespace OnlineExamination.BLL
             }
         }
 
+        public List<StudentDashboardCountData> StudentDashboard(int id)
+        {
+            try
+            {
+                Hashtable hash = new Hashtable();
+                hash.Add("@Stud_Id", id);
+
+                DataTable dt = ControlFill.FillDataTable("GetStudentDashboardData", hash);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    List<StudentDashboardCountData> list = ConversionFunctions.DataTableToList<StudentDashboardCountData>(dt);
+                    return list;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception Ex)
+            {
+                return null;
+            }
+        }
+
     }
 }

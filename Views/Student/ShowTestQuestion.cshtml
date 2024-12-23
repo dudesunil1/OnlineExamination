@@ -20,7 +20,7 @@
                 <thead class="thead-dark">
                     <tr>
                         <th>Question</th>
-                        
+
                     </tr>
                 </thead>
                 <tbody>
@@ -75,7 +75,7 @@
                 @for (int i = 1; i <= totalPages; i++)
                 {
                     // Set initial button color to red (danger) for unattempted pages
-                    string buttonClass = i == currentPage ? "btn btn-warning btn-sm" : "btn btn-danger btn-sm";  // Red for unattempted pages, yellow for current page
+                    string buttonClass = i == currentPage ? "btn btn-warning btn-sm rounded-circle" : "btn btn-danger btn-sm rounded-circle";  // Red for unattempted pages, yellow for current page
                     string buttonText = i.ToString(); // Show only the page number
 
                     <div class="col-2 mb-1">
@@ -87,6 +87,7 @@
             </div>
         </div>
     </div>
+
 
 </div>
 

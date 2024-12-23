@@ -51,4 +51,13 @@ namespace OnlineExamination.Models
 
         public string FormattedStudDOB => Stud_DOB.ToString("yyyy-MM-dd");
     }
+
+    public class StudentDashboardCountData
+    {
+        public int TodaysTestsCount { get; set; }
+        public int AttemptedTestsCount { get; set; }
+        public int NonAttemptedTestsCount { get; set; }
+        public int UpcomingTestsCount { get; set; }
+    }
+
 }

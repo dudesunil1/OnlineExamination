@@ -1,0 +1,105 @@
+﻿@model OnlineExamination.Models.DashboardStats
+
+@{
+    ViewBag.Title = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Add custom styling for the dashboard -->
+<style>
+    /* Dashboard container */
+    .dashboard-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin: 20px;
+    }
+
+    /* Dashboard box styles */
+    .dashboard-box {
+        width: 30%;
+        padding: 20px;
+        background-color: #f4f6f9;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer; /* To show a pointer on hover */
+    }
+
+        .dashboard-box:hover {
+            background-color: #e3e7ea;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .dashboard-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .dashboard-box p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+    /* Title styles */
+    .box-title {
+        font-weight: bold;
+        font-size: 1.3rem;
+        color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    /* Box Value (Counts) */
+    .box-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* Individual box color variations */
+    .box-total-students {
+        background-color: #4CAF50; /* Green */
+    }
+
+    .box-total-classes {
+        background-color: #2196F3; /* Blue */
+    }
+
+    .box-todays-exams {
+        background-color: #FF9800; /* Orange */
+    }
+
+    /* Header text */
+    .header-text {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 40px;
+    }
+</style>
+
+<!-- Main Dashboard Header -->
+<h2 class="header-text">Admin Dashboard</h2>
+
+<div class="dashboard-container">
+    <!-- Total Students Box (Clickable) -->
+    <a href="@Url.Action("Index", "StudentMaster")" class="dashboard-box box-total-students">
+        <h3 class="box-title">Total Students</h3>
+        <p class="box-value">@Model.total_students</p>
+    </a>
+
+    <!-- Total Classes Box -->
+    <div class="dashboard-box box-total-classes">
+        <h3 class="box-title">Total Classes</h3>
+        <p class="box-value">@Model.total_classes</p>
+    </div>
+
+    <!-- Today's Exams Box -->
+    <div class="dashboard-box box-todays-exams">
+        <h3 class="box-title">Today's Exams</h3>
+        <p class="box-value">@Model.todays_exams</p>
+    </div>
+</div>

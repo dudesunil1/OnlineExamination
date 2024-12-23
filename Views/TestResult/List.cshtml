@@ -38,42 +38,42 @@
                         }
                         else
                         {
-                            <table class="table table-striped table-borderless custom-tbl text-center">
-                                <thead>
+                            <table class="table table-striped table-hover text-center" id="tblSuntech">
+                                <thead class="table-dark">
                                     <tr>
                                         <th>Test ID</th>
                                         <th>Student ID</th>
                                         <th>Test Name</th>
-                                        <th>Student Name</th> 
+                                        <th>Student Name</th>
                                         <th>Attempted</th>
                                         <th>Mark</th>
-                                        <th>Details</th> 
+                                        <th>Details</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var result in Model)
                                     {
-                                    <tr>
-                                        <td>@result.TS_TestId</td>
-                                        <td>@result.TS_StudId</td>
-                                        <td>@result.TS_TestName</td>
-                                        <td>@result.TS_StudName</td>
-                                        <td>
-                                            @if (result.TS_IsAttempted)
-                                            {
-                                                @:Attempted
-                                            }
-                                            else
-                                            {
-                                                @:Not Attempted
-                                            }
-                                        </td>
-                                        <td>@result.TS_Mark</td>
-                                        <td>
-                                            <!-- Assuming you have a Details link or button to view more information -->
-                                            <a href="@Url.Action("Details", "Test", new { id = result.TS_Id })" class="btn btn-info btn-sm">View Details</a>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>@result.TS_TestId</td>
+                                            <td>@result.TS_StudId</td>
+                                            <td>@result.TS_TestName</td>
+                                            <td>@result.TS_StudName</td>
+                                            <td>
+                                                @if (result.TS_IsAttempted)
+                                                {
+                                                    @:Attempted
+                                                }
+                                                else
+                                                {
+                                                    @:Not Attempted
+                                                }
+                                            </td>
+                                            <td>@result.TS_Mark</td>
+                                            <td>
+                                                <!-- Assuming you have a Details link or button to view more information -->
+                                                <a href="@Url.Action("Details", "Test", new { id = result.TS_Id })" class="btn btn-info btn-sm">View Details</a>
+                                            </td>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>

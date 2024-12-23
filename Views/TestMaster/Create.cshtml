@@ -81,7 +81,7 @@
                         <!-- Test Name -->
                         <div class="col-sm-6">
                             <label class="h5 mb-8 fw-semibold font-heading">
-                                @Html.LabelFor(model => model.Test_Name)
+                                Test Name
                                 <span class="text-13 text-gray-400 fw-medium">(Required)</span>
                             </label>
                             <div class="position-relative">
@@ -93,22 +93,23 @@
                         <!-- Test Type -->
                         <div class="col-sm-6">
                             <label class="h5 mb-8 fw-semibold font-heading">
-                                @Html.LabelFor(model => model.Test_TypeId)
+                              Test Type
                             </label>
                             <div class="position-relative">
                                 @Html.DropDownListFor(
-                                    model => model.Test_TypeId,
-                                    new SelectList(ViewBag.Testtypelist, "Value", "Text"),
-                                    "Select a Test Type", // Placeholder text for the first option
-                                    new { @class = "form-control py-11" }
-                                )
+     model => model.Test_TypeId,
+     new SelectList(ViewBag.Testtypelist, "Value", "Text").Prepend(new SelectListItem { Text = "Select a Test Type", Value = "" }),
+     null, // Placeholder value is already handled in the SelectListItem
+     new { @class = "form-control py-11" }
+ )
                                 @Html.ValidationMessageFor(model => model.Test_TypeId, "", new { @class = "text-danger" })
+
                             </div>
                         </div>
 
                         <div class="col-sm-12">
                             <label class="h5 mb-8 fw-semibold font-heading">
-                                Duration (in minutes)
+                                Duration  In Min
                             </label>
                             <div class="position-relative">
                                 <input type="number" id="Duration" name="Test_Duration" class="form-control py-11" min="1" placeholder="Enter duration in minutes" />
@@ -120,8 +121,9 @@
                                 Start Time
                             </label>
                             <div class="position-relative">
-                                <input type="time" id="StartTime" name="Test_StartTime" class="form-control py-11" />
+                                <input type="datetime-local" id="StartTime" name="Test_StartTime" class="form-control py-11" />
                             </div>
+
                         </div>
 
                         <div class="col-sm-6">
@@ -129,7 +131,7 @@
                                 End Time
                             </label>
                             <div class="position-relative">
-                                <input type="time" id="EndTime" name="Test_EndTime" class="form-control py-11" readonly />
+                                <input type="text" id="EndTime" name="Test_EndTime" class="form-control py-11" readonly />
                             </div>
                         </div>
 
@@ -192,33 +194,20 @@
                     <div class="row g-20">
                         <!-- Test Name -->
                         <div class="col-sm-6">
-                            <label class="h5 mb-8 fw-semibold font-heading">Select Subject</label>
-
-                            @Html.DropDownList("Subject", (IEnumerable<SelectListItem>)ViewBag.SubjectDropdown,
-                             "Select a Subject", new { @class = "form-control", id = "ddSubjectId" })
+                          
+                            <h5>Subject Details</h5>
+                            @if (Session["SelectedSubjects"] != null)
+                            {
+                                var selectedSubjects = (Dictionary<string, int>)Session["SelectedSubjects"];
+                                foreach (var subject in selectedSubjects)
+                                {
+                        <p>Subject: @subject.Key, Questions: @subject.Value</p>}
+                                        }
                         </div>
                     </div>
 
 
-                    <div class="form-group">
-
-                        <div class="col-md-10">
-
-                            <div class="dropdown">
-                                <input type="text" id="search-box" placeholder="Search options..." class="search-box">
-                                <ul id="dropdown-list" class="dropdown-list">
-                                    <li><label><input type="checkbox" value="1"> Option 1</label></li>
-                                    <li><label><input type="checkbox" value="2"> Option 2</label></li>
-                                    <li><label><input type="checkbox" value="3"> Option 3</label></li>
-                                    <li><label><input type="checkbox" value="4"> Option 4</label></li>
-                                    <li><label><input type="checkbox" value="5"> Option 5</label></li>
-                                </ul>
-                            </div>
-
-
-
-                        </div>
-                    </div>
+                    
 
 
 
@@ -231,40 +220,7 @@
         </div>
     </div>
     
-    <script>
-        $(document).ready(function () {
-            // Show or hide the dropdown when clicking on the input field
-            $('#search-box').on('focus', function () {
-                $('#dropdown-list').show();
-            });
-
-            // Close dropdown when clicking outside of it
-            $(document).on('click', function (event) {
-                if (!$(event.target).closest('.dropdown').length) {
-                    $('#dropdown-list').hide();
-                }
-            });
-
-            // Filter the dropdown list as the user types in the search box
-            $('#search-box').on('keyup', function () {
-                var searchText = $(this).val().toLowerCase();
-                $('#dropdown-list li').each(function () {
-                    var optionText = $(this).text().toLowerCase();
-                    $(this).toggle(optionText.includes(searchText));
-                });
-            });
-
-            // Handle checkbox selection
-            $('#dropdown-list input[type="checkbox"]').on('change', function () {
-                var selectedValues = [];
-                $('#dropdown-list input[type="checkbox"]:checked').each(function () {
-                    selectedValues.push($(this).val());
-                });
-                console.log("Selected values:", selectedValues); // Handle selected values
-            });
-        });
-        }
-    </script>
+    
 
    
 
@@ -295,144 +251,44 @@
                     });
                 });
             });
-        function addMinutesToTime(timeStr, minutes)
-        {
-        const timeParts = timeStr.split(':');
-        let hours = parseInt(timeParts[0]);
-        let minutesPart = parseInt(timeParts[1]);
+           
+       
+            function addMinutesToTime(timeStr, minutes) {
+                const date = new Date(timeStr); // Parse the input datetime string
 
-        minutesPart += minutes; // Add the duration to minutes part
+                // Add minutes to the current time
+                date.setMinutes(date.getMinutes() + minutes);
 
-        // Handle overflow of minutes
-        while (minutesPart >= 60)
-        {
-        minutesPart -= 60;
-        hours++;
-        }
+                // Format the updated datetime to 'YYYY-MM-DDTHH:mm'
+                let year = date.getFullYear();
+                let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
+                let day = date.getDate().toString().padStart(2, '0');
+                let hours = date.getHours().toString().padStart(2, '0');
+                let minutesFormatted = date.getMinutes().toString().padStart(2, '0');
 
-        // Handle overflow of hours (24-hour format)
-        if (hours >= 24)
-        {
-        hours -= 24;
-        }
+                return `${day}-${month}-${year} ${hours}:${minutesFormatted}`;
+            }
 
-        // Ensure two-digit formatting
-        return `${ String(hours).padStart(2, '0')}:${ String(minutesPart).padStart(2, '0')}`;
-        }
+            // Listen for changes on Start Time and Duration
+            document.getElementById('StartTime').addEventListener('change', function () {
+                updateEndTime();
+            });
 
-        // Listen for changes on Start Time and Duration
-        document.getElementById('StartTime').addEventListener('change', function() {
-        updateEndTime();
-        });
+            document.getElementById('Duration').addEventListener('input', function () {
+                updateEndTime();
+            });
 
-        document.getElementById('Duration').addEventListener('input', function() {
-        updateEndTime();
-        });
+            // Function to update the End Time field
+            function updateEndTime() {
+                const startTime = document.getElementById('StartTime').value;
+                const duration = parseInt(document.getElementById('Duration').value);
 
-        // Function to update the End Time field
-        function updateEndTime()
-        {
-        const startTime = document.getElementById('StartTime').value;
-        const duration = parseInt(document.getElementById('Duration').value);
-
-        // Check if both start time and duration are provided
-        if (startTime && !isNaN(duration) && duration > 0)
-        {
-        const endTime = addMinutesToTime(startTime, duration);
-        document.getElementById('EndTime').value = endTime;
-        }
-        }
-
-
-
-        document.querySelectorAll("[id^='NoOfQuestions_']").forEach(input => {
-        input.addEventListener("input", function() {
-        // Extract the subject ID from the input field's ID
-        var subjectId = this.id.split('_')[1];
-
-        // Get the number of questions entered by the user (default to 0 if empty)
-        var numQuestions = this.value || 0;
-
-        // Check if the checkbox for the subject is checked
-        var isChecked = document.getElementById("subject_" + subjectId).checked;
-
-        // Fetch the subject name from the dropdown
-        var subjectName = getSubjectNameById(subjectId);
-
-        // Update the session with subject details (ID, name, checked state, and number of questions)
-        updateSessionData(subjectId, isChecked, numQuestions, subjectName);
-        });
-        });
-
-        function getSubjectNameById(subjectId)
-        {
-        // Find the checkbox by subjectId
-        var checkbox = document.getElementById('subject_' + subjectId);
-
-        // If the checkbox exists, get its associated label text
-        if (checkbox)
-        {
-        // Find the label associated with the checkbox
-        var label = checkbox.nextElementSibling; // assuming the label is immediately after the checkbox
-        if (label)
-        {
-        return label.textContent.trim(); // Return the text content of the label
-        }
-        }
-
-        return ''; // Return an empty string if subjectId is not found
-        }
-        // Function to update session data (with the subject name, id, checked state, and number of questions)
-
-
-        function updateSessionData(subjectId, isChecked, numQuestions, subjectName)
-        {
-        $.ajax({
-        type: "POST",
-        url: '@Url.Action("StoreSelectedSubjects", "TestMaster")', // Adjust this URL as needed
-        data:
-        {
-        subjectId: subjectId,
-        isChecked: isChecked,
-        numQuestions: numQuestions,
-        subjectName: subjectName // Adding Subject Name to the data sent to the server
-        },
-        success: function(response) {
-        console.log("Selected subject data updated in session");
-        },
-        error: function(error) {
-        console.error("Error updating session", error);
-        }
-        });
-        }
-
-
-
-        document.addEventListener('DOMContentLoaded', function ()
-        {
-        // Listen for the click on the 'Create' button
-        document.getElementById('Create').addEventListener('click', function(event) {
-
-        if (validateForm())
-        {
-        // Prevent the default form submission to allow switching the tab
-        event.preventDefault();
-
-        // Switch to the "question-details" tab
-        switchToQuestionDetailsTab();
-
-        // Submit the form after switching tabs
-        document.querySelector("form").submit();
-        }
-        });
-        });
-
-
-
-
-
-
-        // Function to switch to the "question-details" tab
+                // Check if both start time and duration are provided
+                if (startTime && !isNaN(duration) && duration > 0) {
+                    const endTime = addMinutesToTime(startTime, duration);
+                    document.getElementById('EndTime').value = endTime;
+                }
+            }
         function switchToQuestionDetailsTab()
         {
         // First, remove the 'active' class from the current tab
