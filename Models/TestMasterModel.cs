@@ -20,7 +20,10 @@ namespace OnlineExamination.Models
             public DateTime Test_StartTime { get; set; }
             public DateTime Test_EndTime { get; set; }
             public int Test_TypeId { get; set; }
-        }
+        
+    }
+
+
 
     public class TestType
     {

@@ -8,7 +8,7 @@
 <div class="container mt-4">
     <div class="row mb-3">
         <div class="col-12">
-            <h2 class="text-center">Test List</h2>
+            <h2 class="text-center">Upcoming Test</h2>
         </div>
     </div>
 
@@ -43,7 +43,7 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@item.TS_StartTime.ToString("yyyy-MM-dd")</td>
+                            <td>@item.TS_StartTime</td>
                             <td>@item.TS_TestId</td>
                             <td>@item.Test_Name</td>
                             <td>@item.Test_Duration</td>

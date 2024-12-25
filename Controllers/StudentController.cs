@@ -47,7 +47,7 @@ namespace OnlineExamination.Controllers
 
             if (string.IsNullOrEmpty(studId))
             {
-                return RedirectToAction("Login", "Student"); // Redirect to login if not found
+                return RedirectToAction("Login", "Login"); // Redirect to login if not found
             }
 
             int studentId = int.Parse(studId);
@@ -76,7 +76,7 @@ namespace OnlineExamination.Controllers
 
             if (string.IsNullOrEmpty(studId))
             {
-                return RedirectToAction("Login", "Student"); // Redirect to login if not found
+                return RedirectToAction("Login", "Login"); // Redirect to login if not found
             }
 
             

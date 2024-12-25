@@ -335,57 +335,292 @@
         tinymce.init({
             selector: '#Ques_Answer',
             plugins: 'print preview importcss searchreplace autolink directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount textpattern help charmap quickbars emoticons',
-            toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl',
-            height: 200,
+            toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | math',
+            height: 300,
             setup: function (editor) {
-                editor.on('init', function () {
-                    this.getDoc().body.style.fontSize = '14px';
+                // Add a custom Math button
+                editor.ui.registry.addButton('math', {
+                    text: 'Math',
+                    tooltip: 'Insert Math Equation',
+                    onAction: function () {
+                        // Create a modal for the Math editor
+                        const modal = document.createElement('div');
+                        modal.style.position = 'fixed';
+                        modal.style.top = '50%';
+                        modal.style.left = '50%';
+                        modal.style.transform = 'translate(-50%, -50%)';
+                        modal.style.backgroundColor = '#ffffff';
+                        modal.style.padding = '20px';
+                        modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                        modal.style.zIndex = '10000';
+                        modal.style.width = '400px';
+                        modal.style.borderRadius = '8px';
+
+                        // Add MathLive editor and buttons
+                        modal.innerHTML = `
+                    <h3 style="margin-top: 0;">Math Equation Editor</h3>
+                    <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+                        <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    </div>
+                `;
+
+                        // Append modal to the body
+                        document.body.appendChild(modal);
+
+                        // Add event listener for "Insert" button
+                        document.getElementById('insert-math').onclick = function () {
+                            const mathField = document.getElementById('math-editor');
+                            const mathLatex = mathField.getValue(); // Get LaTeX from MathLive
+                            if (mathLatex) {
+                                // Insert LaTeX into TinyMCE editor
+                                editor.insertContent(`\\(${mathLatex}\\)`);
+                                MathJax.typesetPromise(); // Render math
+                            }
+                            document.body.removeChild(modal); // Remove modal
+                        };
+
+                        // Add event listener for "Cancel" button
+                        document.getElementById('cancel-math').onclick = function () {
+                            document.body.removeChild(modal); // Remove modal
+                        };
+                    }
                 });
-            }
+            },
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         });
         tinymce.init({
             selector: '#Ques_OptionB',
             plugins: 'print preview importcss searchreplace autolink directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount textpattern help charmap quickbars emoticons',
-            toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl',
-            height: 200,
+            toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | math',
+            height: 300,
             setup: function (editor) {
-                editor.on('init', function () {
-                    this.getDoc().body.style.fontSize = '14px';
+                // Add a custom Math button
+                editor.ui.registry.addButton('math', {
+                    text: 'Math',
+                    tooltip: 'Insert Math Equation',
+                    onAction: function () {
+                        // Create a modal for the Math editor
+                        const modal = document.createElement('div');
+                        modal.style.position = 'fixed';
+                        modal.style.top = '50%';
+                        modal.style.left = '50%';
+                        modal.style.transform = 'translate(-50%, -50%)';
+                        modal.style.backgroundColor = '#ffffff';
+                        modal.style.padding = '20px';
+                        modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                        modal.style.zIndex = '10000';
+                        modal.style.width = '400px';
+                        modal.style.borderRadius = '8px';
+
+                        // Add MathLive editor and buttons
+                        modal.innerHTML = `
+                    <h3 style="margin-top: 0;">Math Equation Editor</h3>
+                    <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+                        <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    </div>
+                `;
+
+                        // Append modal to the body
+                        document.body.appendChild(modal);
+
+                        // Add event listener for "Insert" button
+                        document.getElementById('insert-math').onclick = function () {
+                            const mathField = document.getElementById('math-editor');
+                            const mathLatex = mathField.getValue(); // Get LaTeX from MathLive
+                            if (mathLatex) {
+                                // Insert LaTeX into TinyMCE editor
+                                editor.insertContent(`\\(${mathLatex}\\)`);
+                                MathJax.typesetPromise(); // Render math
+                            }
+                            document.body.removeChild(modal); // Remove modal
+                        };
+
+                        // Add event listener for "Cancel" button
+                        document.getElementById('cancel-math').onclick = function () {
+                            document.body.removeChild(modal); // Remove modal
+                        };
+                    }
                 });
-            }
+            },
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         });
         tinymce.init({
             selector: '#Ques_OptionC',
             plugins: 'print preview importcss searchreplace autolink directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount textpattern help charmap quickbars emoticons',
-            toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl',
-            height: 200,
+            toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | math',
+            height: 300,
             setup: function (editor) {
-                editor.on('init', function () {
-                    this.getDoc().body.style.fontSize = '14px';
+                // Add a custom Math button
+                editor.ui.registry.addButton('math', {
+                    text: 'Math',
+                    tooltip: 'Insert Math Equation',
+                    onAction: function () {
+                        // Create a modal for the Math editor
+                        const modal = document.createElement('div');
+                        modal.style.position = 'fixed';
+                        modal.style.top = '50%';
+                        modal.style.left = '50%';
+                        modal.style.transform = 'translate(-50%, -50%)';
+                        modal.style.backgroundColor = '#ffffff';
+                        modal.style.padding = '20px';
+                        modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                        modal.style.zIndex = '10000';
+                        modal.style.width = '400px';
+                        modal.style.borderRadius = '8px';
+
+                        // Add MathLive editor and buttons
+                        modal.innerHTML = `
+                    <h3 style="margin-top: 0;">Math Equation Editor</h3>
+                    <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+                        <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    </div>
+                `;
+
+                        // Append modal to the body
+                        document.body.appendChild(modal);
+
+                        // Add event listener for "Insert" button
+                        document.getElementById('insert-math').onclick = function () {
+                            const mathField = document.getElementById('math-editor');
+                            const mathLatex = mathField.getValue(); // Get LaTeX from MathLive
+                            if (mathLatex) {
+                                // Insert LaTeX into TinyMCE editor
+                                editor.insertContent(`\\(${mathLatex}\\)`);
+                                MathJax.typesetPromise(); // Render math
+                            }
+                            document.body.removeChild(modal); // Remove modal
+                        };
+
+                        // Add event listener for "Cancel" button
+                        document.getElementById('cancel-math').onclick = function () {
+                            document.body.removeChild(modal); // Remove modal
+                        };
+                    }
                 });
-            }
+            },
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         });
         tinymce.init({
             selector: '#Ques_OptionD',
             plugins: 'print preview importcss searchreplace autolink directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount textpattern help charmap quickbars emoticons',
-            toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl',
-            height: 200,
+            toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | math',
+            height: 300,
             setup: function (editor) {
-                editor.on('init', function () {
-                    this.getDoc().body.style.fontSize = '14px';
+                // Add a custom Math button
+                editor.ui.registry.addButton('math', {
+                    text: 'Math',
+                    tooltip: 'Insert Math Equation',
+                    onAction: function () {
+                        // Create a modal for the Math editor
+                        const modal = document.createElement('div');
+                        modal.style.position = 'fixed';
+                        modal.style.top = '50%';
+                        modal.style.left = '50%';
+                        modal.style.transform = 'translate(-50%, -50%)';
+                        modal.style.backgroundColor = '#ffffff';
+                        modal.style.padding = '20px';
+                        modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                        modal.style.zIndex = '10000';
+                        modal.style.width = '400px';
+                        modal.style.borderRadius = '8px';
+
+                        // Add MathLive editor and buttons
+                        modal.innerHTML = `
+                    <h3 style="margin-top: 0;">Math Equation Editor</h3>
+                    <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+                        <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    </div>
+                `;
+
+                        // Append modal to the body
+                        document.body.appendChild(modal);
+
+                        // Add event listener for "Insert" button
+                        document.getElementById('insert-math').onclick = function () {
+                            const mathField = document.getElementById('math-editor');
+                            const mathLatex = mathField.getValue(); // Get LaTeX from MathLive
+                            if (mathLatex) {
+                                // Insert LaTeX into TinyMCE editor
+                                editor.insertContent(`\\(${mathLatex}\\)`);
+                                MathJax.typesetPromise(); // Render math
+                            }
+                            document.body.removeChild(modal); // Remove modal
+                        };
+
+                        // Add event listener for "Cancel" button
+                        document.getElementById('cancel-math').onclick = function () {
+                            document.body.removeChild(modal); // Remove modal
+                        };
+                    }
                 });
-            }
+            },
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         });
         tinymce.init({
             selector: '#Ques_SolutionDetails',
             plugins: 'print preview importcss searchreplace autolink directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount textpattern help charmap quickbars emoticons',
-            toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl',
-            height: 200,
+            toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | math',
+            height: 300,
             setup: function (editor) {
-                editor.on('init', function () {
-                    this.getDoc().body.style.fontSize = '14px';
+                // Add a custom Math button
+                editor.ui.registry.addButton('math', {
+                    text: 'Math',
+                    tooltip: 'Insert Math Equation',
+                    onAction: function () {
+                        // Create a modal for the Math editor
+                        const modal = document.createElement('div');
+                        modal.style.position = 'fixed';
+                        modal.style.top = '50%';
+                        modal.style.left = '50%';
+                        modal.style.transform = 'translate(-50%, -50%)';
+                        modal.style.backgroundColor = '#ffffff';
+                        modal.style.padding = '20px';
+                        modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                        modal.style.zIndex = '10000';
+                        modal.style.width = '400px';
+                        modal.style.borderRadius = '8px';
+
+                        // Add MathLive editor and buttons
+                        modal.innerHTML = `
+                    <h3 style="margin-top: 0;">Math Equation Editor</h3>
+                    <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+                        <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    </div>
+                `;
+
+                        // Append modal to the body
+                        document.body.appendChild(modal);
+
+                        // Add event listener for "Insert" button
+                        document.getElementById('insert-math').onclick = function () {
+                            const mathField = document.getElementById('math-editor');
+                            const mathLatex = mathField.getValue(); // Get LaTeX from MathLive
+                            if (mathLatex) {
+                                // Insert LaTeX into TinyMCE editor
+                                editor.insertContent(`\\(${mathLatex}\\)`);
+                                MathJax.typesetPromise(); // Render math
+                            }
+                            document.body.removeChild(modal); // Remove modal
+                        };
+
+                        // Add event listener for "Cancel" button
+                        document.getElementById('cancel-math').onclick = function () {
+                            document.body.removeChild(modal); // Remove modal
+                        };
+                    }
                 });
-            }
+            },
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         });
 
 
