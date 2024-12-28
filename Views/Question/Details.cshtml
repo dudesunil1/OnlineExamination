@@ -5,147 +5,121 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<h2 class="text-center mb-4">Question Details</h2>
 
-<div>
+<div class="card shadow-lg border-light mb-4">
     <div class="card-body">
+        <!-- Question details displayed in a row with labels and values -->
+        <div class="row gy-4">
+            <div class="col-12">
+                <dl class="row">
+                    <dt class="col-sm-4 text-end">
+                       ID
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.Ques_Id)
+                    </dd>
 
-        <div class="row gy-20">
-            <div class="col-xxl-12 col-md-12 col-sm-12">
-                <div class="row g-20">
-                    <div class="col-sm-12">
-                        <dl class="dl-horizontal">
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_Id)
-                            </dt>
+                    <dt class="col-sm-4 text-end">
+                      Subject Name
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.Ques_SubName)
+                    </dd>
 
-                            <dd>
-                                @Html.DisplayFor(model => model.Ques_Id)
-                            </dd>
+                    <dt class="col-sm-4 text-end">
+                        Class Name
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.Ques_ClassName)
+                    </dd>
 
+                    <dt class="col-sm-4 text-end">
+                       Topic Name
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.Ques_TopName)
+                    </dd>
 
+                    <dt class="col-sm-4 text-end">
+                       Publication Name
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.Ques_PubName)
+                    </dd>
 
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_SubName)
-                            </dt>
+                    <dt class="col-sm-4 text-end">
+                       Mark
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.Ques_Mark)
+                    </dd>
 
-                            <dd>
-                                @Html.DisplayFor(model => model.Ques_SubName)
-                            </dd>
+                    <dt class="col-sm-4 text-end">
+                       JEE Mark
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.Ques_JEEMark)
+                    </dd>
 
+                    <dt class="col-sm-4 text-end">
+                       Negative Mark
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.Ques_Negative)
+                    </dd>
 
+                    <dt class="col-sm-4 text-end">
+                        Question
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.Raw(Model.Ques_Question)
+                    </dd>
 
+                    <dt class="col-sm-4 text-end">
+                        Answer
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.Raw(Model.Ques_Answer)
+                    </dd>
 
+                    <dt class="col-sm-4 text-end">
+                      OptionB
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.Raw(Model.Ques_OptionB)
+                    </dd>
 
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_ClassName)
-                            </dt>
+                    <dt class="col-sm-4 text-end">
+                       OptionC
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.Raw(Model.Ques_OptionC)
+                    </dd>
 
-                            <dd>
-                                @Html.DisplayFor(model => model.Ques_ClassName)
-                            </dd>
+                    <dt class="col-sm-4 text-end">
+                        Ques_OptionD
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.Raw(Model.Ques_OptionD)
+                    </dd>
 
+                    <dt class="col-sm-4 text-end">
+                        Solution Details
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.Raw(Model.Ques_SolutionDetails)
+                    </dd>
+                </dl>
+            </div>
 
-
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_TopName)
-                            </dt>
-
-                            <dd>
-                                @Html.DisplayFor(model => model.Ques_TopName)
-                            </dd>
-
-
-
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_PubName)
-                            </dt>
-
-                            <dd>
-                                @Html.DisplayFor(model => model.Ques_PubName)
-                            </dd>
-
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_Mark)
-                            </dt>
-
-                            <dd>
-                                @Html.DisplayFor(model => model.Ques_Mark)
-                            </dd>
-
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_JEEMark)
-                            </dt>
-
-                            <dd>
-                                @Html.DisplayFor(model => model.Ques_JEEMark)
-                            </dd>
-
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_Negative)
-                            </dt>
-
-                            <dd>
-                                @Html.DisplayFor(model => model.Ques_Negative)
-                            </dd>
-
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_Question)
-                            </dt>
-
-                            <dd>
-                                @Html.Raw(Model.Ques_Question)
-                            </dd>
-
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_Answer)
-                            </dt>
-
-                            <dd>
-                                @Html.Raw(Model.Ques_Answer)
-                            </dd>
-
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_OptionB)
-                            </dt>
-
-                            <dd>
-                                @Html.Raw(Model.Ques_OptionB)
-                            </dd>
-
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_OptionC)
-                            </dt>
-
-                            <dd>
-                                @Html.Raw(Model.Ques_OptionC)
-                            </dd>
-
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_OptionD)
-                            </dt>
-
-                            <dd>
-                                @Html.Raw(Model.Ques_OptionD)
-                            </dd>
-
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Ques_SolutionDetails)
-                            </dt>
-
-                            <dd>
-                                @Html.Raw(Model.Ques_SolutionDetails)
-                            </dd>
-
-                        </dl>
-                    </div>
-                    <p>
-                        @Html.ActionLink("Edit", "Edit", new {  id = Model.Ques_Id }) |
-                        @Html.ActionLink("Back to List", "Index")
-                    </p>
-                    </div>
-                </div>
+            <div class="col-12 text-center mt-4">
+                <p>
+                    @Html.ActionLink("Edit", "Edit", new { id = Model.Ques_Id }, new { @class = "btn btn-warning btn-sm" }) |
+                    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary btn-sm" })
+                </p>
             </div>
         </div>
     </div>
+</div>
 

@@ -93,6 +93,28 @@ namespace OnlineExamination.BLL
         }
 
 
+        public bool Delete(int QuesId)
+        {
+            try
+            {
+                Hashtable hashTable = new Hashtable();
+                hashTable.Add("@Ques_Id", QuesId); 
+
+                
+                return clsSunDAL.ExecuteDMLQuery("SP_QuestionMaster_Delete", hashTable);
+            }
+            catch (Exception ex)
+            {
+                
+                string _errMsg = ex.Message;
+                return false; 
+            }
+        }
+
+
+
+
+
         public QuestionMasterViewModel Add(QuestionMasterViewModel objQuestion)
         {
             string _errMsg;

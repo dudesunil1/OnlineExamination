@@ -9,6 +9,18 @@
 <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
 
 
+<style>
+    .MathJax .mo[data-ch="×"] {
+        font-size: 150% !important; /* Specifically scale the multiplication symbol */
+    }
+
+    /* CSS for math content */
+    .math-symbol {
+        font-size: 1.5em; /* Increase the font size */
+    }
+
+</style>
+
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -271,19 +283,40 @@
         });
     });
     </script>
+    <script type="text/x-mathjax-config">
+                MathJax.Hub.Config({
+                    MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+            displayMath: [ ['$$', '$$'], ['\\[', '\\]'] ],
+            processEscapes: true,
+            processClass: 'tex2jax_process'
+          },
+          TeX: {
+            Macros: {
+              '*': '\\times'  // Prevent \cdot from appearing, instead use \times
+            }
+          }
+        });
+
+                });
+    </script>
+
+  
+
+
     <script>
+
         tinymce.init({
             selector: '#Ques_Question',
             plugins: 'print preview importcss searchreplace autolink directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount textpattern help charmap quickbars emoticons',
             toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | math',
             height: 300,
             setup: function (editor) {
-                // Add a custom Math button
                 editor.ui.registry.addButton('math', {
                     text: 'Math',
                     tooltip: 'Insert Math Equation',
                     onAction: function () {
-                        // Create a modal for the Math editor
                         const modal = document.createElement('div');
                         modal.style.position = 'fixed';
                         modal.style.top = '50%';
@@ -296,40 +329,60 @@
                         modal.style.width = '400px';
                         modal.style.borderRadius = '8px';
 
-                        // Add MathLive editor and buttons
                         modal.innerHTML = `
                     <h3 style="margin-top: 0;">Math Equation Editor</h3>
-                    <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
+                    <math-field id="math-editor" style="width: 100%; font-size: 1.5em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
                     <div style="margin-top: 10px; text-align: right;">
                         <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
                         <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
                     </div>
                 `;
 
-                        // Append modal to the body
                         document.body.appendChild(modal);
 
-                        // Add event listener for "Insert" button
+                        // Make sure MathLive is loaded and ready
+                        const mathField = document.getElementById('math-editor');
+
+                        if (!window.MathLive) {
+                            console.error('MathLive script not loaded!');
+                            return;
+                        }
+
+                        // When the user clicks the "Insert" button
                         document.getElementById('insert-math').onclick = function () {
-                            const mathField = document.getElementById('math-editor');
-                            const mathLatex = mathField.getValue(); // Get LaTeX from MathLive
-                            if (mathLatex) {
-                                // Insert LaTeX into TinyMCE editor
-                                editor.insertContent(`\\(${mathLatex}\\)`);
-                                MathJax.typesetPromise(); // Render math
+                            // Get the plain text from MathLive using getValue()
+                            let mathText = mathField.getValue();
+
+                            if (mathText) {
+                                // Escape LaTeX special characters like \, {, }, etc.
+                                mathText = mathText
+                                    .replace(/\\/g, '\\\\')  // Escape backslashes
+                                    .replace(/\{/g, '\\{')   // Escape opening braces
+                                    .replace(/\}/g, '\\}')   // Escape closing braces
+                                    .replace(/\$/g, '\\$')   // Escape dollar signs
+                                    .replace(/_/g, '\\_');    // Escape underscores (subscripts)
+
+                                // Insert the math content as raw text (not LaTeX-rendered)
+                                editor.insertContent(mathText);
+                            } else {
+                                console.error('No math text available');
                             }
-                            document.body.removeChild(modal); // Remove modal
+
+                            document.body.removeChild(modal);
                         };
 
-                        // Add event listener for "Cancel" button
+                        // When the user clicks the "Cancel" button
                         document.getElementById('cancel-math').onclick = function () {
-                            document.body.removeChild(modal); // Remove modal
+                            document.body.removeChild(modal);
                         };
                     }
                 });
             },
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         });
+
+
+
 
 
         tinymce.init({
@@ -358,13 +411,13 @@
 
                         // Add MathLive editor and buttons
                         modal.innerHTML = `
-                    <h3 style="margin-top: 0;">Math Equation Editor</h3>
-                    <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
-                    <div style="margin-top: 10px; text-align: right;">
-                        <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
-                        <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
-                    </div>
-                `;
+                                        <h3 style="margin-top: 0;">Math Equation Editor</h3>
+                                        <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
+                                        <div style="margin-top: 10px; text-align: right;">
+                                            <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+                                            <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                                        </div>
+                                    `;
 
                         // Append modal to the body
                         document.body.appendChild(modal);
@@ -416,13 +469,13 @@
 
                         // Add MathLive editor and buttons
                         modal.innerHTML = `
-                    <h3 style="margin-top: 0;">Math Equation Editor</h3>
-                    <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
-                    <div style="margin-top: 10px; text-align: right;">
-                        <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
-                        <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
-                    </div>
-                `;
+                                        <h3 style="margin-top: 0;">Math Equation Editor</h3>
+                                        <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
+                                        <div style="margin-top: 10px; text-align: right;">
+                                            <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+                                            <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                                        </div>
+                                    `;
 
                         // Append modal to the body
                         document.body.appendChild(modal);
@@ -474,13 +527,13 @@
 
                         // Add MathLive editor and buttons
                         modal.innerHTML = `
-                    <h3 style="margin-top: 0;">Math Equation Editor</h3>
-                    <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
-                    <div style="margin-top: 10px; text-align: right;">
-                        <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
-                        <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
-                    </div>
-                `;
+                                        <h3 style="margin-top: 0;">Math Equation Editor</h3>
+                                        <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
+                                        <div style="margin-top: 10px; text-align: right;">
+                                            <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+                                            <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                                        </div>
+                                    `;
 
                         // Append modal to the body
                         document.body.appendChild(modal);
@@ -532,13 +585,13 @@
 
                         // Add MathLive editor and buttons
                         modal.innerHTML = `
-                    <h3 style="margin-top: 0;">Math Equation Editor</h3>
-                    <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
-                    <div style="margin-top: 10px; text-align: right;">
-                        <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
-                        <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
-                    </div>
-                `;
+                                        <h3 style="margin-top: 0;">Math Equation Editor</h3>
+                                        <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
+                                        <div style="margin-top: 10px; text-align: right;">
+                                            <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+                                            <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                                        </div>
+                                    `;
 
                         // Append modal to the body
                         document.body.appendChild(modal);
@@ -590,13 +643,13 @@
 
                         // Add MathLive editor and buttons
                         modal.innerHTML = `
-                    <h3 style="margin-top: 0;">Math Equation Editor</h3>
-                    <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
-                    <div style="margin-top: 10px; text-align: right;">
-                        <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
-                        <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
-                    </div>
-                `;
+                                        <h3 style="margin-top: 0;">Math Equation Editor</h3>
+                                        <math-field id="math-editor" style="width: 100%; font-size: 1.2em; border: 1px solid #ccc; padding: 8px; border-radius: 4px;"></math-field>
+                                        <div style="margin-top: 10px; text-align: right;">
+                                            <button id="insert-math" style="background-color: #007BFF; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+                                            <button id="cancel-math" style="background-color: #ccc; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                                        </div>
+                                    `;
 
                         // Append modal to the body
                         document.body.appendChild(modal);

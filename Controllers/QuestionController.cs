@@ -96,6 +96,45 @@ namespace OnlineExamination.Controllers
         }
 
 
+
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+               
+                    if (id > 0)
+                    {
+                        var result = objQuestionService.Delete(id);
+
+                        if (result)
+                        {
+                            TempData["MessageModel"] = MessageModel.Success("Question deleted successfully!");
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["MessageModel"] = MessageModel.Error("An error occurred while deleting the question.");
+                        }
+                    }
+                    else
+                    {
+                        TempData["MessageModel"] = MessageModel.Error("Invalid question ID.");
+                    }
+
+                    LoadData();
+                    return RedirectToAction("Index");
+                
+            }
+            catch
+            {
+                TempData["MessageModel"] = MessageModel.Error("An unexpected error occurred.");
+                LoadData();
+                return RedirectToAction("Index");
+            }
+        }
+
+
+
         [HttpPost]
         public ActionResult Create(QuestionMasterViewModel objQuestion, string Action)
         {
