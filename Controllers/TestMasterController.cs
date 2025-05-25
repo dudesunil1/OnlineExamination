@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Services.Description;
 
 namespace OnlineExamination.Controllers
 {
@@ -27,17 +26,25 @@ namespace OnlineExamination.Controllers
         public ActionResult Create()
         {
 
+           
 
 
-            LoadData();
 
             ViewBag.ActiveTab = "test-details";
-            
+            LoadData();
             return View();
         }
 
+        private void LoadData()
+        {
+            ViewBag.ClassList = MasterService.GetClass();
+            ViewBag.Testtypelist = MasterService.GetTestType();
+            ViewBag.SubjectList = MasterService.GetSubjects();
+        }
+       
+
+
         [HttpPost]
-        
         public JsonResult StoreSessionData(List<QuestionPaperData> model)
         {
             SubjectService objSubjectService = new SubjectService();
@@ -102,7 +109,7 @@ namespace OnlineExamination.Controllers
                     topicIds = topicIdsStr,
                     questionIds = questionIdsStr,
                     testName = test?.Test_Name ?? "",
-                    testType = test?.Test_Mark ?? 0,
+                    testType = test?.Test_TypeId ?? 0,
                     testduration = test?.Test_Duration ?? 0,
                     testdatetime = testdatetime,
                     testMark = test?.Test_Mark ?? 0,
@@ -119,13 +126,14 @@ namespace OnlineExamination.Controllers
         }
 
         [HttpPost]
-        public ActionResult Genratepaper(List<int> Id)
+        
+        public ActionResult Genratepaper(List<int> questionIds)
         {
-            if (Id != null && Id.Count > 0)
+            if (questionIds != null && questionIds.Count > 0)
             {
                 int testId = Convert.ToInt32(Session["TestId"]);
 
-                foreach (int qid in Id)
+                foreach (int qid in questionIds)
                 {
                     TestQuestion model = new TestQuestion
                     {
@@ -145,20 +153,6 @@ namespace OnlineExamination.Controllers
             TempData["MessageModel"] = MessageModel.Error("An error occurred while saving the Test.");
             return RedirectToAction("Create");
         }
-
-
-
-        private void LoadData()
-        {
-            ViewBag.ClassList = MasterService.GetClass();
-            ViewBag.Testtypelist = MasterService.GetTestType();
-            ViewBag.SubjectList = MasterService.GetSubjects();
-            ViewBag.SubjectId = null;
-           
-
-
-        }
-
 
 
 
@@ -183,9 +177,6 @@ namespace OnlineExamination.Controllers
                 return Json(new { error = true, message = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
-
-       
-
         [HttpGet]
         public ContentResult GetQuestionsByTopicIds(List<int> topicIds)
         {
@@ -223,13 +214,14 @@ namespace OnlineExamination.Controllers
                 foreach (var q in allQuestions)
                 {
                     html.AppendLine("<tr>");
-                    html.AppendLine($"<td style='text-align: center; padding: 8px;'><input type='checkbox' id='q{index}' name='questions' value='{q.Ques_Id}' /></td>");
-
-                    html.AppendLine($"<td style='padding: 8px;'>{index}</td>");
-                    html.AppendLine($"<td style='padding: 8px;'><label for='q{index}'>{q.Ques_Question}</label></td>");
+                    html.AppendLine($"<td style='text-align: center; padding: 8px;'><input type='checkbox' id='q{q.Ques_Id}' name='questions' value='{q.Ques_Id}' /></td>");
+                    html.AppendLine($"<td style='padding: 8px;'>{index}</td>"); // Show index (1-based)
+                    html.AppendLine($"<td style='padding: 8px;'><label for='q{q.Ques_Id}'>{q.Ques_Question}</label></td>");
                     html.AppendLine("</tr>");
                     index++;
                 }
+
+
 
                 html.AppendLine("</tbody>");
                 html.AppendLine("</table>");
@@ -240,14 +232,40 @@ namespace OnlineExamination.Controllers
 
             return Content("<p>No questions found.</p>", "text/html");
         }
+        [HttpPost]
+        public ActionResult StoreGeneratedQuestionPaper()
+        {
+            try
+            {
+                // Rewind the input stream to start
+                Request.InputStream.Position = 0;
 
+                // Read the body as a string
+                using (var reader = new StreamReader(Request.InputStream))
+                {
+                    var json = reader.ReadToEnd();
 
-       
-      
-       
+                    // Deserialize the JSON into your model
+                    var data = JsonConvert.DeserializeObject<QuestionPaperData>(json);
 
+                    if (data == null)
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Invalid JSON data.");
+                    }
 
-
+                    // Store in Session
+                    Session["SelectedSubjectId"] = data.SubjectId;
+                    Session["SelectedTopicIds"] = data.TopicIds;
+                    Session["SelectedQuestionIds"] = data.QuestionIds;
+                   
+                    return new HttpStatusCodeResult(HttpStatusCode.OK);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
 
         [HttpPost]
         public ActionResult Create(TestMasterModel objTest, string Action)
@@ -272,7 +290,6 @@ namespace OnlineExamination.Controllers
                     if (res.Test_Id > 0)
                     {
                         LoadData();
-                        Session["TestId"] = res.Test_Id;
 
                         var subjectList = ViewBag.SubjectList as List<SelectListItem>;
                         var selectedSubjects = new Dictionary<int, (string Name, int QuestionCount)>();
@@ -295,7 +312,7 @@ namespace OnlineExamination.Controllers
                                 }
                             }
                         }
-
+                        Session["TestId"] = res.Test_Id;
                         Session["SelectedSubjects"] = selectedSubjects;
                         ViewBag.TestId = res.Test_Id;
                         ViewBag.ActiveTab = "question-details";
@@ -317,7 +334,25 @@ namespace OnlineExamination.Controllers
         }
 
         
-      
+        [HttpGet]
+        public ActionResult PaperDetails()
+        {
+            var subjectId = Session["SelectedSubjectId"] as string;
+            var topicIds = Session["SelectedTopicIds"] as List<string>;
+            var questionIds = Session["SelectedQuestionIds"] as List<string>;
+
+            // Optional: Load data from DB or mock for this example
+            var selectedSubjects = Session["SelectedSubjects"] as Dictionary<int, (string Name, int QuestionCount)>;
+            string subjectName = selectedSubjects?.FirstOrDefault(s => s.Key.ToString() == subjectId).Value.Name ?? "N/A";
+
+            ViewBag.SubjectName = subjectName;
+            ViewBag.Topics = topicIds;
+            ViewBag.Questions = questionIds;
+
+            return View();
+        }
+
+
 
     }
 

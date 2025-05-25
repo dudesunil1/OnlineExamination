@@ -78,7 +78,6 @@ namespace OnlineExamination.Models
         public int SubjectId { get; set; }
         public List<int> TopicIds { get; set; }
         public List<int> QuestionIds { get; set; }
-
         public string TopicNames { get; set; }
     }
 

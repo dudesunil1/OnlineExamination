@@ -6,48 +6,98 @@
 <html lang="en">
 <head>
 
-
     <style>
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        th, td {
-            border: 1px solid #000;
-            padding: 10px;
-            vertical-align: top;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            text-align: left;
-            width: 30%;
-        }
-
-        .section-title {
-            background-color: #d9edf7;
-            font-weight: bold;
-            text-align: center;
-            font-size: 18px;
-        }
-
-        .instruction-list {
-            padding-left: 20px;
-        }
-
-        .question-options label {
-            display: block;
-            margin: 4px 0;
-        }
         /* Dropdown container styles */
+         .nav-tabs .nav-link.test-tab {
+        background-color: #0d6efd; /* Bootstrap Primary Blue */
+        border-color: #0d6efd;
+        border-radius: 0.375rem 0.375rem 0 0;
+        transition: background-color 0.3s ease;
+    }
+    .nav-tabs .nav-link.test-tab.active,
+    .nav-tabs .nav-link.test-tab:hover {
+        background-color: #084cdf;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .nav-tabs .nav-link.question-tab {
+        background-color: #20c997; /* Bootstrap Teal */
+        border-color: #20c997;
+        border-radius: 0.375rem 0.375rem 0 0;
+        transition: background-color 0.3s ease;
+    }
+    .nav-tabs .nav-link.question-tab.active,
+    .nav-tabs .nav-link.question-tab:hover {
+        background-color: #17a673;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .nav-tabs .nav-link.paper-tab {
+        background-color: #ffc107; /* Bootstrap Warning */
+        border-color: #ffc107;
+        border-radius: 0.375rem 0.375rem 0 0;
+        transition: background-color 0.3s ease;
+    }
+    .nav-tabs .nav-link.paper-tab.active,
+    .nav-tabs .nav-link.paper-tab:hover {
+        background-color: #e0a800;
+        color: #212529;
+        font-weight: 600;
+    }
+
+    /* Tab Content Panes */
+    .custom-tab-pane {
+        border: 1px solid #dee2e6;
+        border-top: none;
+        background-color: #fff;
+        padding: 2rem;
+        box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+        border-radius: 0 0 0.375rem 0.375rem;
+    }
+
+    /* Individual pane subtle background variations */
+    .test-pane {
+        background-color: #e7f1ff; /* Light blue tint */
+    }
+    .question-pane {
+        background-color: #e6f7f0; /* Light teal tint */
+    }
+    .paper-pane {
+        background-color: #fff8e1; /* Light yellow tint */
+    }
+
+    /* Improve form inputs inside panes */
+    .custom-tab-pane .form-control {
+        border-radius: 0.375rem;
+        padding: 0.5rem 1rem;
+    }
+
+    /* Buttons in forms */
+    .custom-tab-pane .btn {
+        border-radius: 0.375rem;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+    }
+
+    /* Responsive tweaks */
+   
+        .nav-tabs .nav-link {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.75rem;
+        }
+    
+        #subjectsContainer table {
+            margin-top: 1.5rem;
+        }
+
+        #subjectsContainer h4 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
         .dropdown {
             position: relative;
             width: 200px;
@@ -92,27 +142,39 @@
 </head>
 
 <body>
+    @{
+        var activeTab = ViewBag.ActiveTab as string ?? "test-details"; // Default tab
+    }
+
     <div class="container mt-4">
         <h2>Create Test</h2>
         <hr />
 
         <!-- Tab navigation -->
-        <ul class="nav nav-tabs" id="testTabs" role="tablist">
-            <li class="nav-item">
-                <button class="nav-link @((ViewBag.ActiveTab == "test-details") ? "active" : "")" id="test-details-tab" data-bs-toggle="tab" data-bs-target="#test-details" type="button" role="tab" aria-controls="test-details" aria-selected="true">Test Details</button>
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(ViewBag.ActiveTab == "test-details" ? "active" : "") text-white test-tab" id="test-details-tab" data-bs-toggle="tab" data-bs-target="#test-details" type="button" role="tab" aria-controls="test-details" aria-selected="@(ViewBag.ActiveTab == "test-details" ? "true" : "false")">
+                    Test Details
+                </button>
             </li>
-            <li class="nav-item">
-                <button class="nav-link @((ViewBag.ActiveTab == "question-details") ? "active" : "")" id="question-details-tab" data-bs-toggle="tab" data-bs-target="#question-details" type="button" role="tab" aria-controls="question-details" aria-selected="false">Question Details</button>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(ViewBag.ActiveTab == "question-details" ? "active" : "") text-white question-tab" id="question-details-tab" data-bs-toggle="tab" data-bs-target="#question-details" type="button" role="tab" aria-controls="question-details" aria-selected="@(ViewBag.ActiveTab == "question-details" ? "true" : "false")">
+                    Question Details
+                </button>
             </li>
-            <li class="nav-item">
-                <button class="nav-link @((ViewBag.ActiveTab == "paper-details") ? "active" : "")" id="paper-details-tab" data-bs-toggle="tab" data-bs-target="#paper-details" type="button" role="tab" aria-controls="paper-details" aria-selected="false">Question Paper Test Details</button>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(ViewBag.ActiveTab == "paper-details" ? "active" : "") text-white paper-tab" id="paper-details-tab" data-bs-toggle="tab" data-bs-target="#paper-details" type="button" role="tab" aria-controls="paper-details" aria-selected="@(ViewBag.ActiveTab == "paper-details" ? "true" : "false")">
+                    Paper Details
+                </button>
             </li>
         </ul>
+
 
         <!-- Tab content -->
         <div class="tab-content" id="testTabContent">
             <!-- Test Details Tab -->
-            <div class="tab-pane @((ViewBag.ActiveTab == "test-details") ? "active" : "")" id="test-details" role="tabpanel" aria-labelledby="test-details-tab">
+            <div class="tab-pane fade @(ViewBag.ActiveTab == "test-details" ? "show active" : "") custom-tab-pane test-pane" id="test-details" role="tabpanel" aria-labelledby="test-details-tab">
+               
                 @using (Html.BeginForm())
                 {
                     @Html.AntiForgeryToken()
@@ -226,402 +288,390 @@
                     </div>
                 }
             </div>
-            <div class="tab-pane @((ViewBag.ActiveTab == "question-details") ? "show active" : "")" id="question-details" role="tabpanel" aria-labelledby="question-details-tab">
-                @using (Html.BeginForm("QuestionDetails", "TestMaster"))
+
+            <div class="tab-pane fade @(ViewBag.ActiveTab == "question-details" ? "show active" : "") custom-tab-pane question-pane" id="question-details" role="tabpanel" aria-labelledby="question-details-tab">
+               
+
+                @using (Html.BeginForm())
                 {
                     @Html.AntiForgeryToken()
 
-                    <div class="row g-20">
-                        <div class="col-sm-6">
-                            <h5>Subject Details</h5>
+                    <!-- Subject dropdown -->
+                    <div class="mb-3">
+                        <label for="SelectedSubjectId" class="form-label"><strong>Select Subject</strong></label>
+                        <select id="SelectedSubjectId" class="form-control">
+                            <option value="">-- Select Subject --</option>
                             @{
                                 var selectedSubjects = Session["SelectedSubjects"] as Dictionary<int, (string Name, int QuestionCount)>;
-                            }
-
-                            @if (selectedSubjects != null && selectedSubjects.Any())
-                            {
-                                <select class="form-control" name="SelectedSubjectId" id="SelectedSubjectId">
-                                    <option value="">Select Subject</option>
-                                    @foreach (var item in selectedSubjects)
+                                if (selectedSubjects != null)
+                                {
+                                    foreach (var item in selectedSubjects)
                                     {
-                                        <option value="@item.Key">@item.Value.Name (Questions: @item.Value.QuestionCount)</option>
+                                        <option value="@item.Key" data-question-count="@item.Value.QuestionCount">
+                                            @item.Value.Name (ID: @item.Key, Questions: @item.Value.QuestionCount)
+                                        </option>
                                     }
-                                </select>
+                                }
                             }
-                            else
-                            {
-                                <p>No subjects selected.</p>
-                            }
-                        </div>
 
-                        <div class="col-sm-6">
-                            <h5>Topics</h5>
-                            <!-- Topic Modal -->
-                            <div class="modal fade" id="topicModal" tabindex="-1" role="dialog" aria-labelledby="topicModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="topicModalLabel">Select Topics</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body" id="topicModalBody">
-                                            <!-- Topics will be loaded here -->
-                                        </div>
-                                    </div>
+                        </select>
+                    </div>
+
+
+
+                    <!-- Hidden fields to store selected data -->
+                    @Html.Hidden("SelectedTopicsJson", "", new { id = "SelectedTopicsJson" })
+                    @Html.Hidden("SelectedQuestionsJson", "", new { id = "SelectedQuestionsJson" })
+
+                    <!-- Modal to display topics -->
+                    <div class="modal fade" id="topicModal" tabindex="-1" aria-labelledby="topicModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="topicModalLabel">Select Topics</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
+                                <div class="modal-body" id="topicModalBody">
+                                    <!-- Topics checkboxes will be injected here -->
+                                </div>
+
                             </div>
-
                         </div>
-
-                        <div class="col-sm-12">
-                            <h5>Question</h5>
-                            <div id="questionList"></div>
-                        </div>
-                        <div class="text-end mt-3">
-                            <button type="button" id="generatePaperBtn" class="btn btn-primary">Generate Question Paper</button>
-                        </div>
-
                     </div>
 
+                    <!-- Questions container -->
+                    <div id="questionList" class="mt-3">
+                        <!-- Questions checkboxes will be injected here -->
+                    </div>
 
-
+                    <!-- Submit button -->
+                    <div class="mt-3 text-end">
+                        <button type="button" class="btn btn-primary" id="generatePaperBtn">Generate Question Paper</button>
+                    </div>
 
                 }
-
-
             </div>
 
-            <div class="tab-pane fade @(ViewBag.ActiveTab == "paper-details" ? "show active" : "")" id="paper-details" role="tabpanel" aria-labelledby="paper-details-tab">
-
-                @using (Html.BeginForm("Genratepaper", "TestMaster", FormMethod.Post, new { id = "generatePaperForm" }))
+            <div class="tab-pane fade @(ViewBag.ActiveTab == "paper-details" ? "show active" : "") custom-tab-pane paper-pane" id="paper-details" role="tabpanel" aria-labelledby="paper-details-tab">
+                @using (Html.BeginForm("Genratepaper", "TestMaster", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
                 {
-                    <h2>Paper Session Data</h2>
+                    <div class="container py-4">
 
-                    <table>
-                        <tr>
-                            <td colspan="2" id="testNameCell" class="section-title fw-bold fs-5"></td>
-                        </tr>
-                        <tr>
-                            <th>Date and Time</th>
-                            <td id="testDatetimeCell"></td>
-                        </tr>
-                        <tr>
-                            <th>Marks</th>
-                            <td id="testMarkCell"></td>
-                        </tr>
-                        <tr>
-                            <th>Test Duration</th>
-                            <td id="testDurationCell"></td>
-                        </tr>
-                        <tr>
-                            <th>Test Type</th>
-                            <td id="testTypeCell"></td>
-                        </tr>
-                    </table>
 
-                    <div id="subjectsContainer" class="mt-4">
-                        <!-- Subject tables will be appended here -->
+                        <h3 class="mb-3 mt-5 text-secondary">Generated Question Paper Details</h3>
+
+                        <table class="table table-striped table-bordered shadow-sm">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="text-nowrap">Test Name</th>
+                                    <td id="testNameCell" class="fw-semibold"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-nowrap">Date &amp; Time</th>
+                                    <td id="testDatetimeCell" class="fw-semibold"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-nowrap">Total Marks</th>
+                                    <td id="testMarkCell" class="fw-semibold"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-nowrap">Duration</th>
+                                    <td id="testDurationCell" class="fw-semibold"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-nowrap">Test Type</th>
+                                    <td id="testTypeCell" class="fw-semibold"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Container for dynamically inserted subject questions -->
+                        <div id="subjectsContainer" class="mt-5"></div>
+
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-end mt-4">
+                            <input type="submit" value="Generate Paper" class="btn btn-success btn-lg px-4" />
+                        </div>
+
                     </div>
-
-                    <div id="hiddenInputsContainer"></div>
-                    <button type="button" class="btn btn-success mt-3" onclick="collectQuestionIdsAndSubmit()">Generate Paper</button>
                 }
-
             </div>
-
-
-
-
-
 
 
 
         </div>
 
-
     </div>
 
 
-   
 
+    <script>
+        var selectedDataBySubject = {}; // global
 
+        $(document).ready(function () {
 
+            $('#SelectedSubjectId').change(function () {
+                var subjectId = $(this).val();
+                $('#SelectedTopicId').empty();
+                $('#questionList').empty();
 
-    @section Scripts {
-        <script>
+                if (selectedDataBySubject[subjectId]) {
+                    var saved = selectedDataBySubject[subjectId];
+                    var modalContent = '';
+                    $.each(saved.topicsData || [], function (index, topic) {
+                        var isChecked = saved.selectedTopics.includes(topic.Top_Id) ? 'checked' : '';
+                        modalContent += `
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input topic-check" id="topic${topic.Top_Id}" value="${topic.Top_Id}" ${isChecked} />
+                            <label class="form-check-label" for="topic${topic.Top_Id}">${topic.Top_Name}</label>
+                        </div>`;
+                    });
+                    $('#topicModalBody').html(modalContent);
+                    var modal = new bootstrap.Modal(document.getElementById('topicModal'));
+                    modal.show();
 
-
-       var selectedDataBySubject = {}; // global
-
-$(document).ready(function () {
-
-    $('#SelectedSubjectId').change(function () {
-        var subjectId = $(this).val();
-        $('#SelectedTopicId').empty();
-        $('#questionList').empty();
-
-        if (selectedDataBySubject[subjectId]) {
-            var saved = selectedDataBySubject[subjectId];
-            var modalContent = '';
-            $.each(saved.topicsData || [], function (index, topic) {
-                var isChecked = saved.selectedTopics.includes(topic.Top_Id) ? 'checked' : '';
-                modalContent += `
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input topic-check" id="topic${topic.Top_Id}" value="${topic.Top_Id}" ${isChecked} />
-                        <label class="form-check-label" for="topic${topic.Top_Id}">${topic.Top_Name}</label>
-                    </div>`;
-            });
-            $('#topicModalBody').html(modalContent);
-            var modal = new bootstrap.Modal(document.getElementById('topicModal'));
-            modal.show();
-
-            if (saved.questionsHtml) {
-                $('#questionList').html(saved.questionsHtml);
-                saved.selectedQuestions.forEach(function (qid) {
-                    $('#questionList input[type="checkbox"][value="' + qid + '"]').prop('checked', true);
-                });
-            }
-        } else if (subjectId) {
-            $.ajax({
-                url: '/TestMaster/GetTopicsBySubjectId',
-                type: 'GET',
-                data: { subjectId: subjectId },
-                success: function (data) {
-                    if (Array.isArray(data)) {
-                        selectedDataBySubject[subjectId] = {
-                            topicsData: data,
-                            selectedTopics: [],
-                            selectedQuestions: [],
-                            questionsHtml: '',
-                            selectedTopicNames: ''
-                        };
-
-                        var modalContent = '';
-                        $.each(data, function (index, topic) {
-                            modalContent += `
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input topic-check" id="topic${topic.Top_Id}" value="${topic.Top_Id}" />
-                                    <label class="form-check-label" for="topic${topic.Top_Id}">${topic.Top_Name}</label>
-                                </div>`;
+                    if (saved.questionsHtml) {
+                        $('#questionList').html(saved.questionsHtml);
+                        saved.selectedQuestions.forEach(function (qid) {
+                            $('#questionList input[type="checkbox"][value="' + qid + '"]').prop('checked', true);
                         });
-
-                        $('#topicModalBody').html(modalContent);
-                        var modal = new bootstrap.Modal(document.getElementById('topicModal'));
-                        modal.show();
-                    } else {
-                        alert("Unexpected data format received.");
                     }
-                },
-                error: function () {
-                    alert('Failed to load topics.');
-                }
-            });
-        }
-    });
+                } else if (subjectId) {
+                    $.ajax({
+                        url: '/TestMaster/GetTopicsBySubjectId',
+                        type: 'GET',
+                        data: { subjectId: subjectId },
+                        success: function (data) {
+                            if (Array.isArray(data)) {
+                                selectedDataBySubject[subjectId] = {
+                                    topicsData: data,
+                                    selectedTopics: [],
+                                    selectedQuestions: [],
+                                    questionsHtml: '',
+                                    selectedTopicNames: ''
+                                };
 
-    // Update selected topics and their names on checkbox change
-    $(document).on('change', '.topic-check', function () {
-        var subjectId = $('#SelectedSubjectId').val();
-        if (!subjectId) return;
+                                var modalContent = '';
+                                $.each(data, function (index, topic) {
+                                    modalContent += `
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input topic-check" id="topic${topic.Top_Id}" value="${topic.Top_Id}" />
+                                        <label class="form-check-label" for="topic${topic.Top_Id}">${topic.Top_Name}</label>
+                                    </div>`;
+                                });
 
-        var selectedTopicIds = [];
-        var selectedTopicNames = [];
-
-        $('.topic-check:checked').each(function () {
-            selectedTopicIds.push(parseInt($(this).val()));
-            selectedTopicNames.push($(this).next('label').text().trim());
-        });
-
-        // Save in global data structure
-        selectedDataBySubject[subjectId].selectedTopics = selectedTopicIds;
-        selectedDataBySubject[subjectId].selectedTopicNames = selectedTopicNames.join(", ");
-
-        // Fetch questions for selected topics
-        if (selectedTopicIds.length > 0) {
-            $.ajax({
-                url: '/TestMaster/GetQuestionsByTopicIds',
-                type: 'GET',
-                traditional: true,
-                data: { topicIds: selectedTopicIds },
-                success: function (questionsHtml) {
-                    $('#questionList').html(questionsHtml);
-
-                    // Save questions html & clear previous question selection
-                    selectedDataBySubject[subjectId].questionsHtml = questionsHtml;
-                    selectedDataBySubject[subjectId].selectedQuestions = [];
-                },
-                error: function () {
-                    alert('Failed to load questions.');
-                }
-            });
-        } else {
-            $('#questionList').empty();
-            selectedDataBySubject[subjectId].questionsHtml = '';
-            selectedDataBySubject[subjectId].selectedQuestions = [];
-        }
-    });
-
-    // Track selected questions per subject
-    $(document).on('change', '#questionList input[type="checkbox"]', function () {
-        var subjectId = $('#SelectedSubjectId').val();
-        if (!subjectId) return;
-
-        var selectedQuestionIds = [];
-        $('#questionList input[type="checkbox"]:checked').each(function () {
-            selectedQuestionIds.push(parseInt($(this).val()));
-        });
-
-        selectedDataBySubject[subjectId].selectedQuestions = selectedQuestionIds;
-    });
-
-    // Limit question checkbox count
-    $(document).on('change', '#questionList input[type="checkbox"]', function () {
-        var checkedCount = $('#questionList input[type="checkbox"]:checked').length;
-        var maxQuestions = getMaxQuestionCount();
-
-        if (checkedCount > maxQuestions) {
-            alert("You can only select up to " + maxQuestions + " questions.");
-            $(this).prop('checked', false);
-        }
-    });
-
-    // Generate paper button click
-    $('#generatePaperBtn').on('click', function () {
-        var allSubjectData = [];
-
-        for (var subjectId in selectedDataBySubject) {
-            if (selectedDataBySubject.hasOwnProperty(subjectId)) {
-                var subjectData = selectedDataBySubject[subjectId];
-
-                if (
-                    subjectData.selectedTopics.length > 0 &&
-                    subjectData.selectedQuestions.length > 0
-                ) {
-                    allSubjectData.push({
-                        SubjectId: parseInt(subjectId),
-                        TopicIds: subjectData.selectedTopics,
-                        QuestionIds: subjectData.selectedQuestions,
-                        TopicNames: subjectData.selectedTopicNames || ""
+                                $('#topicModalBody').html(modalContent);
+                                var modal = new bootstrap.Modal(document.getElementById('topicModal'));
+                                modal.show();
+                            } else {
+                                alert("Unexpected data format received.");
+                            }
+                        },
+                        error: function () {
+                            alert('Failed to load topics.');
+                        }
                     });
                 }
-            }
-        }
+            });
 
-        if (allSubjectData.length === 0) {
-            alert("Please select at least one subject with topics and questions.");
-            return;
-        }
+            // Update selected topics and their names on checkbox change
+            $(document).on('change', '.topic-check', function () {
+                var subjectId = $('#SelectedSubjectId').val();
+                if (!subjectId) return;
 
-        // Send all subjects' data to server
-      $.ajax({
-    url: '@Url.Action("StoreSessionData", "TestMaster")',
-    type: 'POST',
-    data: JSON.stringify(allSubjectData),
-    contentType: 'application/json',
-          success: function (response) {
-              if (!response.success || !response.data) return;
+                var selectedTopicIds = [];
+                var selectedTopicNames = [];
 
-              // Show common test info from first subject (assuming all share this info)
-              var first = response.data[0];
-              $('#testNameCell').text(first.testName);
-              $('#testDatetimeCell').text(first.testdatetime);
-              $('#testMarkCell').text(first.testMark);
-              $('#testDurationCell').text(first.testduration);
-              $('#testTypeCell').text(first.testType);
-
-              // Clear previous subject tables
-              $('#subjectsContainer').empty();
-
-              // Loop through all subjects in response.data
-              response.data.forEach(function (subject) {
-                  // Create a container div for this subject
-                  var subjectHtml = `
-            <h3>${subject.subjectName}</h3>
-            <p><strong>Topics:</strong> ${subject.topicNames}</p>
-            <table class="table table-bordered mb-4">
-                <thead>
-                    <tr>
-                        <th>Question</th>
-                        <th>Answer (Input)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${subject.simplifiedQuestions.map(q => `
-                        <tr>
-                            <td>${q.QuestionText}</td>
-                            <td><input type="text" name="answer_${q.Id}" class="form-control" /></td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-
-                  $('#subjectsContainer').append(subjectHtml);
-              });
-
-              // Switch to the "paper-details" tab (Bootstrap 5)
-              var tabTriggerEl = document.querySelector('#paper-details-tab');
-              if (tabTriggerEl) {
-                  var tab = new bootstrap.Tab(tabTriggerEl);
-                  tab.show();
-              }
-          }
-
-,
-    error: function () {
-        alert('Error saving session data.');
-    }
-});
-
-    });
-
-    function getMaxQuestionCount() {
-        var selectedText = $('#SelectedSubjectId option:selected').text();
-        var match = selectedText.match(/\(Questions:\s*(\d+)\)/);
-        return match ? parseInt(match[1]) : 0;
-    }
-});
-
-
-            function collectQuestionIdsAndSubmit() {
-                const container = $('#hiddenInputsContainer');
-                container.empty();
-
-                // Collect question IDs from all generated inputs
-                const questionIds = [];
-
-                $('#subjectsContainer input[name^="answer_"]').each(function () {
-                    const name = $(this).attr('name');
-                    const id = name.split('_')[1];
-                    if (id) {
-                        questionIds.push(id);
-                    }
+                $('.topic-check:checked').each(function () {
+                    selectedTopicIds.push(parseInt($(this).val()));
+                    selectedTopicNames.push($(this).next('label').text().trim());
                 });
 
-                if (questionIds.length === 0) {
-                    alert("No questions found to submit.");
+                // Save in global data structure
+                selectedDataBySubject[subjectId].selectedTopics = selectedTopicIds;
+                selectedDataBySubject[subjectId].selectedTopicNames = selectedTopicNames.join(", ");
+
+                // Fetch questions for selected topics
+                if (selectedTopicIds.length > 0) {
+                    $.ajax({
+                        url: '/TestMaster/GetQuestionsByTopicIds',
+                        type: 'GET',
+                        traditional: true,
+                        data: { topicIds: selectedTopicIds },
+                        success: function (questionsHtml) {
+                            $('#questionList').html(questionsHtml);
+
+                            // Save questions html & clear previous question selection
+                            selectedDataBySubject[subjectId].questionsHtml = questionsHtml;
+                            selectedDataBySubject[subjectId].selectedQuestions = [];
+                        },
+                        error: function () {
+                            alert('Failed to load questions.');
+                        }
+                    });
+                } else {
+                    $('#questionList').empty();
+                    selectedDataBySubject[subjectId].questionsHtml = '';
+                    selectedDataBySubject[subjectId].selectedQuestions = [];
+                }
+            });
+
+            // Track selected questions per subject
+            $(document).on('change', '#questionList input[type="checkbox"]', function () {
+                var subjectId = $('#SelectedSubjectId').val();
+                if (!subjectId) return;
+
+                var selectedQuestionIds = [];
+                $('#questionList input[type="checkbox"]:checked').each(function () {
+                    selectedQuestionIds.push(parseInt($(this).val()));
+                });
+
+                selectedDataBySubject[subjectId].selectedQuestions = selectedQuestionIds;
+            });
+
+            let isHandling = false;
+
+            $(document).on('change', '#questionList input[type="checkbox"]', function () {
+                if (isHandling) return;
+
+                isHandling = true;
+
+                try {
+                    var checkedCount = $('#questionList input[type="checkbox"]:checked').length;
+                    var maxQuestions = getMaxQuestionCount();
+
+                    if (!Number.isInteger(maxQuestions)) {
+                        console.warn("Max question count is invalid:", maxQuestions);
+                        return;
+                    }
+
+                    if (checkedCount > maxQuestions) {
+                        alert("You can only select up to " + maxQuestions + " questions.");
+                        $(this).prop('checked', false);
+                    }
+                } catch (e) {
+                    console.error("Error during checkbox validation:", e);
+                } finally {
+                    isHandling = false;
+                }
+            });
+
+            function getMaxQuestionCount() {
+                var selectedOption = $('#SelectedSubjectId option:selected');
+                var count = selectedOption.data('question-count');
+
+                if (typeof count === 'undefined') {
+                    console.warn('No question count found in data attribute.');
+                    return 0;
+                }
+
+                return parseInt(count) || 0;
+            }
+
+
+            // JavaScript: Handle Generate Question Paper Button
+
+            $('#generatePaperBtn').on('click', function () {
+                var allSubjectData = [];
+
+                for (var subjectId in selectedDataBySubject) {
+                    if (selectedDataBySubject.hasOwnProperty(subjectId)) {
+                        var subjectData = selectedDataBySubject[subjectId];
+
+                        if (
+                            subjectData.selectedTopics.length > 0 &&
+                            subjectData.selectedQuestions.length > 0
+                        ) {
+                            allSubjectData.push({
+                                SubjectId: parseInt(subjectId),
+                                TopicIds: subjectData.selectedTopics,
+                                QuestionIds: subjectData.selectedQuestions,
+                                TopicNames: subjectData.selectedTopicNames || ""
+                            });
+                        }
+                    }
+                }
+
+                if (allSubjectData.length === 0) {
+                    alert("Please select at least one subject with topics and questions.");
                     return;
                 }
 
-                questionIds.forEach((id, index) => {
-                    container.append(`<input type="hidden" name="Id[${index}]" value="${id}" />`);
+                // Send all subjects' data to server and handle UI update
+                $.ajax({
+                    url: '/TestMaster/StoreSessionData',
+                    type: 'POST',
+                    data: JSON.stringify(allSubjectData),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        if (!response.success || !response.data) return;
+
+                        // Update main test info
+                        var first = response.data[0];
+                        $('#testNameCell').text(first.testName);
+                        $('#testDatetimeCell').text(first.testdatetime);
+                        $('#testMarkCell').text(first.testMark);
+                        $('#testDurationCell').text(first.testduration);
+                        $('#testTypeCell').text(first.testType);
+
+                        // Clear previous subject tables
+                        $('#subjectsContainer').empty();
+
+                        // Loop through all subjects
+                        response.data.forEach(function (subject) {
+                            var subjectHtml = `
+                        <h3>${subject.subjectName}</h3>
+                        <p><strong>Topics:</strong> ${subject.topicNames}</p>
+                        <table class="table table-bordered mb-4">
+                            <thead>
+                                <tr>
+                                    <th>Question</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                              ${subject.simplifiedQuestions.map((q, index) => `
+    <tr>
+        <td>
+            <strong>Q${index + 1}:</strong> ${q.QuestionText}
+            <input type="hidden" name="questionIds" value="${q.Id}" />
+        </td>
+        <td>
+            <input type="text" name="answer_${q.Id}" class="form-control" />
+        </td>
+    </tr>
+`).join('')}
+
+                            </tbody>
+                        </table>
+                    `;
+
+                            $('#subjectsContainer').append(subjectHtml);
+                        });
+
+                        // Switch to paper-details tab (Bootstrap)
+                        var tabTriggerEl = document.querySelector('#paper-details-tab');
+                        if (tabTriggerEl) {
+                            var tab = new bootstrap.Tab(tabTriggerEl);
+                            tab.show();
+                        }
+                    },
+                    error: function () {
+                        alert('Error saving session data.');
+                    }
                 });
+            });
 
 
-                $('#generatePaperForm').submit();
-            }
+        });
 
-
-        </script>
-    }
-
+    </script>
 
 
 
 
 
     <script>
-
 
 
 
