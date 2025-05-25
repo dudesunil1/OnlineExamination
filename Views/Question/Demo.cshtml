@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewBag.Title = "Demo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Creating mathematical and chemical formulas with MathType</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <h1>MATH TOOL</h1>
+    <textarea cols="10" id="editor1" name="editor1" rows="10" data-sample-short>
+    <p><math xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mn>2</mn><mn>5</mn></mfrac><mo>+</mo><mfrac><mn>3</mn><mn>5</mn></mfrac><mo>=</mo><mn>16</mn></math></p>
+    <p><math xmlns="http://www.w3.org/1998/Math/MathML" class="wrs_chemistry"><msub><mi mathvariant="normal">H</mi><mn>2</mn></msub><msub><mi>SO</mi><mn>4</mn></msub></math></p>
+    </textarea>
+    <script src="https://cdn.ckeditor.com/4.14.0/standard-all/ckeditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function() {
+            var mathElements = [
+                'math',
+                'maction',
+                'maligngroup',
+                'malignmark',
+                'menclose',
+                'merror',
+                'mfenced',
+                'mfrac',
+                'mglyph',
+                'mi',
+                'mlabeledtr',
+                'mlongdiv',
+                'mmultiscripts',
+                'mn',
+                'mo',
+                'mover',
+                'mpadded',
+                'mphantom',
+                'mroot',
+                'mrow',
+                'ms',
+                'mscarries',
+                'mscarry',
+                'msgroup',
+                'msline',
+                'mspace',
+                'msqrt',
+                'msrow',
+                'mstack',
+                'mstyle',
+                'msub',
+                'msup',
+                'msubsup',
+                'mtable',
+                'mtd',
+                'mtext',
+                'mtr',
+                'munder',
+                'munderover',
+                'semantics',
+                'annotation',
+                'annotation-xml'
+            ];
+            CKEDITOR.plugins.addExternal('ckeditor_wiris', 'https://ckeditor.com/docs/ckeditor4/4.14.0/examples/assets/plugins/ckeditor_wiris/', 'plugin.js');
+            CKEDITOR.replace('editor1', {
+                extraPlugins: 'ckeditor_wiris,print,format,font,colorbutton,justify,uploadimage,find,magicline,bidi,easyimage,image2,colordialog,tableresize',
+                mathJaxLib: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML',
+                format_tags: 'p;h1;h2;h3;h4;h5;h6;pre;address;div',
+                contentsLangDirection: 'ltr',
+                removeButtons: 'ExportPdf,Form,Checkbox,Radio,TextField,Select,Textarea,Button,ImageButton,HiddenField,NewPage,CreateDiv,Flash,Iframe,About,ShowBlocks,Maximize',
+                toolbarGroups: [{
+                        name: 'clipboard',
+                        groups: ['clipboard', 'undo']
+                    },
+                    {
+                        name: 'editing',
+                        groups: ['find', 'selection', 'spellchecker']
+                    },
+                    {
+                        name: 'links'
+                    },
+                    {
+                        name: 'insert'
+                    },
+                    {
+                        name: 'forms'
+                    },
+                    {
+                        name: 'tools'
+                    },
+                    {
+                        name: 'document',
+                        groups: ['mode', 'document', 'doctools']
+                    },
+                    {
+                        name: 'colors'
+                    },
+                    {
+                        name: 'others'
+                    },
+                    {
+                        name: 'about'
+                    },
+                    '/',
+                    {
+                        name: 'basicstyles',
+                        groups: ['basicstyles', 'cleanup']
+                    },
+                    {
+                        name: 'paragraph',
+                        groups: ['list', 'indent', 'blocks', 'align', 'bidi']
+                    },
+                    {
+                        name: 'styles'
+                    }
+                ],
+                removePlugins: 'uploadimage,uploadwidget,uploadfile,filetools,filebrowser',
+                removeDialogTabs: 'image:advanced;link:advanced',
+                height: 320,
+                extraAllowedContent: mathElements.join(' ') + '(*)[*]{*};img[data-mathml,data-custom-editor,role](Wirisformula);h3{clear};h2{line-height};h2 h3{margin-left,margin-top}; div{border,background,text-align}'
+            });
+        }());
+    </script>
+</body>
+</html>

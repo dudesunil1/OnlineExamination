@@ -71,6 +71,17 @@ namespace OnlineExamination.Models
         public int TestMark { get; set; }              
         public int NumberOfQuestions { get; set; }     
     }
+
+
+    public class QuestionPaperData
+    {
+        public int SubjectId { get; set; }
+        public List<int> TopicIds { get; set; }
+        public List<int> QuestionIds { get; set; }
+
+        public string TopicNames { get; set; }
+    }
+
 }
 
 

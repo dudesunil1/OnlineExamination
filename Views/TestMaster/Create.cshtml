@@ -6,7 +6,47 @@
 <html lang="en">
 <head>
 
+
     <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 10px;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+            width: 30%;
+        }
+
+        .section-title {
+            background-color: #d9edf7;
+            font-weight: bold;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .instruction-list {
+            padding-left: 20px;
+        }
+
+        .question-options label {
+            display: block;
+            margin: 4px 0;
+        }
         /* Dropdown container styles */
         .dropdown {
             position: relative;
@@ -93,7 +133,7 @@
                         <!-- Test Type -->
                         <div class="col-sm-6">
                             <label class="h5 mb-8 fw-semibold font-heading">
-                              Test Type
+                                Test Type
                             </label>
                             <div class="position-relative">
                                 @Html.DropDownListFor(
@@ -192,22 +232,57 @@
                     @Html.AntiForgeryToken()
 
                     <div class="row g-20">
-                        <!-- Test Name -->
                         <div class="col-sm-6">
-                          
                             <h5>Subject Details</h5>
-                            @if (Session["SelectedSubjects"] != null)
+                            @{
+                                var selectedSubjects = Session["SelectedSubjects"] as Dictionary<int, (string Name, int QuestionCount)>;
+                            }
+
+                            @if (selectedSubjects != null && selectedSubjects.Any())
                             {
-                                var selectedSubjects = (Dictionary<string, int>)Session["SelectedSubjects"];
-                                foreach (var subject in selectedSubjects)
-                                {
-                        <p>Subject: @subject.Key, Questions: @subject.Value</p>}
-                                        }
+                                <select class="form-control" name="SelectedSubjectId" id="SelectedSubjectId">
+                                    <option value="">Select Subject</option>
+                                    @foreach (var item in selectedSubjects)
+                                    {
+                                        <option value="@item.Key">@item.Value.Name (Questions: @item.Value.QuestionCount)</option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <p>No subjects selected.</p>
+                            }
                         </div>
+
+                        <div class="col-sm-6">
+                            <h5>Topics</h5>
+                            <!-- Topic Modal -->
+                            <div class="modal fade" id="topicModal" tabindex="-1" role="dialog" aria-labelledby="topicModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="topicModalLabel">Select Topics</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="topicModalBody">
+                                            <!-- Topics will be loaded here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-sm-12">
+                            <h5>Question</h5>
+                            <div id="questionList"></div>
+                        </div>
+                        <div class="text-end mt-3">
+                            <button type="button" id="generatePaperBtn" class="btn btn-primary">Generate Question Paper</button>
+                        </div>
+
                     </div>
 
-
-                    
 
 
 
@@ -216,98 +291,418 @@
 
             </div>
 
+            <div class="tab-pane fade @(ViewBag.ActiveTab == "paper-details" ? "show active" : "")" id="paper-details" role="tabpanel" aria-labelledby="paper-details-tab">
+
+                @using (Html.BeginForm("Genratepaper", "TestMaster", FormMethod.Post, new { id = "generatePaperForm" }))
+                {
+                    <h2>Paper Session Data</h2>
+
+                    <table>
+                        <tr>
+                            <td colspan="2" id="testNameCell" class="section-title fw-bold fs-5"></td>
+                        </tr>
+                        <tr>
+                            <th>Date and Time</th>
+                            <td id="testDatetimeCell"></td>
+                        </tr>
+                        <tr>
+                            <th>Marks</th>
+                            <td id="testMarkCell"></td>
+                        </tr>
+                        <tr>
+                            <th>Test Duration</th>
+                            <td id="testDurationCell"></td>
+                        </tr>
+                        <tr>
+                            <th>Test Type</th>
+                            <td id="testTypeCell"></td>
+                        </tr>
+                    </table>
+
+                    <div id="subjectsContainer" class="mt-4">
+                        <!-- Subject tables will be appended here -->
+                    </div>
+
+                    <div id="hiddenInputsContainer"></div>
+                    <button type="button" class="btn btn-success mt-3" onclick="collectQuestionIdsAndSubmit()">Generate Paper</button>
+                }
+
+            </div>
+
+
+
+
+
+
+
 
         </div>
+
+
     </div>
-    
-    
+
 
    
 
+
+
+
+    @section Scripts {
         <script>
 
-           
 
+       var selectedDataBySubject = {}; // global
 
-            document.addEventListener("DOMContentLoaded", function () {
-                // Listen for checkbox changes
-                const checkboxes = document.querySelectorAll('.subject-checkbox');
+$(document).ready(function () {
 
-                checkboxes.forEach(function (checkbox) {
-                    checkbox.addEventListener('change', function () {
-                        var subjectValue = this.value;
-                        var questionBox = document.getElementById('questionBox_' + subjectValue);
-                        var questionInput = document.getElementById('NoOfQuestions_' + subjectValue);
+    $('#SelectedSubjectId').change(function () {
+        var subjectId = $(this).val();
+        $('#SelectedTopicId').empty();
+        $('#questionList').empty();
 
-                        // Show or hide the question box based on checkbox state
-                        if (this.checked) {
-                            // Show the text box
-                            questionBox.style.display = 'block';
-                        } else {
-                            // Hide the text box and reset the input value
-                            questionBox.style.display = 'none';
-                            questionInput.value = '';  // Reset the input field value
-                        }
-                    });
+        if (selectedDataBySubject[subjectId]) {
+            var saved = selectedDataBySubject[subjectId];
+            var modalContent = '';
+            $.each(saved.topicsData || [], function (index, topic) {
+                var isChecked = saved.selectedTopics.includes(topic.Top_Id) ? 'checked' : '';
+                modalContent += `
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input topic-check" id="topic${topic.Top_Id}" value="${topic.Top_Id}" ${isChecked} />
+                        <label class="form-check-label" for="topic${topic.Top_Id}">${topic.Top_Name}</label>
+                    </div>`;
+            });
+            $('#topicModalBody').html(modalContent);
+            var modal = new bootstrap.Modal(document.getElementById('topicModal'));
+            modal.show();
+
+            if (saved.questionsHtml) {
+                $('#questionList').html(saved.questionsHtml);
+                saved.selectedQuestions.forEach(function (qid) {
+                    $('#questionList input[type="checkbox"][value="' + qid + '"]').prop('checked', true);
                 });
-            });
-           
-       
-            function addMinutesToTime(timeStr, minutes) {
-                const date = new Date(timeStr); // Parse the input datetime string
-
-                // Add minutes to the current time
-                date.setMinutes(date.getMinutes() + minutes);
-
-                // Format the updated datetime to 'YYYY-MM-DDTHH:mm'
-                let year = date.getFullYear();
-                let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
-                let day = date.getDate().toString().padStart(2, '0');
-                let hours = date.getHours().toString().padStart(2, '0');
-                let minutesFormatted = date.getMinutes().toString().padStart(2, '0');
-
-                return `${day}-${month}-${year} ${hours}:${minutesFormatted}`;
             }
+        } else if (subjectId) {
+            $.ajax({
+                url: '/TestMaster/GetTopicsBySubjectId',
+                type: 'GET',
+                data: { subjectId: subjectId },
+                success: function (data) {
+                    if (Array.isArray(data)) {
+                        selectedDataBySubject[subjectId] = {
+                            topicsData: data,
+                            selectedTopics: [],
+                            selectedQuestions: [],
+                            questionsHtml: '',
+                            selectedTopicNames: ''
+                        };
 
-            // Listen for changes on Start Time and Duration
-            document.getElementById('StartTime').addEventListener('change', function () {
-                updateEndTime();
+                        var modalContent = '';
+                        $.each(data, function (index, topic) {
+                            modalContent += `
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input topic-check" id="topic${topic.Top_Id}" value="${topic.Top_Id}" />
+                                    <label class="form-check-label" for="topic${topic.Top_Id}">${topic.Top_Name}</label>
+                                </div>`;
+                        });
+
+                        $('#topicModalBody').html(modalContent);
+                        var modal = new bootstrap.Modal(document.getElementById('topicModal'));
+                        modal.show();
+                    } else {
+                        alert("Unexpected data format received.");
+                    }
+                },
+                error: function () {
+                    alert('Failed to load topics.');
+                }
             });
+        }
+    });
 
-            document.getElementById('Duration').addEventListener('input', function () {
-                updateEndTime();
+    // Update selected topics and their names on checkbox change
+    $(document).on('change', '.topic-check', function () {
+        var subjectId = $('#SelectedSubjectId').val();
+        if (!subjectId) return;
+
+        var selectedTopicIds = [];
+        var selectedTopicNames = [];
+
+        $('.topic-check:checked').each(function () {
+            selectedTopicIds.push(parseInt($(this).val()));
+            selectedTopicNames.push($(this).next('label').text().trim());
+        });
+
+        // Save in global data structure
+        selectedDataBySubject[subjectId].selectedTopics = selectedTopicIds;
+        selectedDataBySubject[subjectId].selectedTopicNames = selectedTopicNames.join(", ");
+
+        // Fetch questions for selected topics
+        if (selectedTopicIds.length > 0) {
+            $.ajax({
+                url: '/TestMaster/GetQuestionsByTopicIds',
+                type: 'GET',
+                traditional: true,
+                data: { topicIds: selectedTopicIds },
+                success: function (questionsHtml) {
+                    $('#questionList').html(questionsHtml);
+
+                    // Save questions html & clear previous question selection
+                    selectedDataBySubject[subjectId].questionsHtml = questionsHtml;
+                    selectedDataBySubject[subjectId].selectedQuestions = [];
+                },
+                error: function () {
+                    alert('Failed to load questions.');
+                }
             });
+        } else {
+            $('#questionList').empty();
+            selectedDataBySubject[subjectId].questionsHtml = '';
+            selectedDataBySubject[subjectId].selectedQuestions = [];
+        }
+    });
 
-            // Function to update the End Time field
-            function updateEndTime() {
-                const startTime = document.getElementById('StartTime').value;
-                const duration = parseInt(document.getElementById('Duration').value);
+    // Track selected questions per subject
+    $(document).on('change', '#questionList input[type="checkbox"]', function () {
+        var subjectId = $('#SelectedSubjectId').val();
+        if (!subjectId) return;
 
-                // Check if both start time and duration are provided
-                if (startTime && !isNaN(duration) && duration > 0) {
-                    const endTime = addMinutesToTime(startTime, duration);
-                    document.getElementById('EndTime').value = endTime;
+        var selectedQuestionIds = [];
+        $('#questionList input[type="checkbox"]:checked').each(function () {
+            selectedQuestionIds.push(parseInt($(this).val()));
+        });
+
+        selectedDataBySubject[subjectId].selectedQuestions = selectedQuestionIds;
+    });
+
+    // Limit question checkbox count
+    $(document).on('change', '#questionList input[type="checkbox"]', function () {
+        var checkedCount = $('#questionList input[type="checkbox"]:checked').length;
+        var maxQuestions = getMaxQuestionCount();
+
+        if (checkedCount > maxQuestions) {
+            alert("You can only select up to " + maxQuestions + " questions.");
+            $(this).prop('checked', false);
+        }
+    });
+
+    // Generate paper button click
+    $('#generatePaperBtn').on('click', function () {
+        var allSubjectData = [];
+
+        for (var subjectId in selectedDataBySubject) {
+            if (selectedDataBySubject.hasOwnProperty(subjectId)) {
+                var subjectData = selectedDataBySubject[subjectId];
+
+                if (
+                    subjectData.selectedTopics.length > 0 &&
+                    subjectData.selectedQuestions.length > 0
+                ) {
+                    allSubjectData.push({
+                        SubjectId: parseInt(subjectId),
+                        TopicIds: subjectData.selectedTopics,
+                        QuestionIds: subjectData.selectedQuestions,
+                        TopicNames: subjectData.selectedTopicNames || ""
+                    });
                 }
             }
-        function switchToQuestionDetailsTab()
-        {
-        // First, remove the 'active' class from the current tab
-        document.querySelector('.nav-link.active').classList.remove('active');
-        document.querySelector('.tab-pane.active').classList.remove('show', 'active');
-
-        // Add the 'active' class to the "question-details" tab
-        document.getElementById('question-details-tab').classList.add('active');
-        document.getElementById('question-details').classList.add('show', 'active');
         }
 
-        function validateForm()
-        {
-
-        return true;
+        if (allSubjectData.length === 0) {
+            alert("Please select at least one subject with topics and questions.");
+            return;
         }
+
+        // Send all subjects' data to server
+      $.ajax({
+    url: '@Url.Action("StoreSessionData", "TestMaster")',
+    type: 'POST',
+    data: JSON.stringify(allSubjectData),
+    contentType: 'application/json',
+          success: function (response) {
+              if (!response.success || !response.data) return;
+
+              // Show common test info from first subject (assuming all share this info)
+              var first = response.data[0];
+              $('#testNameCell').text(first.testName);
+              $('#testDatetimeCell').text(first.testdatetime);
+              $('#testMarkCell').text(first.testMark);
+              $('#testDurationCell').text(first.testduration);
+              $('#testTypeCell').text(first.testType);
+
+              // Clear previous subject tables
+              $('#subjectsContainer').empty();
+
+              // Loop through all subjects in response.data
+              response.data.forEach(function (subject) {
+                  // Create a container div for this subject
+                  var subjectHtml = `
+            <h3>${subject.subjectName}</h3>
+            <p><strong>Topics:</strong> ${subject.topicNames}</p>
+            <table class="table table-bordered mb-4">
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Answer (Input)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${subject.simplifiedQuestions.map(q => `
+                        <tr>
+                            <td>${q.QuestionText}</td>
+                            <td><input type="text" name="answer_${q.Id}" class="form-control" /></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+
+                  $('#subjectsContainer').append(subjectHtml);
+              });
+
+              // Switch to the "paper-details" tab (Bootstrap 5)
+              var tabTriggerEl = document.querySelector('#paper-details-tab');
+              if (tabTriggerEl) {
+                  var tab = new bootstrap.Tab(tabTriggerEl);
+                  tab.show();
+              }
+          }
+
+,
+    error: function () {
+        alert('Error saving session data.');
+    }
+});
+
+    });
+
+    function getMaxQuestionCount() {
+        var selectedText = $('#SelectedSubjectId option:selected').text();
+        var match = selectedText.match(/\(Questions:\s*(\d+)\)/);
+        return match ? parseInt(match[1]) : 0;
+    }
+});
+
+
+            function collectQuestionIdsAndSubmit() {
+                const container = $('#hiddenInputsContainer');
+                container.empty();
+
+                // Collect question IDs from all generated inputs
+                const questionIds = [];
+
+                $('#subjectsContainer input[name^="answer_"]').each(function () {
+                    const name = $(this).attr('name');
+                    const id = name.split('_')[1];
+                    if (id) {
+                        questionIds.push(id);
+                    }
+                });
+
+                if (questionIds.length === 0) {
+                    alert("No questions found to submit.");
+                    return;
+                }
+
+                questionIds.forEach((id, index) => {
+                    container.append(`<input type="hidden" name="Id[${index}]" value="${id}" />`);
+                });
+
+
+                $('#generatePaperForm').submit();
+            }
+
 
         </script>
-    
+    }
+
+
+
+
+
+
+    <script>
+
+
+
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Listen for checkbox changes
+            const checkboxes = document.querySelectorAll('.subject-checkbox');
+
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', function () {
+                    var subjectValue = this.value;
+                    var questionBox = document.getElementById('questionBox_' + subjectValue);
+                    var questionInput = document.getElementById('NoOfQuestions_' + subjectValue);
+
+                    // Show or hide the question box based on checkbox state
+                    if (this.checked) {
+                        // Show the text box
+                        questionBox.style.display = 'block';
+                    } else {
+                        // Hide the text box and reset the input value
+                        questionBox.style.display = 'none';
+                        questionInput.value = '';  // Reset the input field value
+                    }
+                });
+            });
+        });
+
+
+        function addMinutesToTime(timeStr, minutes) {
+            const date = new Date(timeStr); // Parse the input datetime string
+
+            // Add minutes to the current time
+            date.setMinutes(date.getMinutes() + minutes);
+
+            // Format the updated datetime to 'YYYY-MM-DDTHH:mm'
+            let year = date.getFullYear();
+            let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
+            let day = date.getDate().toString().padStart(2, '0');
+            let hours = date.getHours().toString().padStart(2, '0');
+            let minutesFormatted = date.getMinutes().toString().padStart(2, '0');
+
+            return `${day}-${month}-${year} ${hours}:${minutesFormatted}`;
+        }
+
+        // Listen for changes on Start Time and Duration
+        document.getElementById('StartTime').addEventListener('change', function () {
+            updateEndTime();
+        });
+
+        document.getElementById('Duration').addEventListener('input', function () {
+            updateEndTime();
+        });
+
+        // Function to update the End Time field
+        function updateEndTime() {
+            const startTime = document.getElementById('StartTime').value;
+            const duration = parseInt(document.getElementById('Duration').value);
+
+            // Check if both start time and duration are provided
+            if (startTime && !isNaN(duration) && duration > 0) {
+                const endTime = addMinutesToTime(startTime, duration);
+                document.getElementById('EndTime').value = endTime;
+            }
+        }
+        function switchToQuestionDetailsTab() {
+            // First, remove the 'active' class from the current tab
+            document.querySelector('.nav-link.active').classList.remove('active');
+            document.querySelector('.tab-pane.active').classList.remove('show', 'active');
+
+            // Add the 'active' class to the "question-details" tab
+            document.getElementById('question-details-tab').classList.add('active');
+            document.getElementById('question-details').classList.add('show', 'active');
+        }
+
+        function validateForm() {
+
+            return true;
+        }
+
+    </script>
+
 </body>
 </html>
 

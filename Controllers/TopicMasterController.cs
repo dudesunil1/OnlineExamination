@@ -21,6 +21,25 @@ namespace OnlineExamination.Controllers
             return View(objTopics);
         }
 
+        [HttpGet]
+        
+        public JsonResult GetTopicsBySubject(int subjectId)
+        {
+            List<SelectListItem> topics = new List<SelectListItem>();
+
+            if (subjectId > 0)
+            {
+                // Example: Get topics based on subjectId
+                topics = objTopicService.GetTopicsBySubjectId(subjectId)
+                          .Select(t => new SelectListItem
+                          {
+                              Text = t.Top_Name,
+                              Value = t.Top_Id.ToString()
+                          }).ToList();
+            }
+
+            return Json(topics);
+        }
 
 
 

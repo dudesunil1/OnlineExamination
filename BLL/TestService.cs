@@ -109,17 +109,48 @@ namespace OnlineExamination.BLL
         }
 
 
-      
+        public TestQuestion AddTestQuestion(TestQuestion objTestQues)
+        {
+            string _errMsg;
+            try
+            {
+                Hashtable hashTable = new Hashtable();
+                hashTable.Add("@TQ_TestId", objTestQues.TQ_TestId);
+                hashTable.Add("@TQ_QuesId", objTestQues.TQ_QuesId);
+
+                DataTable dt = clsSunDAL.FillDataTable("Sp_Insert_TestQuestion", hashTable);
+                _errMsg = clsSunDAL._errMsg;
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    objTestQues.TQ_Id = Convert.ToInt32(dt.Rows[0]["TQ_Id"]);
+                    return objTestQues;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _errMsg = ex.Message;
+                return null;
+            }
+        }
 
 
 
-        public List<TestMasterModel> GetTests()
+        public List<TestMasterModel> GetTests(int? testId = null)
         {
             try
             {
                 Hashtable hash = new Hashtable();
 
+                if (testId.HasValue)
+                {
+                    hash.Add("@Test_Id", testId.Value); // Adjust the parameter name based on your stored procedure
+                }
+
                 DataTable dt = ControlFill.FillDataTable("SP_TestMaster_Select", hash);
+
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     List<TestMasterModel> list = ConversionFunctions.DataTableToList<TestMasterModel>(dt);
@@ -127,12 +158,13 @@ namespace OnlineExamination.BLL
                 }
                 else
                 {
-                    return null;
+                    return new List<TestMasterModel>(); // Return empty list instead of null for safety
                 }
             }
-            catch (Exception Ex)
+            catch (Exception ex)
             {
-                return null;
+                // Optional: log exception
+                return new List<TestMasterModel>();
             }
         }
 

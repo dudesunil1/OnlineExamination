@@ -75,20 +75,4 @@
     </div>
 </div>
 
-<script>
-    // Table Header Checkbox checked all js Start
-    $('#selectAll').on('change', function () {
-        $('.form-check .form-check-input').prop('checked', $(this).prop('checked'));
-    });
 
-    // Data Tables
-    new DataTable('#tblGroupDetails', {
-        searching: false,
-        lengthChange: false,
-        info: false,   // Bottom Left Text => Showing 1 to 10 of 12 entries
-        paging: false, // Pagination False
-        "columnDefs": [
-            { "orderable": false, "targets": [3] } // Disables sorting on the last column (Actions)
-        ]
-    });
-</script>

@@ -93,46 +93,50 @@ namespace OnlineExamination.Controllers
 
         // POST action for creating a new subject
         [HttpPost]
-    
+
+      
         public ActionResult Create(SubjectsViewModel objSubject, string Action)
         {
             try
             {
-                // Handle different button actions (e.g., "Cancel", "Back To List")
+                // Handle navigation buttons
                 if (Action == "Cancel")
                 {
-                    return RedirectToAction("Create"); // Redirect to the create page if cancel is clicked
+                    return RedirectToAction("Create");
                 }
                 else if (Action == "Back To List")
                 {
-                    return RedirectToAction("Index"); // Redirect to list page if back to list is clicked
+                    return RedirectToAction("Index");
                 }
                 else
                 {
-                   
                     if (ModelState.IsValid)
                     {
-                        
-                        SubjectsViewModel res = objSubjectMasterService.AddSubject(objSubject);
+                        // Save to Session instead of database
+                        List<SubjectsViewModel> sessionSubjects = Session["TempSubjects"] as List<SubjectsViewModel>;
 
-                        if (res.Sub_Id > 0)
-                        {
-                            TempData["MessageModel"] = MessageModel.Success("Subject Created successfully!");
-                            return RedirectToAction("Index"); 
-                        }
-                        else
-                        {
-                            TempData["MessageModel"] = MessageModel.Error("An error occurred while Creating  the subject.");
-                            return RedirectToAction("Create"); 
-                        }
+                        if (sessionSubjects == null)
+                            sessionSubjects = new List<SubjectsViewModel>();
+
+                        sessionSubjects.Add(objSubject);
+                        Session["TempSubjects"] = sessionSubjects;
+
+                        // Optional: show success message (can be displayed in View)
+                        TempData["MessageModel"] = MessageModel.Success("Subject temporarily stored. Proceed to next step.");
+
+                        // Redirect to next tab or same page
+                        return RedirectToAction("Create"); // Or another step like "QuestionDetails"
                     }
-                    return View(); 
+
+                    return View(objSubject); // Return with validation errors
                 }
             }
             catch
             {
-                return View(); // Return to the Create view if an error occurs
+                TempData["MessageModel"] = MessageModel.Error("An unexpected error occurred.");
+                return View(objSubject);
             }
         }
+
     }
 }
