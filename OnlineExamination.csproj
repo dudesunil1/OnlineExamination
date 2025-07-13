@@ -58,6 +58,9 @@
     <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
     </Reference>
@@ -136,9 +139,6 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -157,12 +157,15 @@
     <Compile Include="BLL\APIKeyService.cs" />
     <Compile Include="BLL\ClassService.cs" />
     <Compile Include="BLL\ConversionFunctions.cs" />
+    <Compile Include="BLL\ExamService.cs" />
     <Compile Include="BLL\GroupDetailsService.cs" />
     <Compile Include="BLL\GroupService.cs" />
     <Compile Include="BLL\StudentService.cs" />
     <Compile Include="BLL\TestResultService.cs" />
     <Compile Include="BLL\TestService.cs" />
+    <Compile Include="BLL\TestStudentQuestionService.cs" />
     <Compile Include="CheckSessionRoleAttribute.cs" />
+    <Compile Include="Controllers\ExamController.cs" />
     <Compile Include="Controllers\StudentController.cs" />
     <Compile Include="Controllers\TestMasterController.cs" />
     <Compile Include="Controllers\AssignTestController.cs" />
@@ -199,6 +202,7 @@
     <Compile Include="Models\QuestionMasterModel.cs" />
     <Compile Include="Models\StudentMasterModel.cs" />
     <Compile Include="Models\TestResultModel.cs" />
+    <Compile Include="Models\TestStudentQuestionModel.cs" />
     <Compile Include="Models\TopicViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -390,6 +394,7 @@
     <Content Include="Views\Login\Login.cshtml" />
     <Content Include="Views\Question\Demo.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\Exam\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

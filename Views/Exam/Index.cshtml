@@ -1,0 +1,136 @@
+﻿@model List<OnlineExamination.Models.TestStudentQuestionModel>
+
+<div id="timer" style="font-size:20px; font-weight:bold; color:red;">Time Left: 60:00</div>
+
+<script>
+    let totalTimeInSeconds = 60 * 60; // 60 minutes
+    let timerInterval = setInterval(updateTimer, 1000);
+
+    function updateTimer() {
+        let minutes = Math.floor(totalTimeInSeconds / 60);
+        let seconds = totalTimeInSeconds % 60;
+        document.getElementById("timer").innerText =
+            `Time Left: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        if (totalTimeInSeconds <= 0) {
+            clearInterval(timerInterval);
+            alert("Time's up! Submitting your test...");
+            document.forms[0].submit(); // Auto-submit the form
+        }
+
+        totalTimeInSeconds--;
+    }
+</script>
+
+<style>
+    .question-btn {
+        margin: 5px;
+        padding: 10px;
+        width: 40px;
+    }
+
+    .default {
+        background-color: lightgray;
+    }
+
+    .selected {
+        background-color: red;
+        color: white;
+    }
+
+    .answered {
+        background-color: green;
+        color: white;
+    }
+
+    .review {
+        background-color: purple;
+        color: white;
+    }
+
+    .answered-review {
+        background-color: pink;
+        color: black;
+    }
+</style>
+
+<div id="questionPalette">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <button type="button"
+                class="btn question-btn default"
+                data-qid="@i"
+                onclick="goToQuestion(@i)">
+            @(@i + 1)
+        </button>
+    }
+</div>
+
+<hr />
+
+@using (Html.BeginForm("Submit", "Exam", FormMethod.Post))
+{
+    for (int i = 0; i < Model.Count; i++)
+    {
+        <div id="question-@i" class="question-block">
+            <p><strong>Q@(i + 1):</strong> @Model[i].QuestionText</p>
+
+            @Html.HiddenFor(m => m[i].Id)
+
+            <label>@Html.RadioButtonFor(m => m[i].SelectedOption, "A", new { onchange = $"setAnswered({i})" }) A. @Model[i].OptionA</label><br />
+            <label>@Html.RadioButtonFor(m => m[i].SelectedOption, "B", new { onchange = $"setAnswered({i})" }) B. @Model[i].OptionB</label><br />
+            <label>@Html.RadioButtonFor(m => m[i].SelectedOption, "C", new { onchange = $"setAnswered({i})" }) C. @Model[i].OptionC</label><br />
+            <label>@Html.RadioButtonFor(m => m[i].SelectedOption, "D", new { onchange = $"setAnswered({i})" }) D. @Model[i].OptionD</label><br />
+
+            <label>
+                <input type="checkbox" onchange="markForReview(@i)"> Mark for Review
+            </label>
+        </div>
+        <hr />
+    }
+
+    <input type="submit" value="Submit Exam" class="btn btn-primary" />
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let questionStatus = {};
+
+    function goToQuestion(index) {
+        $(".question-btn").removeClass("selected");
+        $(`.question-btn[data-qid=${index}]`).addClass("selected");
+
+        $('html, body').animate({
+            scrollTop: $(`#question-${index}`).offset().top
+        }, 300);
+    }
+
+    function setAnswered(index) {
+        questionStatus[index] = questionStatus[index] || {};
+        questionStatus[index].answered = true;
+        updateButtonColor(index);
+    }
+
+    function markForReview(index) {
+        let checkbox = $(`#question-${index} input[type=checkbox]`);
+        questionStatus[index] = questionStatus[index] || {};
+        questionStatus[index].review = checkbox.is(':checked');
+        updateButtonColor(index);
+    }
+
+    function updateButtonColor(index) {
+        let btn = $(`.question-btn[data-qid=${index}]`);
+        btn.removeClass("default selected answered review answered-review");
+
+        let status = questionStatus[index] || {};
+        if (status.answered && status.review) {
+            btn.addClass("answered-review");
+        } else if (status.answered) {
+            btn.addClass("answered");
+        } else if (status.review) {
+            btn.addClass("review");
+        } else {
+            btn.addClass("default");
+        }
+    }
+</script>
