@@ -168,31 +168,23 @@
                     else if (ViewBag.UserRole == "STUDENT")
                     {
                         <!-- Student Menu -->
-                        <li class="sidebar-menu__item has-dropdown">
-                            <a href="javascript:void(0)" class="sidebar-menu__link">
-                                <span class="icon"><i class="ph ph-graduation-cap"></i></span>
-                                <span class="text">Test</span>
+                        <li class="sidebar-menu__item">
+                            <a href="@Url.Action("Index", "Home")" class="sidebar-menu__link">
+                                <span class="icon"><i class="ph ph-house"></i></span>
+                                <span class="text">Dashboard</span>
                             </a>
-                            <!-- Submenu start -->
-                            <ul class="sidebar-submenu">
-                                <li class="sidebar-submenu__item">
-                                    @Html.ActionLink("Test List", "TestList", "Student", null, new { @class = "sidebar-submenu__link" })
-                                </li>
-                            </ul>
-                            <!-- Submenu End -->
                         </li>
-                        <li class="sidebar-menu__item has-dropdown">
-                            <a href="javascript:void(0)" class="sidebar-menu__link">
-                                <span class="icon"><i class="ph ph-graduation-cap"></i></span>
-                                <span class="text">Profile</span>
+                        <li class="sidebar-menu__item">
+                            <a href="@Url.Action("TestList", "Student")" class="sidebar-menu__link">
+                                <span class="icon"><i class="ph ph-exam"></i></span>
+                                <span class="text">My Exams</span>
                             </a>
-                            <!-- Submenu start -->
-                            <ul class="sidebar-submenu">
-                                <li class="sidebar-submenu__item">
-                                    @Html.ActionLink("My Profile", "Profile", "Student", null, new { @class = "sidebar-submenu__link" })
-                                </li>
-                            </ul>
-                            <!-- Submenu End -->
+                        </li>
+                        <li class="sidebar-menu__item">
+                            <a href="@Url.Action("Profile", "Student")" class="sidebar-menu__link">
+                                <span class="icon"><i class="ph ph-user-circle"></i></span>
+                                <span class="text">My Profile</span>
+                            </a>
                         </li>
                     }
                 </ul>

@@ -60,4 +60,108 @@ namespace OnlineExamination.Models
         public int UpcomingTestsCount { get; set; }
     }
 
+    public class StudentDashboardViewModel
+    {
+        // Student Information
+        public int StudentId { get; set; }
+        public string StudentName { get; set; }
+        public string StudentPhoto { get; set; }
+        public string StudentClass { get; set; }
+        
+        // Dashboard Counts
+        public int TodaysTestsCount { get; set; }
+        public int AttemptedTestsCount { get; set; }
+        public int NonAttemptedTestsCount { get; set; }
+        public int UpcomingTestsCount { get; set; }
+        public double TotalMarksScored { get; set; }
+        public double AverageMarks { get; set; }
+        
+        // Test Lists
+        public List<DashboardTestInfo> TodaysTests { get; set; }
+        public List<DashboardTestInfo> UpcomingTests { get; set; }
+        public List<SubjectPerformance> SubjectPerformances { get; set; }
+        
+        public StudentDashboardViewModel()
+        {
+            TodaysTests = new List<DashboardTestInfo>();
+            UpcomingTests = new List<DashboardTestInfo>();
+            SubjectPerformances = new List<SubjectPerformance>();
+        }
+    }
+    
+    public class DashboardTestInfo
+    {
+        public int TestId { get; set; }
+        public string TestName { get; set; }
+        public string SubjectName { get; set; }
+        public DateTime TestDate { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
+        public int Duration { get; set; }
+        public int TotalMarks { get; set; }
+        public bool IsAttempted { get; set; }
+    }
+    
+    public class SubjectPerformance
+    {
+        public string SubjectName { get; set; }
+        public double AverageMarks { get; set; }
+        public int TestsAttempted { get; set; }
+    }
+
+    public class ExamInterfaceViewModel
+    {
+        // Test Information
+        public int TestId { get; set; }
+        public string TestName { get; set; }
+        public string SubjectName { get; set; }
+        public int TestDuration { get; set; } // in minutes
+        public int TotalMarks { get; set; }
+        public int NumberOfQuestions { get; set; }
+        public DateTime TestStartTime { get; set; }
+        public DateTime TestEndTime { get; set; }
+        
+        // Current Question
+        public int CurrentQuestionNumber { get; set; }
+        public TestQuestionViewModel CurrentQuestion { get; set; }
+        
+        // Question Navigation
+        public List<QuestionStatus> QuestionStatuses { get; set; }
+        public Dictionary<int, string> StudentAnswers { get; set; }
+        
+        // Timer Information
+        public int TimeRemaining { get; set; } // in seconds
+        public bool IsExamStarted { get; set; }
+        public bool IsExamCompleted { get; set; }
+        
+        // Instructions
+        public List<string> GeneralInstructions { get; set; }
+        public List<string> AnsweringInstructions { get; set; }
+        
+        public ExamInterfaceViewModel()
+        {
+            QuestionStatuses = new List<QuestionStatus>();
+            StudentAnswers = new Dictionary<int, string>();
+            GeneralInstructions = new List<string>();
+            AnsweringInstructions = new List<string>();
+        }
+    }
+    
+    public class QuestionStatus
+    {
+        public int QuestionNumber { get; set; }
+        public QuestionStatusType Status { get; set; }
+        public string StudentAnswer { get; set; }
+        public bool IsMarkedForReview { get; set; }
+    }
+    
+    public enum QuestionStatusType
+    {
+        NotVisited = 1,      // Grey/White - Not visited yet
+        VisitedNotAnswered = 2,  // Red - Visited but not answered
+        Answered = 3,        // Green - Answered and will be considered
+        MarkedForReview = 4, // Purple - Marked for review, not answered
+        AnsweredAndMarked = 5 // Green with purple dot - Answered and marked for review
+    }
+
 }

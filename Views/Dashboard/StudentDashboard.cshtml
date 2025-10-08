@@ -1,94 +1,1302 @@
-﻿@model OnlineExamination.Models.StudentDashboardCountData
+﻿@model OnlineExamination.Models.StudentDashboardViewModel
 
 @{
     ViewBag.Title = "Student Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Add custom styling for the dashboard -->
+<!-- Custom Dashboard Styles -->
 <style>
-    .dashboard-container {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin: 20px;
+    :root {
+        --primary-blue: #4A90E2;
+        --primary-green: #27AE60;
+        --primary-orange: #F39C12;
+        --accent-blue: #5DADE2;
+        --accent-green: #58D68D;
+        --accent-orange: #F8B739;
+        --light-blue: #EBF5FB;
+        --light-green: #E8F8F5;
+        --light-orange: #FEF5E7;
+        --text-dark: #2C3E50;
+        --text-light: #7F8C8D;
+        --white: #FFFFFF;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
     }
 
-    .dashboard-box {
-        width: 23%;
+    /* Dashboard Container */
+    .dashboard-wrapper {
+        padding: 24px;
+        background: #F8F9FA;
+        min-height: 100vh;
+    }
+
+    /* Profile Header Section */
+    .profile-header {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+        border-radius: 16px;
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        color: var(--white);
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 4px solid var(--white);
+        object-fit: cover;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background: var(--white);
+    }
+
+    .profile-info h2 {
+        margin: 0 0 8px 0;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .profile-info p {
+        margin: 0;
+        font-size: 16px;
+        opacity: 0.95;
+    }
+
+    /* Stats Cards Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--primary-blue);
+    }
+
+    .stat-card.green::before {
+        background: var(--primary-green);
+    }
+
+    .stat-card.orange::before {
+        background: var(--primary-orange);
+    }
+
+    .stat-card-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin-bottom: 16px;
+    }
+
+    .stat-card.blue .stat-card-icon {
+        background: var(--light-blue);
+        color: var(--primary-blue);
+    }
+
+    .stat-card.green .stat-card-icon {
+        background: var(--light-green);
+        color: var(--primary-green);
+    }
+
+    .stat-card.orange .stat-card-icon {
+        background: var(--light-orange);
+        color: var(--primary-orange);
+    }
+
+    .stat-card h3 {
+        font-size: 14px;
+        color: var(--text-light);
+        margin: 0 0 8px 0;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-card .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 0;
+    }
+
+    /* Section Cards */
+    .section-card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: var(--shadow);
+        margin-bottom: 24px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #F0F0F0;
+    }
+
+    .section-header i {
+        font-size: 24px;
+        color: var(--primary-blue);
+    }
+
+    .section-header h4 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    /* Exam Cards */
+    .exam-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .exam-card {
         padding: 20px;
         border-radius: 10px;
-        text-align: center;
+        border: 1px solid #E8E8E8;
         transition: all 0.3s ease;
-        color: white; /* White text for better contrast */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
-        .dashboard-box:hover {
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-            transform: scale(1.05); /* Slight zoom effect on hover */
-        }
-
-        .dashboard-box h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .dashboard-box p {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-    /* Styling for each individual box color */
-    .box-todays-tests {
-        background-color: #4CAF50; /* Green for Today's Tests */
+    .exam-card:hover {
+        border-color: var(--primary-blue);
+        background: var(--light-blue);
+        transform: translateX(4px);
     }
 
-    .box-attempted-tests {
-        background-color: #2196F3; /* Blue for Attempted Tests */
+    .exam-info {
+        flex: 1;
     }
 
-    .box-non-attempted-tests {
-        background-color: #FF9800; /* Orange for Non-Attempted Tests */
+    .exam-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0 0 8px 0;
     }
 
-    .box-upcoming-tests {
-        background-color: #FF5722; /* Red for Upcoming Tests */
+    .exam-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 14px;
+        color: var(--text-light);
     }
 
-    /* Header Styling */
-    .header-text {
+    .exam-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .exam-detail-item i {
+        font-size: 16px;
+    }
+
+    .exam-action {
+        padding: 10px 20px;
+        border-radius: 8px;
+        background: var(--primary-blue);
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+
+    .exam-action:hover {
+        background: var(--accent-blue);
+        transform: scale(1.05);
+        color: var(--white);
+    }
+
+    .exam-action.attempted {
+        background: var(--primary-green);
+    }
+
+    .exam-action.attempted:hover {
+        background: var(--accent-green);
+    }
+
+    /* Empty State */
+    .empty-state {
         text-align: center;
-        font-size: 2rem;
-        margin-bottom: 40px;
+        padding: 40px;
+        color: var(--text-light);
+    }
+
+    .empty-state i {
+        font-size: 64px;
+        opacity: 0.3;
+        margin-bottom: 16px;
+    }
+
+    .empty-state p {
+        font-size: 16px;
+        margin: 0;
+    }
+
+    /* Performance Chart */
+    .chart-container {
+        padding: 24px;
+        background: var(--white);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+    }
+
+    .performance-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 24px;
+    }
+
+    .performance-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .performance-label {
+        min-width: 120px;
+        font-weight: 500;
+        color: var(--text-dark);
+        font-size: 14px;
+    }
+
+    .performance-bar-container {
+        flex: 1;
+        height: 32px;
+        background: #F0F0F0;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .performance-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 12px;
+        color: var(--white);
+        font-weight: 600;
+        font-size: 13px;
+        transition: width 1s ease;
+    }
+
+    .performance-bar.green {
+        background: linear-gradient(90deg, var(--primary-green), var(--accent-green));
+    }
+
+    .performance-bar.orange {
+        background: linear-gradient(90deg, var(--primary-orange), var(--accent-orange));
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .exam-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .exam-action {
+            align-self: stretch;
+            text-align: center;
+        }
+
+        .performance-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .performance-label {
+            min-width: auto;
+        }
+
+        .performance-bar-container {
+            width: 100%;
+        }
+    }
+
+    /* Badge */
+    .badge-status {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .badge-today {
+        background: var(--light-orange);
+        color: var(--primary-orange);
+    }
+
+    .badge-upcoming {
+        background: var(--light-blue);
+        color: var(--primary-blue);
+    }
+
+    /* Modal Styles */
+    .exam-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 9999;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .exam-modal-overlay.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .exam-modal {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 0;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+    }
+
+    .exam-modal-header {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+        color: var(--white);
+        padding: 32px;
+        border-radius: 20px 20px 0 0;
+        position: relative;
+    }
+
+    .exam-modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: var(--white);
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .exam-modal-close:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(90deg);
+    }
+
+    .exam-modal-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 12px 0;
+    }
+
+    .exam-modal-subject {
+        font-size: 18px;
+        opacity: 0.95;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .exam-modal-body {
+        padding: 32px;
+    }
+
+    .exam-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+
+    .exam-info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .exam-info-label {
+        font-size: 13px;
+        color: var(--text-light);
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .exam-info-value {
+        font-size: 18px;
+        color: var(--text-dark);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .exam-info-value i {
+        color: var(--primary-blue);
+    }
+
+    /* Countdown Timer */
+    .countdown-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        padding: 32px;
+        text-align: center;
+        margin-bottom: 32px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .countdown-container::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: pulse 3s ease-in-out infinite;
+    }
+
+    .countdown-label {
+        color: var(--white);
+        font-size: 16px;
+        margin: 0 0 16px 0;
+        opacity: 0.95;
+        position: relative;
+        z-index: 1;
+    }
+
+    .countdown-timer {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .countdown-unit {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 16px;
+        min-width: 80px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .countdown-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--white);
+        display: block;
+        line-height: 1;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .countdown-text {
+        font-size: 12px;
+        color: var(--white);
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Exam States */
+    .exam-state {
+        padding: 24px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .exam-state.not-started {
+        background: var(--light-orange);
+        border: 2px solid var(--primary-orange);
+    }
+
+    .exam-state.active {
+        background: var(--light-green);
+        border: 2px solid var(--primary-green);
+    }
+
+    .exam-state.ended {
+        background: #FADBD8;
+        border: 2px solid #E74C3C;
+    }
+
+    .exam-state.absent {
+        background: #FDF4E3;
+        border: 2px solid #E67E22;
+    }
+
+    .exam-state-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+    }
+
+    .exam-state.not-started .exam-state-icon {
+        color: var(--primary-orange);
+    }
+
+    .exam-state.active .exam-state-icon {
+        color: var(--primary-green);
+        animation: pulse 2s infinite;
+    }
+
+    .exam-state.ended .exam-state-icon {
+        color: #E74C3C;
+    }
+
+    .exam-state.absent .exam-state-icon {
+        color: #E67E22;
+    }
+
+    .exam-state-message {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .exam-state.not-started .exam-state-message {
+        color: var(--primary-orange);
+    }
+
+    .exam-state.active .exam-state-message {
+        color: var(--primary-green);
+    }
+
+    .exam-state.ended .exam-state-message {
+        color: #E74C3C;
+    }
+
+    .exam-state.absent .exam-state-message {
+        color: #E67E22;
+    }
+
+    .exam-state-submessage {
+        font-size: 14px;
+        color: var(--text-light);
+        margin: 8px 0 0 0;
+    }
+
+    /* Exam Action Button */
+    .exam-modal-action {
+        width: 100%;
+        padding: 18px 32px;
+        border-radius: 12px;
+        border: none;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        text-decoration: none;
+    }
+
+    .exam-modal-action.start-exam {
+        background: linear-gradient(135deg, var(--primary-green) 0%, var(--accent-green) 100%);
+        color: var(--white);
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+    }
+
+    .exam-modal-action.start-exam:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+    }
+
+    .exam-modal-action:disabled {
+        background: #BDC3C7;
+        color: #7F8C8D;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    .exam-modal-action.view-details {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+        color: var(--white);
+        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+    }
+
+    .exam-modal-action.view-details:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    /* Animations */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+    }
+
+    /* Cursor Pointer */
+    .exam-card {
+        cursor: pointer;
+    }
+
+    /* Responsive */
+    @@media (max-width: 576px) {
+        .exam-modal {
+            width: 95%;
+            max-height: 95vh;
+        }
+
+        .exam-info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .countdown-unit {
+            min-width: 70px;
+            padding: 12px;
+        }
+
+        .countdown-value {
+            font-size: 28px;
+        }
+
+        .exam-modal-title {
+            font-size: 22px;
+        }
     }
 </style>
 
-<h2 class="header-text">Student Dashboard</h2>
-
-<!--<div class="dashboard-container">-->
-    <!-- Today's Tests Box -->
-    <!--<div class="dashboard-box box-todays-tests">
-        <h3>Today's Tests</h3>
-        <p>@Model.TodaysTestsCount</p>
-    </div>-->
-
-    <!-- Attempted Tests Box -->
-    <!--<div class="dashboard-box box-attempted-tests">
-        <h3>Attempted Tests</h3>
-        <p>@Model.AttemptedTestsCount</p>
-    </div>-->
-
-    <!-- Non-Attempted Tests Box -->
-    <!--<div class="dashboard-box box-non-attempted-tests">
-        <h3>Non-Attempted Tests</h3>
-        <p>@Model.NonAttemptedTestsCount</p>
-    </div>-->
-
-    <!-- Upcoming Tests Box -->
-    <!--<div class="dashboard-box box-upcoming-tests">
-        <h3>Upcoming Tests</h3>
-        <p>@Model.UpcomingTestsCount</p>
+<div class="dashboard-wrapper">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        @if (!string.IsNullOrEmpty(Model.StudentPhoto))
+        {
+            <img src="@Url.Content("~/Content/Studentphotos/" + Model.StudentId + Model.StudentPhoto)" 
+                 alt="@Model.StudentName" 
+                 class="profile-avatar" 
+                 onerror="this.src='@Url.Content("~/Content/assets/images/thumbs/user-default.png")'">
+        }
+        else
+        {
+            <div class="profile-avatar" style="display: flex; align-items: center; justify-content: center; background: var(--white); color: var(--primary-blue); font-size: 40px; font-weight: 700;">
+                @(Model.StudentName?.Substring(0, 1).ToUpper())
+            </div>
+        }
+        <div class="profile-info">
+            <h2>Welcome, @Model.StudentName!</h2>
+            <p><i class="ph ph-student"></i> @Model.StudentClass</p>
+        </div>
     </div>
-</div>-->
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <!-- Total Exams Card -->
+        <div class="stat-card blue">
+            <div class="stat-card-icon">
+                <i class="ph ph-exam"></i>
+            </div>
+            <h3>Total Exams Given</h3>
+            <p class="stat-value">@Model.AttemptedTestsCount</p>
+            <p style="margin: 8px 0 0 0; color: var(--text-light); font-size: 14px;">
+                Total Marks: <strong>@Model.TotalMarksScored.ToString("F1")</strong>
+            </p>
+        </div>
+
+        <!-- Today's Exams Card -->
+        <div class="stat-card green">
+            <div class="stat-card-icon">
+                <i class="ph ph-calendar-check"></i>
+            </div>
+            <h3>Today's Exams</h3>
+            <p class="stat-value">@Model.TodaysTestsCount</p>
+            <p style="margin: 8px 0 0 0; color: var(--text-light); font-size: 14px;">
+                Scheduled for today
+            </p>
+        </div>
+
+        <!-- Upcoming Exams Card -->
+        <div class="stat-card orange">
+            <div class="stat-card-icon">
+                <i class="ph ph-calendar-plus"></i>
+            </div>
+            <h3>Upcoming Exams</h3>
+            <p class="stat-value">@Model.UpcomingTestsCount</p>
+            <p style="margin: 8px 0 0 0; color: var(--text-light); font-size: 14px;">
+                In the coming days
+            </p>
+        </div>
+
+        <!-- Average Score Card -->
+        <div class="stat-card blue">
+            <div class="stat-card-icon">
+                <i class="ph ph-chart-line-up"></i>
+            </div>
+            <h3>Average Score</h3>
+            <p class="stat-value">@Model.AverageMarks.ToString("F1")%</p>
+            <p style="margin: 8px 0 0 0; color: var(--text-light); font-size: 14px;">
+                Overall Performance
+            </p>
+        </div>
+    </div>
+
+    <!-- Today's Exams Section -->
+    <div class="section-card">
+        <div class="section-header">
+            <i class="ph ph-calendar-check"></i>
+            <h4>Today's Exams</h4>
+            <span class="badge-status badge-today">@Model.TodaysTestsCount Exam(s)</span>
+        </div>
+
+        @if (Model.TodaysTests != null && Model.TodaysTests.Count > 0)
+        {
+            <div class="exam-list">
+                @foreach (var exam in Model.TodaysTests)
+                {
+                    <div class="exam-card" onclick="openExamModal(@exam.TestId, '@exam.TestName', '@exam.SubjectName', '@exam.TestDate.ToString("MMM dd, yyyy")', '@exam.StartTime.ToString(@"hh\:mm")', '@exam.EndTime.ToString(@"hh\:mm")', @exam.Duration, '@exam.TestDate.ToString("yyyy-MM-dd")', '@exam.StartTime.ToString(@"HH\:mm")', @exam.IsAttempted.ToString().ToLower(), '@Url.Action("TakeExam", "Student", new { testId = exam.TestId })')">
+                        <div class="exam-info">
+                            <h5 class="exam-name">@exam.TestName</h5>
+                            <div class="exam-details">
+                                <span class="exam-detail-item">
+                                    <i class="ph ph-book-open"></i>
+                                    @exam.SubjectName
+                                </span>
+                                <span class="exam-detail-item">
+                                    <i class="ph ph-clock"></i>
+                                    @exam.StartTime.ToString(@"hh\:mm") - @exam.EndTime.ToString(@"hh\:mm")
+                                </span>
+                                <span class="exam-detail-item">
+                                    <i class="ph ph-timer"></i>
+                                    @exam.Duration mins
+                                </span>
+                            </div>
+                        </div>
+                        <div class="exam-action" onclick="event.stopPropagation(); openExamModal(@exam.TestId, '@exam.TestName', '@exam.SubjectName', '@exam.TestDate.ToString("MMM dd, yyyy")', '@exam.StartTime.ToString(@"hh\:mm")', '@exam.EndTime.ToString(@"hh\:mm")', @exam.Duration, '@exam.TestDate.ToString("yyyy-MM-dd")', '@exam.StartTime.ToString(@"HH\:mm")', @exam.IsAttempted.ToString().ToLower(), '@Url.Action("TakeExam", "Student", new { testId = exam.TestId })')">
+                            <i class="ph ph-eye"></i> View Details
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="ph ph-calendar-x"></i>
+                <p>No exams scheduled for today</p>
+            </div>
+        }
+    </div>
+
+    <!-- Upcoming Exams Section -->
+    <div class="section-card">
+        <div class="section-header">
+            <i class="ph ph-calendar-plus"></i>
+            <h4>Upcoming Exams</h4>
+            <span class="badge-status badge-upcoming">@Model.UpcomingTestsCount Exam(s)</span>
+        </div>
+
+        @if (Model.UpcomingTests != null && Model.UpcomingTests.Count > 0)
+        {
+            <div class="exam-list">
+                @foreach (var exam in Model.UpcomingTests)
+                {
+                    <div class="exam-card" onclick="openExamModal(@exam.TestId, '@exam.TestName', '@exam.SubjectName', '@exam.TestDate.ToString("MMM dd, yyyy")', '@exam.StartTime.ToString(@"hh\:mm")', '@exam.EndTime.ToString(@"hh\:mm")', @exam.Duration, '@exam.TestDate.ToString("yyyy-MM-dd")', '@exam.StartTime.ToString(@"HH\:mm")', @exam.IsAttempted.ToString().ToLower(), '@Url.Action("TakeExam", "Student", new { testId = exam.TestId })')">
+                        <div class="exam-info">
+                            <h5 class="exam-name">@exam.TestName</h5>
+                            <div class="exam-details">
+                                <span class="exam-detail-item">
+                                    <i class="ph ph-book-open"></i>
+                                    @exam.SubjectName
+                                </span>
+                                <span class="exam-detail-item">
+                                    <i class="ph ph-calendar"></i>
+                                    @exam.TestDate.ToString("MMM dd, yyyy")
+                                </span>
+                                <span class="exam-detail-item">
+                                    <i class="ph ph-clock"></i>
+                                    @exam.StartTime.ToString(@"hh\:mm") - @exam.EndTime.ToString(@"hh\:mm")
+                                </span>
+                                <span class="exam-detail-item">
+                                    <i class="ph ph-timer"></i>
+                                    @exam.Duration mins
+                                </span>
+                            </div>
+                        </div>
+                        <div class="exam-action" onclick="event.stopPropagation(); openExamModal(@exam.TestId, '@exam.TestName', '@exam.SubjectName', '@exam.TestDate.ToString("MMM dd, yyyy")', '@exam.StartTime.ToString(@"hh\:mm")', '@exam.EndTime.ToString(@"hh\:mm")', @exam.Duration, '@exam.TestDate.ToString("yyyy-MM-dd")', '@exam.StartTime.ToString(@"HH\:mm")', @exam.IsAttempted.ToString().ToLower(), '@Url.Action("TakeExam", "Student", new { testId = exam.TestId })')">
+                            <i class="ph ph-eye"></i> View Details
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="ph ph-calendar-x"></i>
+                <p>No upcoming exams scheduled</p>
+            </div>
+        }
+    </div>
+
+    <!-- Performance Trend Section -->
+    @if (Model.AttemptedTestsCount > 0)
+    {
+        <div class="section-card">
+            <div class="section-header">
+                <i class="ph ph-chart-bar"></i>
+                <h4>Performance Overview</h4>
+            </div>
+
+            <div class="performance-bars">
+                <div class="performance-item">
+                    <span class="performance-label">Average Score</span>
+                    <div class="performance-bar-container">
+                        <div class="performance-bar" style="width: @(Model.AverageMarks)%">
+                            @Model.AverageMarks.ToString("F1")%
+                        </div>
+                    </div>
+                </div>
+
+                <div class="performance-item">
+                    <span class="performance-label">Completion Rate</span>
+                    <div class="performance-bar-container">
+                        @{
+                            var completionRate = Model.AttemptedTestsCount > 0 
+                                ? (Model.AttemptedTestsCount * 100.0 / (Model.AttemptedTestsCount + Model.NonAttemptedTestsCount))
+                                : 0;
+                        }
+                        <div class="performance-bar green" style="width: @(completionRate)%">
+                            @completionRate.ToString("F1")%
+                        </div>
+                    </div>
+                </div>
+
+                <div class="performance-item">
+                    <span class="performance-label">Tests Completed</span>
+                    <div class="performance-bar-container">
+                        @{
+                            var testProgress = Model.AttemptedTestsCount > 0 
+                                ? Math.Min((Model.AttemptedTestsCount * 10), 100)
+                                : 0;
+                        }
+                        <div class="performance-bar orange" style="width: @(testProgress)%">
+                            @Model.AttemptedTestsCount Tests
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Exam Modal -->
+<div id="examModalOverlay" class="exam-modal-overlay">
+    <div class="exam-modal">
+        <!-- Modal Header -->
+        <div class="exam-modal-header">
+            <button class="exam-modal-close" onclick="closeExamModal()">
+                <i class="ph ph-x"></i>
+            </button>
+            <h3 class="exam-modal-title" id="modalExamName">Exam Name</h3>
+            <p class="exam-modal-subject">
+                <i class="ph ph-book-open"></i>
+                <span id="modalSubjectName">Subject Name</span>
+            </p>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="exam-modal-body">
+            <!-- Exam Information Grid -->
+            <div class="exam-info-grid">
+                <div class="exam-info-item">
+                    <span class="exam-info-label">Date</span>
+                    <span class="exam-info-value">
+                        <i class="ph ph-calendar"></i>
+                        <span id="modalExamDate">--</span>
+                    </span>
+                </div>
+                <div class="exam-info-item">
+                    <span class="exam-info-label">Start Time</span>
+                    <span class="exam-info-value">
+                        <i class="ph ph-clock"></i>
+                        <span id="modalStartTime">--</span>
+                    </span>
+                </div>
+                <div class="exam-info-item">
+                    <span class="exam-info-label">End Time</span>
+                    <span class="exam-info-value">
+                        <i class="ph ph-clock-countdown"></i>
+                        <span id="modalEndTime">--</span>
+                    </span>
+                </div>
+                <div class="exam-info-item">
+                    <span class="exam-info-label">Duration</span>
+                    <span class="exam-info-value">
+                        <i class="ph ph-timer"></i>
+                        <span id="modalDuration">--</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Countdown Timer -->
+            <div id="countdownSection" class="countdown-container">
+                <p class="countdown-label">Time Until Exam Starts</p>
+                <div class="countdown-timer">
+                    <div class="countdown-unit">
+                        <span class="countdown-value" id="countdownDays">00</span>
+                        <span class="countdown-text">Days</span>
+                    </div>
+                    <div class="countdown-unit">
+                        <span class="countdown-value" id="countdownHours">00</span>
+                        <span class="countdown-text">Hours</span>
+                    </div>
+                    <div class="countdown-unit">
+                        <span class="countdown-value" id="countdownMinutes">00</span>
+                        <span class="countdown-text">Minutes</span>
+                    </div>
+                    <div class="countdown-unit">
+                        <span class="countdown-value" id="countdownSeconds">00</span>
+                        <span class="countdown-text">Seconds</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exam State -->
+            <div id="examStateSection"></div>
+
+            <!-- Action Button -->
+            <div id="examActionSection"></div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        // Animate progress bars on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const bars = document.querySelectorAll('.performance-bar');
+            bars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            });
+        });
+
+        // Exam Modal Variables
+        let countdownInterval = null;
+        let currentExamData = {};
+
+        // Open Exam Modal
+        function openExamModal(testId, testName, subjectName, dateFormatted, startTimeFormatted, endTimeFormatted, duration, dateRaw, startTimeRaw, isAttempted, examUrl) {
+            currentExamData = {
+                testId: testId,
+                testName: testName,
+                subjectName: subjectName,
+                dateFormatted: dateFormatted,
+                startTimeFormatted: startTimeFormatted,
+                endTimeFormatted: endTimeFormatted,
+                duration: duration,
+                dateRaw: dateRaw,
+                startTimeRaw: startTimeRaw,
+                isAttempted: isAttempted,
+                examUrl: examUrl
+            };
+
+            // Populate modal data
+            document.getElementById('modalExamName').textContent = testName;
+            document.getElementById('modalSubjectName').textContent = subjectName;
+            document.getElementById('modalExamDate').textContent = dateFormatted;
+            document.getElementById('modalStartTime').textContent = startTimeFormatted;
+            document.getElementById('modalEndTime').textContent = endTimeFormatted;
+            document.getElementById('modalDuration').textContent = duration + ' minutes';
+
+            // Show modal
+            document.getElementById('examModalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Start countdown
+            startCountdown();
+        }
+
+        // Close Exam Modal
+        function closeExamModal() {
+            document.getElementById('examModalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // Clear countdown
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+        }
+
+        // Close modal on overlay click
+        document.getElementById('examModalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeExamModal();
+            }
+        });
+
+        // Start Countdown Timer
+        function startCountdown() {
+            // Clear any existing interval
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            // Parse exam datetime
+            const examDateTime = new Date(currentExamData.dateRaw + 'T' + currentExamData.startTimeRaw + ':00');
+            const examEndDateTime = new Date(examDateTime.getTime() + (currentExamData.duration * 60 * 1000));
+
+            // Update countdown every second
+            countdownInterval = setInterval(function() {
+                const now = new Date();
+                const timeDiff = examDateTime - now;
+                const timeAfterEnd = now - examEndDateTime;
+
+                // Check exam state
+                if (timeAfterEnd > 0) {
+                    // Exam has ended
+                    updateExamState('ended');
+                    clearInterval(countdownInterval);
+                } else if (timeDiff <= 0) {
+                    // Exam is active (started but not ended)
+                    updateExamState('active');
+                } else {
+                    // Exam not started yet
+                    updateExamState('not-started');
+                    updateCountdownDisplay(timeDiff);
+                }
+            }, 1000);
+
+            // Initial call
+            setTimeout(() => {
+                const now = new Date();
+                const timeDiff = examDateTime - now;
+                const timeAfterEnd = now - examEndDateTime;
+
+                if (timeAfterEnd > 0) {
+                    updateExamState('ended');
+                } else if (timeDiff <= 0) {
+                    updateExamState('active');
+                } else {
+                    updateExamState('not-started');
+                    updateCountdownDisplay(timeDiff);
+                }
+            }, 0);
+        }
+
+        // Update Countdown Display
+        function updateCountdownDisplay(timeDiff) {
+            const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+            document.getElementById('countdownDays').textContent = String(days).padStart(2, '0');
+            document.getElementById('countdownHours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('countdownMinutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('countdownSeconds').textContent = String(seconds).padStart(2, '0');
+
+            // Show countdown section
+            document.getElementById('countdownSection').style.display = 'block';
+        }
+
+        // Update Exam State
+        function updateExamState(state) {
+            const stateSection = document.getElementById('examStateSection');
+            const actionSection = document.getElementById('examActionSection');
+            const countdownSection = document.getElementById('countdownSection');
+
+            if (state === 'not-started') {
+                // Show countdown, state message, and disabled button
+                countdownSection.style.display = 'block';
+                
+                stateSection.innerHTML = `
+                    <div class="exam-state not-started">
+                        <div class="exam-state-icon">
+                            <i class="ph ph-clock-countdown"></i>
+                        </div>
+                        <p class="exam-state-message">Exam Not Started Yet</p>
+                    </div>
+                `;
+
+                actionSection.innerHTML = `
+                    <button class="exam-modal-action" disabled>
+                        <i class="ph ph-lock"></i>
+                        Exam Not Available
+                    </button>
+                `;
+            } else if (state === 'active') {
+                // Hide countdown, show active state, enable start button
+                countdownSection.style.display = 'none';
+                
+                stateSection.innerHTML = `
+                    <div class="exam-state active">
+                        <div class="exam-state-icon">
+                            <i class="ph ph-check-circle"></i>
+                        </div>
+                        <p class="exam-state-message">Exam is Now Active!</p>
+                    </div>
+                `;
+
+                if (currentExamData.isAttempted === 'true') {
+                    actionSection.innerHTML = `
+                        <a href="${currentExamData.examUrl}" class="exam-modal-action view-details">
+                            <i class="ph ph-eye"></i>
+                            View Results
+                        </a>
+                    `;
+                } else {
+                    actionSection.innerHTML = `
+                        <a href="${currentExamData.examUrl}" class="exam-modal-action start-exam">
+                            <i class="ph ph-play-circle"></i>
+                            Start Exam Now
+                        </a>
+                    `;
+                }
+            } else if (state === 'ended') {
+                // Hide countdown, show ended state or absent state
+                countdownSection.style.display = 'none';
+
+                if (currentExamData.isAttempted === 'true') {
+                    // Student attempted the exam - show regular ended state
+                    stateSection.innerHTML = `
+                        <div class="exam-state ended">
+                            <div class="exam-state-icon">
+                                <i class="ph ph-check-circle"></i>
+                            </div>
+                            <p class="exam-state-message">Exam Completed</p>
+                        </div>
+                    `;
+
+                    actionSection.innerHTML = `
+                        <a href="${currentExamData.examUrl}" class="exam-modal-action view-details">
+                            <i class="ph ph-eye"></i>
+                            View Results
+                        </a>
+                    `;
+                } else {
+                    // Student didn't attempt - show ABSENT status with TIME OUT
+                    stateSection.innerHTML = `
+                        <div class="exam-state absent">
+                            <div class="exam-state-icon">
+                                <i class="ph ph-user-minus"></i>
+                            </div>
+                            <p class="exam-state-message">⏱️ Time Out - Absent</p>
+                            <p class="exam-state-submessage">You did not attempt this exam</p>
+                        </div>
+                    `;
+
+                    actionSection.innerHTML = `
+                        <button class="exam-modal-action" disabled>
+                            <i class="ph ph-prohibit"></i>
+                            Marked as Absent
+                        </button>
+                    `;
+                }
+            }
+        }
+
+        // Keyboard shortcut to close modal (Escape key)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('examModalOverlay').classList.contains('active')) {
+                closeExamModal();
+            }
+        });
+    </script>
+}

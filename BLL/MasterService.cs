@@ -11,126 +11,173 @@ namespace OnlineExamination.BLL
     {
         public static List<SelectListItem> GetClass()
         {
-            ClassService classService = new ClassService();
-            List<ClassViewModel> objClass = classService.GetClass();
-            if (objClass.Count > 0)
+            try
             {
-                return objClass.Select(s => new SelectListItem
+                ClassService classService = new ClassService();
+                List<ClassViewModel> objClass = classService.GetClass();
+                if (objClass != null && objClass.Count > 0)
                 {
-                    Value = s.ID.ToString(),  // Use appropriate property for Value
-                    Text = s.Name             // Use appropriate property for Text
-                }).ToList();
-
+                    return objClass.Select(s => new SelectListItem
+                    {
+                        Value = s.ID.ToString(),  // Use appropriate property for Value
+                        Text = s.Name             // Use appropriate property for Text
+                    }).ToList();
+                }
+                else
+                {
+                    return new List<SelectListItem>();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return null;
+                // Log the exception if you have logging configured
+                return new List<SelectListItem>();
             }
         }
         public static List<SelectListItem> GetGroups()
         {
-            GroupService groupService = new GroupService();
-            List<GroupViewModel> objgroup = groupService.GetGroups();
-            if (objgroup.Count > 0)
+            try
             {
-                return objgroup.Select(s => new SelectListItem
+                GroupService groupService = new GroupService();
+                List<GroupViewModel> objgroup = groupService.GetGroups();
+                if (objgroup != null && objgroup.Count > 0)
                 {
-                    Value = s.Grp_Id.ToString(),  // Use appropriate property for Value
-                    Text = s.Grp_Name             // Use appropriate property for Text
-                }).ToList();
-
+                    return objgroup.Select(s => new SelectListItem
+                    {
+                        Value = s.Grp_Id.ToString(),  // Use appropriate property for Value
+                        Text = s.Grp_Name             // Use appropriate property for Text
+                    }).ToList();
+                }
+                else
+                {
+                    return new List<SelectListItem>();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return null;
+                return new List<SelectListItem>();
             }
         }
 
         public static List<SelectListItem> GetTest()
         {
-            TestService testService = new TestService();
-            List<TestMasterModel > objgroup = testService.GetTests();
-            if (objgroup.Count > 0)
+            try
             {
-                return objgroup.Select(s => new SelectListItem
+                TestService testService = new TestService();
+                List<TestMasterModel> objgroup = testService.GetTests();
+                if (objgroup != null && objgroup.Count > 0)
                 {
-                    Value = s.Test_Id.ToString(),  // Use appropriate property for Value
-                    Text = s.Test_Name             // Use appropriate property for Text
-                }).ToList();
-
+                    return objgroup.Select(s => new SelectListItem
+                    {
+                        Value = s.Test_Id.ToString(),  // Use appropriate property for Value
+                        Text = s.Test_Name             // Use appropriate property for Text
+                    }).ToList();
+                }
+                else
+                {
+                    return new List<SelectListItem>();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return null;
+                return new List<SelectListItem>();
             }
         }
 
         public static List<SelectListItem> GetSubjects()
         {
-            SubjectService subjectService = new SubjectService();
-            List<SubjectsViewModel> objSubjects = subjectService.GetSubjects();
-            if (objSubjects.Count > 0)
+            try
             {
-                return objSubjects.Select(s => new SelectListItem
+                SubjectService subjectService = new SubjectService();
+                List<SubjectsViewModel> objSubjects = subjectService.GetSubjects();
+                if (objSubjects != null && objSubjects.Count > 0)
                 {
-                    Value = s.Sub_Id.ToString(),  // Use appropriate property for Value
-                    Text = s.Sub_Name             // Use appropriate property for Text
-                }).ToList();
+                    return objSubjects.Select(s => new SelectListItem
+                    {
+                        Value = s.Sub_Id.ToString(),  // Use appropriate property for Value
+                        Text = s.Sub_Name             // Use appropriate property for Text
+                    }).ToList();
+                }
+                else
+                {
+                    return new List<SelectListItem>();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return null;
+                return new List<SelectListItem>();
             }
         }
         public static List<SelectListItem> GetTestType()
         {
-            TestService testService = new TestService();
-            List<TestType> objtest = testService.GetTestType();
-            if (objtest.Count > 0)
+            try
             {
-                return objtest.Select(s => new SelectListItem
+                TestService testService = new TestService();
+                List<TestType> objtest = testService.GetTestType();
+                if (objtest != null && objtest.Count > 0)
                 {
-                    Value = s.TT_Id.ToString(),  // Use appropriate property for Value
-                    Text = s.TT_Name             // Use appropriate property for Text
-                }).ToList();
+                    return objtest.Select(s => new SelectListItem
+                    {
+                        Value = s.TT_Id.ToString(),  // Use appropriate property for Value
+                        Text = s.TT_Name             // Use appropriate property for Text
+                    }).ToList();
+                }
+                else
+                {
+                    return new List<SelectListItem>();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return null;
+                return new List<SelectListItem>();
             }
         }
         public static List<SelectListItem> GetPublications()
         {
-            PublicationService publicationService = new PublicationService();
-            List<PublicationViewModel> objSubjects = publicationService.GetPublications();
-            if (objSubjects.Count > 0)
+            try
             {
-                return objSubjects.Select(s => new SelectListItem
+                PublicationService publicationService = new PublicationService();
+                List<PublicationViewModel> objSubjects = publicationService.GetPublications();
+                if (objSubjects != null && objSubjects.Count > 0)
                 {
-                    Value = s.Pub_Id.ToString(),  // Use appropriate property for Value
-                    Text = s.Pub_Name             // Use appropriate property for Text
-                }).ToList();
+                    return objSubjects.Select(s => new SelectListItem
+                    {
+                        Value = s.Pub_Id.ToString(),  // Use appropriate property for Value
+                        Text = s.Pub_Name             // Use appropriate property for Text
+                    }).ToList();
+                }
+                else
+                {
+                    return new List<SelectListItem>();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return null;
+                return new List<SelectListItem>();
             }
         }
         public static List<SelectListItem> GetTopics()
         {
-            TopicService topicService = new TopicService();
-            List<TopicShowViewModel> objTopics = topicService.GetTopics();
-            if (objTopics.Count > 0)
+            try
             {
-                return objTopics.Select(s => new SelectListItem
+                TopicService topicService = new TopicService();
+                List<TopicShowViewModel> objTopics = topicService.GetTopics();
+                if (objTopics != null && objTopics.Count > 0)
                 {
-                    Value = s.Top_Id.ToString(),  // Use appropriate property for Value
-                    Text = s.Top_Name             // Use appropriate property for Text
-                }).ToList();
+                    return objTopics.Select(s => new SelectListItem
+                    {
+                        Value = s.Top_Id.ToString(),  // Use appropriate property for Value
+                        Text = s.Top_Name             // Use appropriate property for Text
+                    }).ToList();
+                }
+                else
+                {
+                    return new List<SelectListItem>();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return null;
+                return new List<SelectListItem>();
             }
         }
 

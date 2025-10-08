@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DateTime Combination Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">DateTime Combination Test</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="StartTime" class="form-label">Start Time</label>
+                            <input type="datetime-local" id="StartTime" name="Test_StartTime" class="form-control" />
+                            <small class="form-text text-muted">Select date and time for the test start</small>
+                            <div id="timePreservationMessage" class="alert alert-info mt-2" style="display: none;">
+                                <i class="fas fa-info-circle"></i> Time preserved from previous selection
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="EndTime" class="form-label">End Time (Auto-calculated)</label>
+                            <input type="text" id="EndTime" name="Test_EndTime" class="form-control" readonly />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Duration" class="form-label">Duration (minutes)</label>
+                            <input type="number" id="Duration" name="Test_Duration" class="form-control" min="1" placeholder="Enter duration in minutes" />
+                        </div>
+                        
+                        <div class="alert alert-light">
+                            <h6>Test Instructions:</h6>
+                            <ol>
+                                <li>Set a start time (e.g., 2024-11-20 14:30)</li>
+                                <li>Change only the date (e.g., to 2024-11-21)</li>
+                                <li>Notice the time is preserved automatically</li>
+                                <li>Try changing the time explicitly to see different behavior</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store the original time components and last known value
+        let originalTimeComponents = {
+            hours: 1,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0
+        };
+        let lastKnownValue = '';
+
+        // Listen for changes on Start Time and Duration
+        document.getElementById('StartTime').addEventListener('change', function () {
+            handleDateTimeChange();
+            updateEndTime();
+        });
+
+        document.getElementById('Duration').addEventListener('input', function () {
+            updateEndTime();
+        });
+
+        // Function to handle date-time combination logic
+        function handleDateTimeChange() {
+            const startTimeInput = document.getElementById('StartTime');
+            const currentValue = startTimeInput.value;
+            
+            if (currentValue && lastKnownValue) {
+                // Parse both values
+                const currentDateTime = new Date(currentValue);
+                const lastDateTime = new Date(lastKnownValue);
+                
+                // Check if only the date changed (same time components)
+                if (isOnlyDateChanged(currentDateTime, lastDateTime)) {
+                    // User changed only the date, preserve the original time
+                    const combinedDateTime = combineDateWithOriginalTime(currentDateTime, originalTimeComponents);
+                    
+                    // Update the input with the combined datetime
+                    const formattedDateTime = formatDateTimeForInput(combinedDateTime);
+                    startTimeInput.value = formattedDateTime;
+                    
+                    // Update the last known value
+                    lastKnownValue = formattedDateTime;
+                    
+                    // Show preservation message
+                    showTimePreservationMessage();
+                    
+                    // Update end time after combining
+                    updateEndTime();
+                    return;
+                }
+            }
+            
+            if (currentValue) {
+                // Extract and store current time components
+                const currentDateTime = new Date(currentValue);
+                originalTimeComponents = {
+                    hours: currentDateTime.getHours(),
+                    minutes: currentDateTime.getMinutes(),
+                    seconds: currentDateTime.getSeconds(),
+                    milliseconds: currentDateTime.getMilliseconds()
+                };
+                
+                // Update last known value
+                lastKnownValue = currentValue;
+                
+                // Hide any existing preservation message since time was explicitly changed
+                hideTimePreservationMessage();
+            }
+        }
+
+        // Function to check if only the date changed (time remains the same)
+        function isOnlyDateChanged(currentDateTime, lastDateTime) {
+            return (currentDateTime.getHours() === lastDateTime.getHours() &&
+                    currentDateTime.getMinutes() === lastDateTime.getMinutes() &&
+                    currentDateTime.getSeconds() === lastDateTime.getSeconds() &&
+                    currentDateTime.getMilliseconds() === lastDateTime.getMilliseconds() &&
+                    (currentDateTime.getDate() !== lastDateTime.getDate() ||
+                     currentDateTime.getMonth() !== lastDateTime.getMonth() ||
+                     currentDateTime.getFullYear() !== lastDateTime.getFullYear()));
+        }
+
+        // Function to combine new date with original time
+        function combineDateWithOriginalTime(newDate, originalTime) {
+            const combinedDate = new Date(newDate);
+            
+            // Set the time components from the original time
+            combinedDate.setHours(originalTime.hours);
+            combinedDate.setMinutes(originalTime.minutes);
+            combinedDate.setSeconds(originalTime.seconds);
+            combinedDate.setMilliseconds(originalTime.milliseconds);
+            
+            return combinedDate;
+        }
+
+        // Function to format datetime for input field
+        function formatDateTimeForInput(dateTime) {
+            const year = dateTime.getFullYear();
+            const month = String(dateTime.getMonth() + 1).padStart(2, '0');
+            const day = String(dateTime.getDate()).padStart(2, '0');
+            const hours = String(dateTime.getHours()).padStart(2, '0');
+            const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+            
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        // Function to show time preservation message
+        function showTimePreservationMessage() {
+            const messageElement = document.getElementById('timePreservationMessage');
+            if (messageElement) {
+                messageElement.style.display = 'block';
+                
+                // Hide the message after 3 seconds
+                setTimeout(() => {
+                    messageElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Function to hide time preservation message
+        function hideTimePreservationMessage() {
+            const messageElement = document.getElementById('timePreservationMessage');
+            if (messageElement) {
+                messageElement.style.display = 'none';
+            }
+        }
+
+        function addMinutesToTime(timeStr, minutes) {
+            const date = new Date(timeStr);
+            date.setMinutes(date.getMinutes() + minutes);
+            
+            let year = date.getFullYear();
+            let month = (date.getMonth() + 1).toString().padStart(2, '0');
+            let day = date.getDate().toString().padStart(2, '0');
+            let hours = date.getHours().toString().padStart(2, '0');
+            let minutesFormatted = date.getMinutes().toString().padStart(2, '0');
+
+            return `${day}-${month}-${year} ${hours}:${minutesFormatted}`;
+        }
+
+        // Function to update the End Time field
+        function updateEndTime() {
+            const startTime = document.getElementById('StartTime').value;
+            const duration = parseInt(document.getElementById('Duration').value);
+
+            if (startTime && !isNaN(duration) && duration > 0) {
+                const endTime = addMinutesToTime(startTime, duration);
+                document.getElementById('EndTime').value = endTime;
+            }
+        }
+
+        // Initialize with current time if no value is set
+        document.addEventListener('DOMContentLoaded', function() {
+            const startTimeInput = document.getElementById('StartTime');
+            
+            // If no value is set, initialize with current datetime
+            if (!startTimeInput.value) {
+                const now = new Date();
+                const formattedNow = formatDateTimeForInput(now);
+                startTimeInput.value = formattedNow;
+                
+                // Store the initial time components and last known value
+                originalTimeComponents = {
+                    hours: now.getHours(),
+                    minutes: now.getMinutes(),
+                    seconds: now.getSeconds(),
+                    milliseconds: now.getMilliseconds()
+                };
+                lastKnownValue = formattedNow;
+            } else {
+                // If there's already a value, extract time components
+                const existingDateTime = new Date(startTimeInput.value);
+                originalTimeComponents = {
+                    hours: existingDateTime.getHours(),
+                    minutes: existingDateTime.getMinutes(),
+                    seconds: existingDateTime.getSeconds(),
+                    milliseconds: existingDateTime.getMilliseconds()
+                };
+                lastKnownValue = startTimeInput.value;
+            }
+        });
+    </script>
+</body>
+</html>
+
+

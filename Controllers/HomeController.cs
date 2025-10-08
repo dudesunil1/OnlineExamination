@@ -37,8 +37,8 @@ namespace OnlineExamination.Controllers
                 ViewBag.UserRole = "STUDENT";
                 ViewBag.UserData = userData;
                 StudentService objStudentService = new StudentService();
-                StudentDashboardCountData objstudDash = objStudentService.StudentDashboard(studid).FirstOrDefault();
-                return View("~/Views/Dashboard/StudentDashboard.cshtml", objstudDash);
+                StudentDashboardViewModel dashboardData = objStudentService.GetStudentDashboardData(studid);
+                return View("~/Views/Dashboard/StudentDashboard.cshtml", dashboardData);
             }
             else if (userRole == "ADMIN")
             {

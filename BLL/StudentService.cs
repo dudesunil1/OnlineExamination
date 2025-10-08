@@ -224,5 +224,267 @@ namespace OnlineExamination.BLL
             }
         }
 
+        public StudentDashboardViewModel GetStudentDashboardData(int studentId)
+        {
+            try
+            {
+                StudentDashboardViewModel dashboard = new StudentDashboardViewModel();
+                
+                // Get student basic information
+                var studentInfo = GetStudentById(studentId)?.FirstOrDefault();
+                if (studentInfo != null)
+                {
+                    dashboard.StudentId = studentInfo.Stud_Id;
+                    dashboard.StudentName = studentInfo.Stud_Name;
+                    dashboard.StudentPhoto = studentInfo.Stud_Photo;
+                    dashboard.StudentClass = studentInfo.classname;
+                }
+                
+                // Get dashboard counts
+                var dashboardCounts = StudentDashboard(studentId)?.FirstOrDefault();
+                if (dashboardCounts != null)
+                {
+                    dashboard.TodaysTestsCount = dashboardCounts.TodaysTestsCount;
+                    dashboard.AttemptedTestsCount = dashboardCounts.AttemptedTestsCount;
+                    dashboard.NonAttemptedTestsCount = dashboardCounts.NonAttemptedTestsCount;
+                    dashboard.UpcomingTestsCount = dashboardCounts.UpcomingTestsCount;
+                }
+                
+                // Get today's tests and upcoming tests
+                StudentTestService testService = new StudentTestService();
+                var allTests = testService.GetstudetTest(studentId);
+                
+                if (allTests != null && allTests.Count > 0)
+                {
+                    DateTime today = DateTime.Today;
+                    
+                    // Filter today's tests
+                    dashboard.TodaysTests = allTests
+                        .Where(t => t.TS_Expected_Date.Date == today)
+                        .Select(t => new DashboardTestInfo
+                        {
+                            TestId = t.TS_TestId,
+                            TestName = t.Test_Name,
+                            SubjectName = "",
+                            TestDate = t.TS_Expected_Date,
+                            StartTime = t.TS_StartTime.TimeOfDay,
+                            EndTime = t.TS_End_Time.TimeOfDay,
+                            Duration = t.Test_Duration,
+                            IsAttempted = t.TS_IsAttempted
+                        }).ToList();
+                    
+                    // Filter upcoming tests (future dates, not today)
+                    dashboard.UpcomingTests = allTests
+                        .Where(t => t.TS_Expected_Date.Date > today)
+                        .OrderBy(t => t.TS_Expected_Date)
+                        .Take(5)
+                        .Select(t => new DashboardTestInfo
+                        {
+                            TestId = t.TS_TestId,
+                            TestName = t.Test_Name,
+                            SubjectName = "",
+                            TestDate = t.TS_Expected_Date,
+                            StartTime = t.TS_StartTime.TimeOfDay,
+                            EndTime = t.TS_End_Time.TimeOfDay,
+                            Duration = t.Test_Duration,
+                            IsAttempted = t.TS_IsAttempted
+                        }).ToList();
+                    
+                    // Calculate total marks and average
+                    var attemptedTests = allTests.Where(t => t.TS_IsAttempted).ToList();
+                    if (attemptedTests.Count > 0)
+                    {
+                        dashboard.TotalMarksScored = attemptedTests.Sum(t => t.TS_Mark);
+                        dashboard.AverageMarks = attemptedTests.Average(t => t.TS_Mark);
+                    }
+                }
+                
+                return dashboard;
+            }
+            catch (Exception Ex)
+            {
+                return new StudentDashboardViewModel();
+            }
+        }
+
+        public ExamInterfaceViewModel GetExamInterfaceData(int testId, int studentId, int currentQuestionNumber)
+        {
+            try
+            {
+                ExamInterfaceViewModel examData = new ExamInterfaceViewModel();
+                
+                // Get test details
+                var testDetails = GetTestDetails(testId, studentId);
+                if (testDetails == null)
+                {
+                    return null;
+                }
+
+                examData.TestId = testId;
+                examData.TestName = testDetails.Test_Name;
+                examData.TestDuration = testDetails.Test_Duration;
+                examData.TestStartTime = testDetails.TS_StartTime;
+                examData.TestEndTime = testDetails.TS_End_Time;
+                examData.CurrentQuestionNumber = currentQuestionNumber;
+                examData.IsExamStarted = true; // Assume started when accessing this method
+
+                // Get questions for the test
+                QuestionMasterService questionService = new QuestionMasterService();
+                var allQuestions = questionService.GetTestQuestions(testId);
+                
+                if (allQuestions == null || allQuestions.Count == 0)
+                {
+                    return null;
+                }
+
+                examData.NumberOfQuestions = allQuestions.Count;
+                
+                // Get current question
+                if (currentQuestionNumber > 0 && currentQuestionNumber <= allQuestions.Count)
+                {
+                    examData.CurrentQuestion = allQuestions[currentQuestionNumber - 1];
+                }
+
+                // Initialize question statuses
+                for (int i = 1; i <= examData.NumberOfQuestions; i++)
+                {
+                    examData.QuestionStatuses.Add(new QuestionStatus
+                    {
+                        QuestionNumber = i,
+                        Status = QuestionStatusType.NotVisited,
+                        StudentAnswer = "",
+                        IsMarkedForReview = false
+                    });
+                }
+
+                // Load saved answers and statuses
+                LoadStudentAnswers(examData, studentId, testId);
+
+                // Calculate time remaining
+                examData.TimeRemaining = CalculateTimeRemaining(testDetails.TS_StartTime, testDetails.Test_Duration);
+
+                // Set up instructions
+                SetupInstructions(examData);
+
+                return examData;
+            }
+            catch (Exception Ex)
+            {
+                return null;
+            }
+        }
+
+        private TestStudent GetTestDetails(int testId, int studentId)
+        {
+            try
+            {
+                StudentTestService testService = new StudentTestService();
+                var allTests = testService.GetstudetTest(studentId);
+                return allTests?.FirstOrDefault(t => t.TS_TestId == testId);
+            }
+            catch (Exception Ex)
+            {
+                return null;
+            }
+        }
+
+        private void LoadStudentAnswers(ExamInterfaceViewModel examData, int studentId, int testId)
+        {
+            try
+            {
+                // This would typically load from a StudentAnswers table
+                // For now, we'll simulate with empty data
+                // In a real implementation, you'd query the database for saved answers
+            }
+            catch (Exception Ex)
+            {
+                // Handle error silently
+            }
+        }
+
+        private int CalculateTimeRemaining(DateTime startTime, int durationMinutes)
+        {
+            try
+            {
+                DateTime endTime = startTime.AddMinutes(durationMinutes);
+                TimeSpan remaining = endTime - DateTime.Now;
+                
+                if (remaining.TotalSeconds <= 0)
+                {
+                    return 0;
+                }
+                
+                return (int)remaining.TotalSeconds;
+            }
+            catch (Exception Ex)
+            {
+                return durationMinutes * 60; // Fallback to full duration
+            }
+        }
+
+        private void SetupInstructions(ExamInterfaceViewModel examData)
+        {
+            examData.GeneralInstructions.AddRange(new[]
+            {
+                "The total duration of the examination is " + examData.TestDuration + " minutes.",
+                "The clock is server-set and a countdown timer will show the remaining time.",
+                "When the timer reaches zero, the examination will end automatically.",
+                "The Question Palette shows the status of each question using symbols.",
+                "Click on any question number to navigate directly to that question."
+            });
+
+            examData.AnsweringInstructions.AddRange(new[]
+            {
+                "Click on the button of one of the options to select an answer.",
+                "To deselect, click the chosen option again or click 'Clear Response'.",
+                "To change an answer, click on another option.",
+                "To save an answer, you MUST click on the 'Save & Next' button.",
+                "To mark for review, click 'Review & Next'.",
+                "Note: Your answer will not be saved if you navigate directly by clicking question number."
+            });
+        }
+
+        public bool StartExamSession(int testId, int studentId)
+        {
+            try
+            {
+                // This would typically update the database to mark exam as started
+                // For now, we'll return true as a placeholder
+                return true;
+            }
+            catch (Exception Ex)
+            {
+                return false;
+            }
+        }
+
+        public bool SaveStudentAnswer(int testId, int studentId, int questionNumber, string answer, bool markForReview = false)
+        {
+            try
+            {
+                // This would typically save the answer to a StudentAnswers table
+                // For now, we'll return true as a placeholder
+                return true;
+            }
+            catch (Exception Ex)
+            {
+                return false;
+            }
+        }
+
+        public bool SubmitExam(int testId, int studentId)
+        {
+            try
+            {
+                // This would typically mark the exam as completed and calculate results
+                // For now, we'll return true as a placeholder
+                return true;
+            }
+            catch (Exception Ex)
+            {
+                return false;
+            }
+        }
+
     }
 }

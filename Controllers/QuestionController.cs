@@ -27,32 +27,60 @@ namespace OnlineExamination.Controllers
        
 
 
-        QuestionMasterViewModel objQuestion;
         public ActionResult Create()
         {
-            if(objQuestion == null)
-                objQuestion = new QuestionMasterViewModel();
-            //ViewBag.SubjectList = GetSubjects();
-            //ViewBag.ClassList = GetClass();
-            //ViewBag.PublicationList = GetPublications();
-
-            //ViewData["ApiKey"] = apiKeyService.GetAPIKey();
-            LoadData();
-            return View(objQuestion);
+            try
+            {
+                QuestionMasterViewModel objQuestion = new QuestionMasterViewModel();
+                LoadData();
+                return View(objQuestion);
+            }
+            catch (Exception)
+            {
+                // Log the exception if you have logging configured
+                TempData["MessageModel"] = MessageModel.Error("An error occurred while loading the page. Please try again.");
+                return RedirectToAction("Index");
+            }
         }
 
         public ActionResult Details(int id)
         {
-            objQuestion= objQuestionService.GetQuestionsById(id).FirstOrDefault();
-            LoadData();
-            return View(objQuestion);
+            try
+            {
+                QuestionMasterViewModel objQuestion = objQuestionService.GetQuestionsById(id).FirstOrDefault();
+                if (objQuestion == null)
+                {
+                    TempData["MessageModel"] = MessageModel.Error("Question not found.");
+                    return RedirectToAction("Index");
+                }
+                LoadData();
+                return View(objQuestion);
+            }
+            catch (Exception)
+            {
+                TempData["MessageModel"] = MessageModel.Error("An error occurred while loading the question details.");
+                return RedirectToAction("Index");
+            }
         }
 
         public ActionResult Edit(int id)
         {
-            objQuestion = objQuestionService.GetQuestionsById(id).FirstOrDefault();
-            LoadData();
-            return View(objQuestion);
+            try
+            {
+                QuestionMasterViewModel objQuestion = objQuestionService.GetQuestionsById(id).FirstOrDefault();
+                if (objQuestion == null)
+                {
+                    TempData["MessageModel"] = MessageModel.Error("Question not found.");
+                    return RedirectToAction("Index");
+                }
+                LoadData();
+                return View(objQuestion);
+            }
+            catch (Exception)
+            {
+                TempData["MessageModel"] = MessageModel.Error("An error occurred while loading the question for editing.");
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpPost]
@@ -154,7 +182,7 @@ namespace OnlineExamination.Controllers
                     {
                         QuestionMasterViewModel res = objQuestionService.Add(objQuestion);
                         
-                        if (res.Ques_Id > 0)
+                        if (res != null && res.Ques_Id > 0)
                         {
                             objQuestion.Ques_Id = 0;
                             objQuestion.Ques_Question =
@@ -168,10 +196,14 @@ namespace OnlineExamination.Controllers
                         }
                         else
                         {
-                            TempData["MessageModel"] = MessageModel.Error("An error occurred while saving the question.");
+                            TempData["MessageModel"] = MessageModel.Error("An error occurred while saving the question. Please ensure the stored procedure 'SP_QuestionMaster_Insert' exists in your database.");
 
                         }
                         
+                    }
+                    else
+                    {
+                        TempData["MessageModel"] = MessageModel.Error("Please fill all required fields correctly.");
                     }
                     LoadData();
                     return View(objQuestion);
@@ -187,21 +219,38 @@ namespace OnlineExamination.Controllers
 
         private void LoadData()
         {
-            ViewBag.SubjectList =MasterService.GetSubjects();
-            ViewBag.ClassList = MasterService.GetClass();
-            ViewBag.PublicationList = MasterService.GetPublications();
-            ViewBag.TopicList = MasterService.GetTopics();
-            ViewData["ApiKey"] = apiKeyService.GetAPIKey();
+            try
+            {
+                ViewBag.SubjectList = MasterService.GetSubjects() ?? new List<SelectListItem>();
+                ViewBag.ClassList = MasterService.GetClass() ?? new List<SelectListItem>();
+                ViewBag.PublicationList = MasterService.GetPublications() ?? new List<SelectListItem>();
+                ViewBag.TopicList = MasterService.GetTopics() ?? new List<SelectListItem>();
+                ViewData["ApiKey"] = apiKeyService?.GetAPIKey() ?? "";
+            }
+            catch (Exception)
+            {
+                // Log the exception if you have logging configured
+                ViewBag.SubjectList = new List<SelectListItem>();
+                ViewBag.ClassList = new List<SelectListItem>();
+                ViewBag.PublicationList = new List<SelectListItem>();
+                ViewBag.TopicList = new List<SelectListItem>();
+                ViewData["ApiKey"] = "";
+            }
         }
 
         [HttpPost]
-        public async Task<JsonResult> InActivateKey(string apiKey)
+        public JsonResult InActivateKey(string apiKey)
         {
-            string responseMessage = $"Key Inactivated Successfully";
-            apiKeyService.InActivateKey(apiKey);
-
-            return Json(new { success = true, message = responseMessage });
-           
+            try
+            {
+                string responseMessage = $"Key Inactivated Successfully";
+                apiKeyService.InActivateKey(apiKey);
+                return Json(new { success = true, message = responseMessage });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, message = "An error occurred while inactivating the key." });
+            }
         }
     }
 }

@@ -1,0 +1,1038 @@
+@model OnlineExamination.Models.ExamInterfaceViewModel
+
+@{
+    ViewBag.Title = "Online Examination - " + Model.TestName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Exam Interface Styles -->
+<style>
+    :root {
+        --exam-primary: #2E86AB;
+        --exam-success: #28A745;
+        --exam-danger: #DC3545;
+        --exam-warning: #FFC107;
+        --exam-info: #6F42C1;
+        --exam-light: #F8F9FA;
+        --exam-dark: #343A40;
+        --exam-white: #FFFFFF;
+        --exam-border: #DEE2E6;
+    }
+
+    /* Full Screen Exam Layout */
+    body {
+        margin: 0;
+        padding: 0;
+        background: var(--exam-light);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .exam-container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Header Section */
+    .exam-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: var(--exam-white);
+        border-bottom: 2px solid var(--exam-border);
+        padding: 12px 20px;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .exam-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--exam-dark);
+        margin: 0;
+    }
+
+    .exam-timer {
+        background: var(--exam-danger);
+        color: var(--exam-white);
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 16px;
+        min-width: 120px;
+        text-align: center;
+    }
+
+    .exam-timer.warning {
+        background: var(--exam-warning);
+        color: var(--exam-dark);
+    }
+
+    /* Main Content Area */
+    .exam-main {
+        flex: 1;
+        display: flex;
+        margin-top: 60px;
+        height: calc(100vh - 60px);
+    }
+
+    /* Question Area */
+    .question-area {
+        flex: 1;
+        padding: 20px;
+        background: var(--exam-white);
+        overflow-y: auto;
+        border-right: 1px solid var(--exam-border);
+    }
+
+    .question-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .question-header {
+        background: var(--exam-primary);
+        color: var(--exam-white);
+        padding: 15px 20px;
+        border-radius: 8px 8px 0 0;
+        margin-bottom: 0;
+    }
+
+    .question-number {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .question-content {
+        background: var(--exam-white);
+        border: 1px solid var(--exam-border);
+        border-top: none;
+        padding: 25px;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .question-text {
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        color: var(--exam-dark);
+    }
+
+    .question-options {
+        margin-bottom: 30px;
+    }
+
+    .option-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        padding: 12px;
+        border: 1px solid var(--exam-border);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .option-item:hover {
+        background: var(--exam-light);
+        border-color: var(--exam-primary);
+    }
+
+    .option-item.selected {
+        background: #E3F2FD;
+        border-color: var(--exam-primary);
+        border-width: 2px;
+    }
+
+    .option-radio {
+        margin-right: 12px;
+        margin-top: 2px;
+        transform: scale(1.2);
+    }
+
+    .option-label {
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--exam-dark);
+        cursor: pointer;
+        flex: 1;
+    }
+
+    .option-letter {
+        font-weight: 600;
+        color: var(--exam-primary);
+        margin-right: 8px;
+    }
+
+    /* Navigation Controls */
+    .question-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--exam-border);
+    }
+
+    .nav-button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 14px;
+    }
+
+    .btn-previous {
+        background: var(--exam-light);
+        color: var(--exam-dark);
+        border: 1px solid var(--exam-border);
+    }
+
+    .btn-previous:hover {
+        background: #E9ECEF;
+    }
+
+    .btn-next {
+        background: var(--exam-primary);
+        color: var(--exam-white);
+    }
+
+    .btn-next:hover {
+        background: #1E5F7A;
+    }
+
+    .btn-save-next {
+        background: var(--exam-success);
+        color: var(--exam-white);
+    }
+
+    .btn-save-next:hover {
+        background: #1E7E34;
+    }
+
+    .btn-review-next {
+        background: var(--exam-info);
+        color: var(--exam-white);
+    }
+
+    .btn-review-next:hover {
+        background: #5A2D91;
+    }
+
+    .btn-clear {
+        background: var(--exam-warning);
+        color: var(--exam-dark);
+    }
+
+    .btn-clear:hover {
+        background: #E0A800;
+    }
+
+    /* Question Palette */
+    .question-palette {
+        width: 280px;
+        background: var(--exam-white);
+        border-left: 1px solid var(--exam-border);
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .palette-header {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--exam-dark);
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .palette-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .question-btn {
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--exam-border);
+        border-radius: 6px;
+        background: var(--exam-white);
+        color: var(--exam-dark);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    .question-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Question Status Colors */
+    .question-btn.not-visited {
+        background: var(--exam-white);
+        border-color: var(--exam-border);
+        color: var(--exam-dark);
+    }
+
+    .question-btn.visited-not-answered {
+        background: var(--exam-danger);
+        border-color: var(--exam-danger);
+        color: var(--exam-white);
+    }
+
+    .question-btn.answered {
+        background: var(--exam-success);
+        border-color: var(--exam-success);
+        color: var(--exam-white);
+    }
+
+    .question-btn.marked-for-review {
+        background: var(--exam-info);
+        border-color: var(--exam-info);
+        color: var(--exam-white);
+    }
+
+    .question-btn.answered-and-marked {
+        background: var(--exam-success);
+        border-color: var(--exam-success);
+        color: var(--exam-white);
+        position: relative;
+    }
+
+    .question-btn.answered-and-marked::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 8px;
+        height: 8px;
+        background: var(--exam-info);
+        border-radius: 50%;
+    }
+
+    .question-btn.current {
+        border-width: 3px;
+        transform: scale(1.1);
+        box-shadow: 0 0 0 2px rgba(46, 134, 171, 0.3);
+    }
+
+    /* Legend */
+    .palette-legend {
+        background: var(--exam-light);
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+
+    .legend-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--exam-dark);
+        margin-bottom: 10px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 6px;
+        font-size: 12px;
+    }
+
+    .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        margin-right: 8px;
+        border: 1px solid var(--exam-border);
+    }
+
+    /* Action Buttons */
+    .palette-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .action-btn {
+        padding: 12px;
+        border: 1px solid var(--exam-border);
+        border-radius: 6px;
+        background: var(--exam-white);
+        color: var(--exam-dark);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .action-btn:hover {
+        background: var(--exam-light);
+    }
+
+    .action-btn.primary {
+        background: var(--exam-primary);
+        color: var(--exam-white);
+        border-color: var(--exam-primary);
+    }
+
+    .action-btn.primary:hover {
+        background: #1E5F7A;
+    }
+
+    /* Instructions Modal */
+    .instructions-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 2000;
+        display: none;
+    }
+
+    .instructions-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--exam-white);
+        border-radius: 8px;
+        padding: 30px;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .instructions-header {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--exam-dark);
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .instructions-section {
+        margin-bottom: 20px;
+    }
+
+    .instructions-section h4 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--exam-primary);
+        margin-bottom: 10px;
+    }
+
+    .instructions-section ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .instructions-section li {
+        margin-bottom: 5px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .instructions-section .warning {
+        color: var(--exam-danger);
+        font-weight: 600;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .exam-main {
+            flex-direction: column;
+        }
+
+        .question-palette {
+            width: 100%;
+            height: auto;
+            max-height: 200px;
+            order: -1;
+        }
+
+        .palette-grid {
+            grid-template-columns: repeat(8, 1fr);
+        }
+
+        .question-area {
+            padding: 15px;
+        }
+
+        .question-navigation {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-button {
+            width: 100%;
+        }
+    }
+
+    /* Loading Animation */
+    .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Auto-save indicator */
+    .auto-save-indicator {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--exam-success);
+        color: var(--exam-white);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .auto-save-indicator.show {
+        opacity: 1;
+    }
+</style>
+
+<!-- Exam Header -->
+<div class="exam-header">
+    <h1 class="exam-title">@Model.TestName - @Model.SubjectName</h1>
+    <div class="exam-timer" id="examTimer">
+        <span id="timerDisplay">@Model.TimeRemaining</span>
+    </div>
+</div>
+
+<!-- Main Exam Container -->
+<div class="exam-main">
+    <!-- Question Area -->
+    <div class="question-area">
+        <div class="question-container">
+            <!-- Question Header -->
+            <div class="question-header">
+                <h3 class="question-number">Question @Model.CurrentQuestionNumber of @Model.NumberOfQuestions</h3>
+            </div>
+
+            <!-- Question Content -->
+            <div class="question-content">
+                <div class="question-text">
+                    @Html.Raw(Model.CurrentQuestion.Ques_Question)
+                </div>
+
+                <!-- Question Options -->
+                <div class="question-options">
+                    <div class="option-item" data-option="A">
+                        <input type="radio" name="answer" value="A" class="option-radio" id="optionA" />
+                        <label for="optionA" class="option-label">
+                            <span class="option-letter">A.</span>
+                            @Html.Raw(Model.CurrentQuestion.Ques_Answer)
+                        </label>
+                    </div>
+
+                    <div class="option-item" data-option="B">
+                        <input type="radio" name="answer" value="B" class="option-radio" id="optionB" />
+                        <label for="optionB" class="option-label">
+                            <span class="option-letter">B.</span>
+                            @Html.Raw(Model.CurrentQuestion.Ques_OptionB)
+                        </label>
+                    </div>
+
+                    <div class="option-item" data-option="C">
+                        <input type="radio" name="answer" value="C" class="option-radio" id="optionC" />
+                        <label for="optionC" class="option-label">
+                            <span class="option-letter">C.</span>
+                            @Html.Raw(Model.CurrentQuestion.Ques_OptionC)
+                        </label>
+                    </div>
+
+                    <div class="option-item" data-option="D">
+                        <input type="radio" name="answer" value="D" class="option-radio" id="optionD" />
+                        <label for="optionD" class="option-label">
+                            <span class="option-letter">D.</span>
+                            @Html.Raw(Model.CurrentQuestion.Ques_OptionD)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="question-navigation">
+                    <div>
+                        @if (Model.CurrentQuestionNumber > 1)
+                        {
+                            <button type="button" class="nav-button btn-previous" onclick="navigateToQuestion(@Model.CurrentQuestionNumber - 1)">
+                                ← Previous
+                            </button>
+                        }
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="nav-button btn-clear" onclick="clearResponse()">
+                            Clear Response
+                        </button>
+                        
+                        <button type="button" class="nav-button btn-review-next" onclick="saveAndMarkForReview()">
+                            Review & Next
+                        </button>
+                        
+                        @if (Model.CurrentQuestionNumber < Model.NumberOfQuestions)
+                        {
+                            <button type="button" class="nav-button btn-save-next" onclick="saveAndNext()">
+                                Save & Next
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="nav-button btn-save-next" onclick="saveAndNext()">
+                                Save & Finish
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Palette -->
+    <div class="question-palette">
+        <div class="palette-header">Question Palette</div>
+        
+        <!-- Question Grid -->
+        <div class="palette-grid" id="questionGrid">
+            @for (int i = 1; i <= Model.NumberOfQuestions; i++)
+            {
+                var status = Model.QuestionStatuses.FirstOrDefault(q => q.QuestionNumber == i);
+                var statusClass = status != null ? GetStatusClass(status.Status) : "not-visited";
+                var currentClass = i == Model.CurrentQuestionNumber ? "current" : "";
+                
+                <button type="button" class="question-btn @statusClass @currentClass" 
+                        onclick="navigateToQuestion(@i)" 
+                        data-question="@i">
+                    @i
+                </button>
+            }
+        </div>
+
+        <!-- Legend -->
+        <div class="palette-legend">
+            <div class="legend-title">Question Status</div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: var(--exam-white);"></div>
+                <span>Not Visited</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: var(--exam-danger);"></div>
+                <span>Visited Not Answered</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: var(--exam-success);"></div>
+                <span>Answered</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: var(--exam-info);"></div>
+                <span>Marked for Review</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: var(--exam-success); position: relative;">
+                    <div style="position: absolute; top: 2px; right: 2px; width: 6px; height: 6px; background: var(--exam-info); border-radius: 50%;"></div>
+                </div>
+                <span>Answered & Marked</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="palette-actions">
+            <button type="button" class="action-btn" onclick="showInstructions()">
+                📋 Instructions
+            </button>
+            <button type="button" class="action-btn" onclick="showQuestionPaper()">
+                📄 Question Paper
+            </button>
+            <button type="button" class="action-btn primary" onclick="submitExam()">
+                ✅ Submit Exam
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Instructions Modal -->
+<div class="instructions-modal" id="instructionsModal">
+    <div class="instructions-content">
+        <div class="instructions-header">General Instructions</div>
+        
+        <div class="instructions-section">
+            <h4>1. Duration</h4>
+            <ul>
+                <li>The total duration of the examination is <strong>@Model.TestDuration minutes</strong>.</li>
+                <li>The clock is server-set and a countdown timer in the top right corner of the screen will show the remaining time.</li>
+                <li>When the timer reaches zero, the examination will end automatically.</li>
+            </ul>
+        </div>
+
+        <div class="instructions-section">
+            <h4>2. Question Palette</h4>
+            <ul>
+                <li>The "Question Palette" on the right side of the screen shows the status of each question using symbols.</li>
+                <li>Click on any question number to navigate directly to that question.</li>
+            </ul>
+        </div>
+
+        <div class="instructions-section">
+            <h4>3. Answering Questions</h4>
+            <ul>
+                <li>Click on the button of one of the options to select an answer.</li>
+                <li>To deselect, click the chosen option again or click "Clear Response".</li>
+                <li>To change an answer, click on another option.</li>
+                <li><span class="warning">Note: Your answer for the current question will not be saved if you navigate to another question directly by clicking on its question number.</span></li>
+            </ul>
+        </div>
+
+        <div class="instructions-section">
+            <h4>4. Saving Answers</h4>
+            <ul>
+                <li>To save an answer, you MUST click on the "Save & Next" button.</li>
+                <li>To mark for review, click "Review & Next".</li>
+                <li>If an answer is selected for a question marked for review, that answer will be considered in the evaluation.</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button type="button" class="action-btn primary" onclick="closeInstructions()">
+                I Understand
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Auto-save Indicator -->
+<div class="auto-save-indicator" id="autoSaveIndicator">
+    ✓ Auto-saved
+</div>
+
+@functions {
+    public string GetStatusClass(OnlineExamination.Models.QuestionStatusType status)
+    {
+        switch (status)
+        {
+            case OnlineExamination.Models.QuestionStatusType.NotVisited:
+                return "not-visited";
+            case OnlineExamination.Models.QuestionStatusType.VisitedNotAnswered:
+                return "visited-not-answered";
+            case OnlineExamination.Models.QuestionStatusType.Answered:
+                return "answered";
+            case OnlineExamination.Models.QuestionStatusType.MarkedForReview:
+                return "marked-for-review";
+            case OnlineExamination.Models.QuestionStatusType.AnsweredAndMarked:
+                return "answered-and-marked";
+            default:
+                return "not-visited";
+        }
+    }
+}
+
+@section scripts {
+    <script>
+        // Global variables
+        let timeRemaining = @Model.TimeRemaining;
+        let examStarted = @Model.IsExamStarted.ToString().ToLower();
+        let currentQuestion = @Model.CurrentQuestionNumber;
+        let totalQuestions = @Model.NumberOfQuestions;
+        let testId = @Model.TestId;
+        let autoSaveInterval;
+
+        // Initialize exam
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeExam();
+            startTimer();
+            setupEventListeners();
+            loadCurrentAnswer();
+        });
+
+        function initializeExam() {
+            if (!examStarted) {
+                startExam();
+            }
+        }
+
+        function startExam() {
+            // Call server to start exam
+            fetch('@Url.Action("StartExam", "Student")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ testId: testId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    examStarted = true;
+                    console.log('Exam started successfully');
+                }
+            })
+            .catch(error => {
+                console.error('Error starting exam:', error);
+            });
+        }
+
+        function startTimer() {
+            const timerElement = document.getElementById('timerDisplay');
+            const timerContainer = document.getElementById('examTimer');
+
+            const timer = setInterval(() => {
+                timeRemaining--;
+                
+                const hours = Math.floor(timeRemaining / 3600);
+                const minutes = Math.floor((timeRemaining % 3600) / 60);
+                const seconds = timeRemaining % 60;
+
+                timerElement.textContent = 
+                    (hours > 0 ? hours + ':' : '') + 
+                    (minutes < 10 ? '0' : '') + minutes + ':' + 
+                    (seconds < 10 ? '0' : '') + seconds;
+
+                // Change color when time is running low
+                if (timeRemaining <= 300) { // 5 minutes
+                    timerContainer.classList.add('warning');
+                }
+
+                // Auto-submit when time runs out
+                if (timeRemaining <= 0) {
+                    clearInterval(timer);
+                    submitExam();
+                }
+            }, 1000);
+        }
+
+        function setupEventListeners() {
+            // Option selection
+            document.querySelectorAll('.option-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    updateOptionSelection();
+                });
+            });
+
+            // Radio button changes
+            document.querySelectorAll('input[name="answer"]').forEach(radio => {
+                radio.addEventListener('change', updateOptionSelection);
+            });
+
+            // Auto-save every 30 seconds
+            autoSaveInterval = setInterval(autoSave, 30000);
+
+            // Prevent accidental page refresh
+            window.addEventListener('beforeunload', function(e) {
+                if (examStarted && timeRemaining > 0) {
+                    e.preventDefault();
+                    e.returnValue = 'Are you sure you want to leave? Your progress may be lost.';
+                }
+            });
+        }
+
+        function updateOptionSelection() {
+            document.querySelectorAll('.option-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            const selectedRadio = document.querySelector('input[name="answer"]:checked');
+            if (selectedRadio) {
+                const selectedItem = selectedRadio.closest('.option-item');
+                selectedItem.classList.add('selected');
+            }
+        }
+
+        function loadCurrentAnswer() {
+            // Load previously saved answer for current question
+            const savedAnswer = '@(Model.StudentAnswers.ContainsKey(Model.CurrentQuestionNumber) ? Model.StudentAnswers[Model.CurrentQuestionNumber] : "")';
+            if (savedAnswer) {
+                const radio = document.querySelector(`input[name="answer"][value="${savedAnswer}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    updateOptionSelection();
+                }
+            }
+        }
+
+        function navigateToQuestion(questionNumber) {
+            if (questionNumber < 1 || questionNumber > totalQuestions) return;
+
+            // Save current answer before navigating
+            saveCurrentAnswer();
+
+            // Navigate to question
+            window.location.href = '@Url.Action("TakeExam", "Student")' + '?testId=' + testId + '&question=' + questionNumber;
+        }
+
+        function saveCurrentAnswer() {
+            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+            if (selectedAnswer) {
+                // Update question status
+                updateQuestionStatus(currentQuestion, 'answered');
+                
+                // Save to server
+                saveAnswerToServer(currentQuestion, selectedAnswer.value);
+            } else {
+                // Mark as visited but not answered
+                updateQuestionStatus(currentQuestion, 'visited-not-answered');
+            }
+        }
+
+        function saveAndNext() {
+            saveCurrentAnswer();
+            
+            if (currentQuestion < totalQuestions) {
+                navigateToQuestion(currentQuestion + 1);
+            } else {
+                submitExam();
+            }
+        }
+
+        function saveAndMarkForReview() {
+            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+            
+            if (selectedAnswer) {
+                updateQuestionStatus(currentQuestion, 'answered-and-marked');
+                saveAnswerToServer(currentQuestion, selectedAnswer.value, true);
+            } else {
+                updateQuestionStatus(currentQuestion, 'marked-for-review');
+            }
+
+            if (currentQuestion < totalQuestions) {
+                navigateToQuestion(currentQuestion + 1);
+            } else {
+                submitExam();
+            }
+        }
+
+        function clearResponse() {
+            document.querySelectorAll('input[name="answer"]').forEach(radio => {
+                radio.checked = false;
+            });
+            updateOptionSelection();
+            updateQuestionStatus(currentQuestion, 'visited-not-answered');
+        }
+
+        function updateQuestionStatus(questionNumber, status) {
+            const questionBtn = document.querySelector(`[data-question="${questionNumber}"]`);
+            if (questionBtn) {
+                questionBtn.className = `question-btn ${status}`;
+                if (questionNumber === currentQuestion) {
+                    questionBtn.classList.add('current');
+                }
+            }
+        }
+
+        function saveAnswerToServer(questionNumber, answer, markForReview = false) {
+            fetch('@Url.Action("SaveAnswer", "Student")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    testId: testId,
+                    questionNumber: questionNumber,
+                    answer: answer,
+                    markForReview: markForReview
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAutoSaveIndicator();
+                }
+            })
+            .catch(error => {
+                console.error('Error saving answer:', error);
+            });
+        }
+
+        function autoSave() {
+            if (examStarted) {
+                saveCurrentAnswer();
+            }
+        }
+
+        function showAutoSaveIndicator() {
+            const indicator = document.getElementById('autoSaveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        function showInstructions() {
+            document.getElementById('instructionsModal').style.display = 'block';
+        }
+
+        function closeInstructions() {
+            document.getElementById('instructionsModal').style.display = 'none';
+        }
+
+        function showQuestionPaper() {
+            // Open question paper in new window
+            window.open('@Url.Action("QuestionPaper", "Student")' + '?testId=' + testId, '_blank');
+        }
+
+        function submitExam() {
+            if (confirm('Are you sure you want to submit the exam? You cannot change your answers after submission.')) {
+                // Save current answer
+                saveCurrentAnswer();
+
+                // Submit exam
+                fetch('@Url.Action("SubmitExam", "Student")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ testId: testId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Exam submitted successfully!');
+                        window.location.href = '@Url.Action("TestList", "Student")';
+                    } else {
+                        alert('Error submitting exam. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error submitting exam:', error);
+                    alert('Error submitting exam. Please try again.');
+                });
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('instructionsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeInstructions();
+            }
+        });
+    </script>
+}
+
