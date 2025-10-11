@@ -256,6 +256,79 @@
         background: var(--accent-green);
     }
 
+    /* Countdown Timer Styles */
+    .countdown-timer {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        color: var(--white);
+        font-weight: 600;
+        font-size: 13px;
+        margin-top: 12px;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .countdown-timer i {
+        font-size: 16px;
+        animation: pulse 2s infinite;
+    }
+
+    .countdown-timer.urgent {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        animation: glow 2s ease-in-out infinite;
+    }
+
+    .countdown-timer.starting-soon {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    @@keyframes glow {
+        0%, 100% {
+            box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+        }
+        50% {
+            box-shadow: 0 4px 16px rgba(245, 87, 108, 0.6);
+        }
+    }
+
+    .countdown-units {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .countdown-unit {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 35px;
+    }
+
+    .countdown-value {
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .countdown-label {
+        font-size: 9px;
+        text-transform: uppercase;
+        opacity: 0.9;
+        letter-spacing: 0.5px;
+    }
+
     /* Empty State */
     .empty-state {
         text-align: center;
@@ -892,6 +965,9 @@
             <div class="exam-list">
                 @foreach (var exam in Model.UpcomingTests)
                 {
+                    var examDateTime = exam.TestDate.Date + exam.StartTime;
+                    var examDateTimeStr = examDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                    
                     <div class="exam-card" onclick="openExamModal(@exam.TestId, '@exam.TestName', '@exam.SubjectName', '@exam.TestDate.ToString("MMM dd, yyyy")', '@exam.StartTime.ToString(@"hh\:mm")', '@exam.EndTime.ToString(@"hh\:mm")', @exam.Duration, '@exam.TestDate.ToString("yyyy-MM-dd")', '@exam.StartTime.ToString(@"HH\:mm")', @exam.IsAttempted.ToString().ToLower(), '@Url.Action("TakeExam", "Student", new { testId = exam.TestId })')">
                         <div class="exam-info">
                             <h5 class="exam-name">@exam.TestName</h5>
@@ -912,6 +988,32 @@
                                     <i class="ph ph-timer"></i>
                                     @exam.Duration mins
                                 </span>
+                            </div>
+                            
+                            <!-- Countdown Timer -->
+                            <div class="countdown-timer" id="countdown-@exam.TestId" data-exam-time="@examDateTimeStr">
+                                <i class="ph ph-hourglass"></i>
+                                <div class="countdown-units">
+                                    <div class="countdown-unit">
+                                        <span class="countdown-value" id="days-@exam.TestId">0</span>
+                                        <span class="countdown-label">Days</span>
+                                    </div>
+                                    <span>:</span>
+                                    <div class="countdown-unit">
+                                        <span class="countdown-value" id="hours-@exam.TestId">0</span>
+                                        <span class="countdown-label">Hours</span>
+                                    </div>
+                                    <span>:</span>
+                                    <div class="countdown-unit">
+                                        <span class="countdown-value" id="minutes-@exam.TestId">0</span>
+                                        <span class="countdown-label">Mins</span>
+                                    </div>
+                                    <span>:</span>
+                                    <div class="countdown-unit">
+                                        <span class="countdown-value" id="seconds-@exam.TestId">0</span>
+                                        <span class="countdown-label">Secs</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="exam-action" onclick="event.stopPropagation(); openExamModal(@exam.TestId, '@exam.TestName', '@exam.SubjectName', '@exam.TestDate.ToString("MMM dd, yyyy")', '@exam.StartTime.ToString(@"hh\:mm")', '@exam.EndTime.ToString(@"hh\:mm")', @exam.Duration, '@exam.TestDate.ToString("yyyy-MM-dd")', '@exam.StartTime.ToString(@"HH\:mm")', @exam.IsAttempted.ToString().ToLower(), '@Url.Action("TakeExam", "Student", new { testId = exam.TestId })')">
@@ -1074,7 +1176,71 @@
                     bar.style.width = width;
                 }, 100);
             });
+            
+            // Initialize countdown timers
+            initializeCountdownTimers();
         });
+
+        // Initialize Countdown Timers for Upcoming Exams
+        function initializeCountdownTimers() {
+            const countdownElements = document.querySelectorAll('.countdown-timer[data-exam-time]');
+            
+            countdownElements.forEach(element => {
+                updateCountdownTimer(element);
+            });
+            
+            // Update every second
+            setInterval(() => {
+                countdownElements.forEach(element => {
+                    updateCountdownTimer(element);
+                });
+            }, 1000);
+        }
+
+        // Update Single Countdown Timer
+        function updateCountdownTimer(element) {
+            const examTimeStr = element.getAttribute('data-exam-time');
+            const examTime = new Date(examTimeStr);
+            const now = new Date();
+            const timeDiff = examTime - now;
+            
+            // Extract test ID from element ID
+            const testId = element.id.replace('countdown-', '');
+            
+            if (timeDiff <= 0) {
+                // Exam has started or passed
+                element.innerHTML = `
+                    <i class="ph ph-check-circle"></i>
+                    <span>Exam Time!</span>
+                `;
+                element.classList.add('urgent');
+                return;
+            }
+            
+            // Calculate time units
+            const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+            
+            // Update display
+            const daysEl = document.getElementById(`days-${testId}`);
+            const hoursEl = document.getElementById(`hours-${testId}`);
+            const minutesEl = document.getElementById(`minutes-${testId}`);
+            const secondsEl = document.getElementById(`seconds-${testId}`);
+            
+            if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+            if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+            if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+            if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+            
+            // Change style based on urgency
+            if (days === 0 && hours < 1) {
+                element.classList.add('urgent');
+            } else if (days === 0 && hours < 24) {
+                element.classList.add('starting-soon');
+            }
+        }
 
         // Exam Modal Variables
         let countdownInterval = null;

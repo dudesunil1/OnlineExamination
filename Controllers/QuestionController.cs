@@ -182,7 +182,7 @@ namespace OnlineExamination.Controllers
                     {
                         QuestionMasterViewModel res = objQuestionService.Add(objQuestion);
                         
-                        if (res != null && res.Ques_Id > 0)
+                        if (res.Ques_Id > 0)
                         {
                             objQuestion.Ques_Id = 0;
                             objQuestion.Ques_Question =
@@ -196,14 +196,10 @@ namespace OnlineExamination.Controllers
                         }
                         else
                         {
-                            TempData["MessageModel"] = MessageModel.Error("An error occurred while saving the question. Please ensure the stored procedure 'SP_QuestionMaster_Insert' exists in your database.");
+                            TempData["MessageModel"] = MessageModel.Error("An error occurred while saving the question.");
 
                         }
                         
-                    }
-                    else
-                    {
-                        TempData["MessageModel"] = MessageModel.Error("Please fill all required fields correctly.");
                     }
                     LoadData();
                     return View(objQuestion);

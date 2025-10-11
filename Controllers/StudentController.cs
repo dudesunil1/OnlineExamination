@@ -226,6 +226,30 @@ namespace OnlineExamination.Controllers
         }
 
         [HttpPost]
+        public JsonResult ClearAnswer(int testId, int questionNumber)
+        {
+            try
+            {
+                string studId = Session["StudentId"] as string;
+                if (string.IsNullOrEmpty(studId))
+                {
+                    return Json(new { success = false, message = "Student not logged in" });
+                }
+
+                int studentId = int.Parse(studId);
+
+                StudentService studentService = new StudentService();
+                bool cleared = studentService.ClearStudentAnswer(testId, studentId, questionNumber);
+
+                return Json(new { success = cleared });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
         public JsonResult SubmitExam(int testId)
         {
             try

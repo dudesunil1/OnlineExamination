@@ -30,7 +30,7 @@ namespace OnlineExamination.Models
 
         public int Ques_JEEMark { get; set; }
 
-        public decimal Ques_Negative { get; set; }
+        public int Ques_Negative { get; set; }
 
         [Required(ErrorMessage = "Question is required")]
         [Display(Name = "Question")]

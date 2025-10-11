@@ -273,10 +273,13 @@ namespace OnlineExamination.BLL
                             IsAttempted = t.TS_IsAttempted
                         }).ToList();
                     
-                    // Filter upcoming tests (future dates, not today)
+                    // Filter upcoming tests (today or future, not attempted)
+                    DateTime now = DateTime.Now;
                     dashboard.UpcomingTests = allTests
-                        .Where(t => t.TS_Expected_Date.Date > today)
+                        .Where(t => !t.TS_IsAttempted && 
+                                    (t.TS_Expected_Date.Date >= today))
                         .OrderBy(t => t.TS_Expected_Date)
+                        .ThenBy(t => t.TS_StartTime)
                         .Take(5)
                         .Select(t => new DashboardTestInfo
                         {
@@ -392,13 +395,62 @@ namespace OnlineExamination.BLL
         {
             try
             {
-                // This would typically load from a StudentAnswers table
-                // For now, we'll simulate with empty data
-                // In a real implementation, you'd query the database for saved answers
+                // Load saved answers from Session
+                string sessionKey = $"ExamAnswers_{testId}_{studentId}";
+                var savedAnswers = HttpContext.Current.Session[sessionKey] as Dictionary<int, string>;
+                
+                // Load review flags from Session
+                string reviewKey = $"ExamReviews_{testId}_{studentId}";
+                var reviewedQuestions = HttpContext.Current.Session[reviewKey] as Dictionary<int, bool>;
+                
+                // Load visited questions from Session
+                string visitedKey = $"ExamVisited_{testId}_{studentId}";
+                var visitedQuestions = HttpContext.Current.Session[visitedKey] as HashSet<int>;
+                
+                // Update each question's status
+                for (int i = 1; i <= examData.QuestionStatuses.Count; i++)
+                {
+                    var questionStatus = examData.QuestionStatuses[i - 1];
+                    bool hasAnswer = savedAnswers != null && savedAnswers.ContainsKey(i) && !string.IsNullOrEmpty(savedAnswers[i]);
+                    bool isReviewed = reviewedQuestions != null && reviewedQuestions.ContainsKey(i) && reviewedQuestions[i];
+                    bool isVisited = visitedQuestions != null && visitedQuestions.Contains(i);
+                    
+                    // Set student answer if exists
+                    if (hasAnswer)
+                    {
+                        questionStatus.StudentAnswer = savedAnswers[i];
+                        examData.StudentAnswers[i] = savedAnswers[i];
+                    }
+                    
+                    // Determine status based on answer and review flag
+                    if (hasAnswer && isReviewed)
+                    {
+                        questionStatus.Status = QuestionStatusType.AnsweredAndMarked;
+                        questionStatus.IsMarkedForReview = true;
+                    }
+                    else if (hasAnswer)
+                    {
+                        questionStatus.Status = QuestionStatusType.Answered;
+                    }
+                    else if (isReviewed)
+                    {
+                        questionStatus.Status = QuestionStatusType.MarkedForReview;
+                        questionStatus.IsMarkedForReview = true;
+                    }
+                    else if (isVisited)
+                    {
+                        questionStatus.Status = QuestionStatusType.VisitedNotAnswered;
+                    }
+                    else
+                    {
+                        questionStatus.Status = QuestionStatusType.NotVisited;
+                    }
+                }
             }
             catch (Exception Ex)
             {
                 // Handle error silently
+                System.Diagnostics.Debug.WriteLine("Error loading student answers: " + Ex.Message);
             }
         }
 
@@ -448,12 +500,23 @@ namespace OnlineExamination.BLL
         {
             try
             {
-                // This would typically update the database to mark exam as started
-                // For now, we'll return true as a placeholder
+                // Initialize exam start in session
+                string sessionKey = $"ExamStarted_{testId}_{studentId}";
+                DateTime startTime = DateTime.Now;
+                HttpContext.Current.Session[sessionKey] = startTime;
+                
+                // Save actual start time to database
+                Hashtable hash = new Hashtable();
+                hash.Add("@TS_TestId", testId);
+                hash.Add("@TS_StudId", studentId);
+                
+                clsSunDAL.ExecuteDMLQuery("SP_StartExam", hash);
+                
                 return true;
             }
             catch (Exception Ex)
             {
+                System.Diagnostics.Debug.WriteLine("Error starting exam session: " + Ex.Message);
                 return false;
             }
         }
@@ -462,12 +525,97 @@ namespace OnlineExamination.BLL
         {
             try
             {
-                // This would typically save the answer to a StudentAnswers table
-                // For now, we'll return true as a placeholder
+                // Save answer in Session (only if not empty)
+                string sessionKey = $"ExamAnswers_{testId}_{studentId}";
+                var savedAnswers = HttpContext.Current.Session[sessionKey] as Dictionary<int, string>;
+                
+                if (savedAnswers == null)
+                {
+                    savedAnswers = new Dictionary<int, string>();
+                    HttpContext.Current.Session[sessionKey] = savedAnswers;
+                }
+                
+                // Update or add the answer only if it's not empty
+                if (!string.IsNullOrEmpty(answer))
+                {
+                    if (savedAnswers.ContainsKey(questionNumber))
+                    {
+                        savedAnswers[questionNumber] = answer;
+                    }
+                    else
+                    {
+                        savedAnswers.Add(questionNumber, answer);
+                    }
+                }
+                
+                // Save mark for review status in separate Session key
+                string reviewKey = $"ExamReviews_{testId}_{studentId}";
+                var reviewedQuestions = HttpContext.Current.Session[reviewKey] as Dictionary<int, bool>;
+                
+                if (reviewedQuestions == null)
+                {
+                    reviewedQuestions = new Dictionary<int, bool>();
+                    HttpContext.Current.Session[reviewKey] = reviewedQuestions;
+                }
+                
+                // Update or add the review flag
+                if (reviewedQuestions.ContainsKey(questionNumber))
+                {
+                    reviewedQuestions[questionNumber] = markForReview;
+                }
+                else
+                {
+                    reviewedQuestions.Add(questionNumber, markForReview);
+                }
+                
+                // Also track visited questions
+                string visitedKey = $"ExamVisited_{testId}_{studentId}";
+                var visitedQuestions = HttpContext.Current.Session[visitedKey] as HashSet<int>;
+                
+                if (visitedQuestions == null)
+                {
+                    visitedQuestions = new HashSet<int>();
+                    HttpContext.Current.Session[visitedKey] = visitedQuestions;
+                }
+                
+                visitedQuestions.Add(questionNumber);
+                
                 return true;
             }
             catch (Exception Ex)
             {
+                System.Diagnostics.Debug.WriteLine("Error saving student answer: " + Ex.Message);
+                return false;
+            }
+        }
+
+        public bool ClearStudentAnswer(int testId, int studentId, int questionNumber)
+        {
+            try
+            {
+                // Remove answer from Session
+                string sessionKey = $"ExamAnswers_{testId}_{studentId}";
+                var savedAnswers = HttpContext.Current.Session[sessionKey] as Dictionary<int, string>;
+                
+                if (savedAnswers != null && savedAnswers.ContainsKey(questionNumber))
+                {
+                    savedAnswers.Remove(questionNumber);
+                }
+                
+                // Remove review flag
+                string reviewKey = $"ExamReviews_{testId}_{studentId}";
+                var reviewedQuestions = HttpContext.Current.Session[reviewKey] as Dictionary<int, bool>;
+                
+                if (reviewedQuestions != null && reviewedQuestions.ContainsKey(questionNumber))
+                {
+                    reviewedQuestions.Remove(questionNumber);
+                }
+                
+                return true;
+            }
+            catch (Exception Ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error clearing student answer: " + Ex.Message);
                 return false;
             }
         }
@@ -476,12 +624,103 @@ namespace OnlineExamination.BLL
         {
             try
             {
-                // This would typically mark the exam as completed and calculate results
-                // For now, we'll return true as a placeholder
-                return true;
+                // Get all saved answers from Session
+                string sessionKey = $"ExamAnswers_{testId}_{studentId}";
+                var savedAnswers = HttpContext.Current.Session[sessionKey] as Dictionary<int, string>;
+                
+                // Get all test questions to save results
+                QuestionMasterService questionService = new QuestionMasterService();
+                var allQuestions = questionService.GetTestQuestions(testId);
+                
+                if (allQuestions != null && savedAnswers != null)
+                {
+                    // Save each answer to the database
+                    foreach (var answer in savedAnswers)
+                    {
+                        int questionNumber = answer.Key;
+                        string studentAnswer = answer.Value;
+                        
+                        if (questionNumber > 0 && questionNumber <= allQuestions.Count)
+                        {
+                            var question = allQuestions[questionNumber - 1];
+                            
+                            // Check if answer is correct (Ques_Answer contains the correct option letter)
+                            // Note: In QuestionMaster, Ques_Answer actually contains option A's text, not the letter
+                            // We need to compare based on which option letter is selected
+                            bool isCorrect = false;
+                            string correctOption = "A"; // Default to A since Ques_Answer is option A
+                            
+                            isCorrect = studentAnswer.Trim().ToUpper() == correctOption.ToUpper();
+                            int marksObtained = isCorrect ? question.Ques_Mark : 0;
+                            
+                            // Save to TestResult table
+                            Hashtable resultHash = new Hashtable();
+                            resultHash.Add("@TR_TestId", testId);
+                            resultHash.Add("@TR_StudentId", studentId);
+                            resultHash.Add("@TR_QuestionId", question.Ques_Id);
+                            resultHash.Add("@TR_Answer", studentAnswer);
+                            resultHash.Add("@TR_IsCorrect", isCorrect ? 1 : 0);
+                            resultHash.Add("@TR_MarksObtained", marksObtained);
+                            
+                            clsSunDAL.ExecuteDMLQuery("SP_SaveTestResult", resultHash);
+                        }
+                    }
+                }
+                
+                // Calculate total marks
+                int totalMarks = 0;
+                if (savedAnswers != null && allQuestions != null)
+                {
+                    foreach (var answer in savedAnswers)
+                    {
+                        int questionNumber = answer.Key;
+                        string studentAnswer = answer.Value;
+                        
+                        if (questionNumber > 0 && questionNumber <= allQuestions.Count)
+                        {
+                            var question = allQuestions[questionNumber - 1];
+                            // Option A is always correct since Ques_Answer contains option A's text
+                            string correctOption = "A";
+                            bool isCorrect = studentAnswer.Trim().ToUpper() == correctOption.ToUpper();
+                            if (isCorrect)
+                            {
+                                totalMarks += question.Ques_Mark;
+                            }
+                        }
+                    }
+                }
+                
+                // Get start time from session
+                string startSessionKey = $"ExamStarted_{testId}_{studentId}";
+                DateTime? startTime = HttpContext.Current.Session[startSessionKey] as DateTime?;
+                DateTime endTime = DateTime.Now;
+                
+                // Mark exam as attempted with total marks and timing information
+                Hashtable hash = new Hashtable();
+                hash.Add("@TS_TestId", testId);
+                hash.Add("@TS_StudId", studentId);
+                hash.Add("@TS_Mark", totalMarks);
+                hash.Add("@TS_ActualStartTime", startTime.HasValue ? (object)startTime.Value : DBNull.Value);
+                hash.Add("@TS_ActualEndTime", endTime);
+                hash.Add("@TS_TotalBreakTime", 0); // Can be enhanced to track actual breaks
+                
+                // Update TestStudent to mark as attempted
+                bool updated = clsSunDAL.ExecuteDMLQuery("SP_MarkTestAsAttempted", hash);
+                
+                // Clear session data after successful submission
+                if (updated)
+                {
+                    HttpContext.Current.Session.Remove(sessionKey);
+                    HttpContext.Current.Session.Remove($"ExamReviews_{testId}_{studentId}");
+                    HttpContext.Current.Session.Remove($"ExamVisited_{testId}_{studentId}");
+                    HttpContext.Current.Session.Remove(startSessionKey);
+                }
+                
+                return updated;
             }
             catch (Exception Ex)
             {
+                System.Diagnostics.Debug.WriteLine("Error submitting exam: " + Ex.Message);
                 return false;
             }
         }

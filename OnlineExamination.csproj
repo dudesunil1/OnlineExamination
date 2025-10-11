@@ -157,7 +157,6 @@
     <Compile Include="BLL\APIKeyService.cs" />
     <Compile Include="BLL\ClassService.cs" />
     <Compile Include="BLL\ConversionFunctions.cs" />
-    <Compile Include="BLL\ExamService.cs" />
     <Compile Include="BLL\GroupDetailsService.cs" />
     <Compile Include="BLL\GroupService.cs" />
     <Compile Include="BLL\StudentService.cs" />

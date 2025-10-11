@@ -191,49 +191,49 @@
     }
 
     .btn-previous {
-        background: var(--exam-light);
-        color: var(--exam-dark);
-        border: 1px solid var(--exam-border);
+        background: var(--exam-light) !important;
+        color: var(--exam-dark) !important;
+        border: 1px solid var(--exam-border) !important;
     }
 
     .btn-previous:hover {
-        background: #E9ECEF;
+        background: #E9ECEF !important;
     }
 
     .btn-next {
-        background: var(--exam-primary);
-        color: var(--exam-white);
+        background: var(--exam-primary) !important;
+        color: var(--exam-white) !important;
     }
 
     .btn-next:hover {
-        background: #1E5F7A;
+        background: #1E5F7A !important;
     }
 
     .btn-save-next {
-        background: var(--exam-success);
-        color: var(--exam-white);
+        background: var(--exam-success) !important;
+        color: var(--exam-white) !important;
     }
 
     .btn-save-next:hover {
-        background: #1E7E34;
+        background: #1E7E34 !important;
     }
 
     .btn-review-next {
-        background: var(--exam-info);
-        color: var(--exam-white);
+        background: var(--exam-info) !important;
+        color: var(--exam-white) !important;
     }
 
     .btn-review-next:hover {
-        background: #5A2D91;
+        background: #5A2D91 !important;
     }
 
     .btn-clear {
-        background: var(--exam-warning);
-        color: var(--exam-dark);
+        background: var(--exam-warning) !important;
+        color: var(--exam-dark) !important;
     }
 
     .btn-clear:hover {
-        background: #E0A800;
+        background: #E0A800 !important;
     }
 
     /* Question Palette */
@@ -260,7 +260,7 @@
         margin-bottom: 20px;
     }
 
-    .question-btn {
+    button.question-btn {
         width: 40px;
         height: 40px;
         border: 2px solid var(--exam-border);
@@ -276,52 +276,58 @@
         font-size: 14px;
     }
 
-    .question-btn:hover {
+    button.question-btn:hover {
         transform: scale(1.05);
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    /* Question Status Colors */
-    .question-btn.not-visited {
-        background: var(--exam-white);
-        border-color: var(--exam-border);
-        color: var(--exam-dark);
+    /* Question Status Colors - High specificity to override all global button styles */
+    button.question-btn.not-visited {
+        background-color: #FFFFFF !important;
+        background: #FFFFFF !important;
+        border-color: #DEE2E6 !important;
+        color: #343A40 !important;
     }
 
-    .question-btn.visited-not-answered {
-        background: var(--exam-danger);
-        border-color: var(--exam-danger);
-        color: var(--exam-white);
+    button.question-btn.visited-not-answered {
+        background-color: #DC3545 !important;
+        background: #DC3545 !important;
+        border-color: #DC3545 !important;
+        color: #FFFFFF !important;
     }
 
-    .question-btn.answered {
-        background: var(--exam-success);
-        border-color: var(--exam-success);
-        color: var(--exam-white);
+    button.question-btn.answered {
+        background-color: #28A745 !important;
+        background: #28A745 !important;
+        border-color: #28A745 !important;
+        color: #FFFFFF !important;
     }
 
-    .question-btn.marked-for-review {
-        background: var(--exam-info);
-        border-color: var(--exam-info);
-        color: var(--exam-white);
+    button.question-btn.marked-for-review {
+        background-color: #6F42C1 !important;
+        background: #6F42C1 !important;
+        border-color: #6F42C1 !important;
+        color: #FFFFFF !important;
     }
 
-    .question-btn.answered-and-marked {
-        background: var(--exam-success);
-        border-color: var(--exam-success);
-        color: var(--exam-white);
+    button.question-btn.answered-and-marked {
+        background-color: #28A745 !important;
+        background: #28A745 !important;
+        border-color: #28A745 !important;
+        color: #FFFFFF !important;
         position: relative;
     }
 
-    .question-btn.answered-and-marked::after {
-        content: '';
-        position: absolute;
-        top: 2px;
-        right: 2px;
-        width: 8px;
-        height: 8px;
-        background: var(--exam-info);
-        border-radius: 50%;
+    button.question-btn.answered-and-marked::after {
+        content: '' !important;
+        position: absolute !important;
+        top: 2px !important;
+        right: 2px !important;
+        width: 8px !important;
+        height: 8px !important;
+        background-color: #6F42C1 !important;
+        background: #6F42C1 !important;
+        border-radius: 50% !important;
     }
 
     .question-btn.current {
@@ -369,10 +375,10 @@
 
     .action-btn {
         padding: 12px;
-        border: 1px solid var(--exam-border);
+        border: 1px solid var(--exam-border) !important;
         border-radius: 6px;
-        background: var(--exam-white);
-        color: var(--exam-dark);
+        background: var(--exam-white) !important;
+        color: var(--exam-dark) !important;
         cursor: pointer;
         transition: all 0.2s ease;
         font-size: 14px;
@@ -380,17 +386,17 @@
     }
 
     .action-btn:hover {
-        background: var(--exam-light);
+        background: var(--exam-light) !important;
     }
 
     .action-btn.primary {
-        background: var(--exam-primary);
-        color: var(--exam-white);
-        border-color: var(--exam-primary);
+        background: var(--exam-primary) !important;
+        color: var(--exam-white) !important;
+        border-color: var(--exam-primary) !important;
     }
 
     .action-btn.primary:hover {
-        background: #1E5F7A;
+        background: #1E5F7A !important;
     }
 
     /* Instructions Modal */
@@ -628,10 +634,37 @@
                 var statusClass = status != null ? GetStatusClass(status.Status) : "not-visited";
                 var currentClass = i == Model.CurrentQuestionNumber ? "current" : "";
                 
-                <button type="button" class="question-btn @statusClass @currentClass" 
+                // Get inline style based on status
+                var bgColor = "#FFFFFF";
+                var borderColor = "#DEE2E6";
+                var textColor = "#343A40";
+                
+                if (statusClass == "visited-not-answered") {
+                    bgColor = "#DC3545";
+                    borderColor = "#DC3545";
+                    textColor = "#FFFFFF";
+                }
+                else if (statusClass == "answered" || statusClass == "answered-and-marked") {
+                    bgColor = "#28A745";
+                    borderColor = "#28A745";
+                    textColor = "#FFFFFF";
+                }
+                else if (statusClass == "marked-for-review") {
+                    bgColor = "#6F42C1";
+                    borderColor = "#6F42C1";
+                    textColor = "#FFFFFF";
+                }
+                
+                <button type="button" 
+                        class="question-btn @statusClass @currentClass" 
                         onclick="navigateToQuestion(@i)" 
-                        data-question="@i">
+                        data-question="@i"
+                        data-status="@statusClass"
+                        style="background-color: @bgColor !important; background: @bgColor !important; border-color: @borderColor !important; color: @textColor !important;">
                     @i
+                    @if (statusClass == "answered-and-marked") {
+                        <span class="status-dot" style="position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: #6F42C1 !important; border-radius: 50%;"></span>
+                    }
                 </button>
             }
         </div>
@@ -640,24 +673,24 @@
         <div class="palette-legend">
             <div class="legend-title">Question Status</div>
             <div class="legend-item">
-                <div class="legend-color" style="background: var(--exam-white);"></div>
+                <div class="legend-color" style="background: #FFFFFF; border: 1px solid #DEE2E6;"></div>
                 <span>Not Visited</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background: var(--exam-danger);"></div>
+                <div class="legend-color" style="background: #DC3545;"></div>
                 <span>Visited Not Answered</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background: var(--exam-success);"></div>
+                <div class="legend-color" style="background: #28A745;"></div>
                 <span>Answered</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background: var(--exam-info);"></div>
+                <div class="legend-color" style="background: #6F42C1;"></div>
                 <span>Marked for Review</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background: var(--exam-success); position: relative;">
-                    <div style="position: absolute; top: 2px; right: 2px; width: 6px; height: 6px; background: var(--exam-info); border-radius: 50%;"></div>
+                <div class="legend-color" style="background: #28A745; position: relative;">
+                    <div style="position: absolute; top: 2px; right: 2px; width: 6px; height: 6px; background: #6F42C1; border-radius: 50%;"></div>
                 </div>
                 <span>Answered & Marked</span>
             </div>
@@ -762,6 +795,7 @@
         let totalQuestions = @Model.NumberOfQuestions;
         let testId = @Model.TestId;
         let autoSaveInterval;
+        let beforeUnloadHandler;
 
         // Initialize exam
         document.addEventListener('DOMContentLoaded', function() {
@@ -769,6 +803,15 @@
             startTimer();
             setupEventListeners();
             loadCurrentAnswer();
+            
+            // Remove warning when clicking any navigation link
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a');
+                if (link && link.href && !link.target) {
+                    // User is navigating away intentionally via a link
+                    window.removeEventListener('beforeunload', beforeUnloadHandler);
+                }
+            });
         });
 
         function initializeExam() {
@@ -846,12 +889,14 @@
             autoSaveInterval = setInterval(autoSave, 30000);
 
             // Prevent accidental page refresh
-            window.addEventListener('beforeunload', function(e) {
+            beforeUnloadHandler = function(e) {
                 if (examStarted && timeRemaining > 0) {
                     e.preventDefault();
                     e.returnValue = 'Are you sure you want to leave? Your progress may be lost.';
+                    return 'Are you sure you want to leave? Your progress may be lost.';
                 }
-            });
+            };
+            window.addEventListener('beforeunload', beforeUnloadHandler);
         }
 
         function updateOptionSelection() {
@@ -881,11 +926,30 @@
         function navigateToQuestion(questionNumber) {
             if (questionNumber < 1 || questionNumber > totalQuestions) return;
 
-            // Save current answer before navigating
-            saveCurrentAnswer();
-
-            // Navigate to question
-            window.location.href = '@Url.Action("TakeExam", "Student")' + '?testId=' + testId + '&question=' + questionNumber;
+            // Save current answer before navigating and wait for completion
+            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+            if (selectedAnswer) {
+                // Update question status immediately for UI feedback
+                updateQuestionStatus(currentQuestion, 'answered');
+                
+                // Save to server and wait before navigating
+                saveAnswerToServer(currentQuestion, selectedAnswer.value, false).then(() => {
+                    // Remove beforeunload warning to allow navigation
+                    window.removeEventListener('beforeunload', beforeUnloadHandler);
+                    // Navigate to question
+                    window.location.href = '@Url.Action("TakeExam", "Student")' + '?testId=' + testId + '&question=' + questionNumber;
+                });
+            } else {
+                // Mark as visited but not answered
+                updateQuestionStatus(currentQuestion, 'visited-not-answered');
+                // Save visited status to server (with empty answer)
+                saveAnswerToServer(currentQuestion, '', false).then(() => {
+                    // Remove beforeunload warning to allow navigation
+                    window.removeEventListener('beforeunload', beforeUnloadHandler);
+                    // Navigate to question
+                    window.location.href = '@Url.Action("TakeExam", "Student")' + '?testId=' + testId + '&question=' + questionNumber;
+                });
+            }
         }
 
         function saveCurrentAnswer() {
@@ -895,20 +959,41 @@
                 updateQuestionStatus(currentQuestion, 'answered');
                 
                 // Save to server
-                saveAnswerToServer(currentQuestion, selectedAnswer.value);
+                saveAnswerToServer(currentQuestion, selectedAnswer.value, false);
             } else {
                 // Mark as visited but not answered
                 updateQuestionStatus(currentQuestion, 'visited-not-answered');
+                // Save visited status to server
+                saveAnswerToServer(currentQuestion, '', false);
             }
         }
 
         function saveAndNext() {
-            saveCurrentAnswer();
+            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
             
-            if (currentQuestion < totalQuestions) {
-                navigateToQuestion(currentQuestion + 1);
+            if (selectedAnswer) {
+                // Update question status immediately for UI feedback
+                updateQuestionStatus(currentQuestion, 'answered');
+                
+                // Save to server and wait before navigating
+                saveAnswerToServer(currentQuestion, selectedAnswer.value, false).then(() => {
+                    if (currentQuestion < totalQuestions) {
+                        doNavigate(currentQuestion + 1);
+                    } else {
+                        submitExam();
+                    }
+                });
             } else {
-                submitExam();
+                // Mark as visited but not answered
+                updateQuestionStatus(currentQuestion, 'visited-not-answered');
+                // Save visited status to server
+                saveAnswerToServer(currentQuestion, '', false).then(() => {
+                    if (currentQuestion < totalQuestions) {
+                        doNavigate(currentQuestion + 1);
+                    } else {
+                        submitExam();
+                    }
+                });
             }
         }
 
@@ -917,16 +1002,31 @@
             
             if (selectedAnswer) {
                 updateQuestionStatus(currentQuestion, 'answered-and-marked');
-                saveAnswerToServer(currentQuestion, selectedAnswer.value, true);
+                saveAnswerToServer(currentQuestion, selectedAnswer.value, true).then(() => {
+                    if (currentQuestion < totalQuestions) {
+                        doNavigate(currentQuestion + 1);
+                    } else {
+                        submitExam();
+                    }
+                });
             } else {
                 updateQuestionStatus(currentQuestion, 'marked-for-review');
+                // Save review flag to server (with empty answer)
+                saveAnswerToServer(currentQuestion, '', true).then(() => {
+                    if (currentQuestion < totalQuestions) {
+                        doNavigate(currentQuestion + 1);
+                    } else {
+                        submitExam();
+                    }
+                });
             }
-
-            if (currentQuestion < totalQuestions) {
-                navigateToQuestion(currentQuestion + 1);
-            } else {
-                submitExam();
-            }
+        }
+        
+        function doNavigate(questionNumber) {
+            // Remove beforeunload warning to allow navigation
+            window.removeEventListener('beforeunload', beforeUnloadHandler);
+            // Navigate to question
+            window.location.href = '@Url.Action("TakeExam", "Student")' + '?testId=' + testId + '&question=' + questionNumber;
         }
 
         function clearResponse() {
@@ -935,20 +1035,98 @@
             });
             updateOptionSelection();
             updateQuestionStatus(currentQuestion, 'visited-not-answered');
+            // Clear the answer on the server
+            clearAnswerOnServer(currentQuestion);
+        }
+        
+        function clearAnswerOnServer(questionNumber) {
+            fetch('@Url.Action("ClearAnswer", "Student")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    testId: testId,
+                    questionNumber: questionNumber
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Answer cleared:', data);
+            })
+            .catch(error => {
+                console.error('Error clearing answer:', error);
+            });
         }
 
         function updateQuestionStatus(questionNumber, status) {
-            const questionBtn = document.querySelector(`[data-question="${questionNumber}"]`);
+            const questionBtn = document.querySelector(`button.question-btn[data-question="${questionNumber}"]`);
             if (questionBtn) {
-                questionBtn.className = `question-btn ${status}`;
+                // Remove all status classes first
+                questionBtn.classList.remove('not-visited', 'visited-not-answered', 'answered', 'marked-for-review', 'answered-and-marked');
+                
+                // Add the new status class
+                questionBtn.classList.add(status);
+                
+                // Update data attribute
+                questionBtn.setAttribute('data-status', status);
+                
+                // Apply inline styles based on status to ensure colors always show
+                let bgColor = '#FFFFFF';
+                let borderColor = '#DEE2E6';
+                let textColor = '#343A40';
+                
+                // Remove any existing purple dot span (specifically with marker class)
+                const existingDot = questionBtn.querySelector('span.status-dot');
+                if (existingDot) {
+                    existingDot.remove();
+                }
+                
+                if (status === 'visited-not-answered') {
+                    bgColor = '#DC3545';
+                    borderColor = '#DC3545';
+                    textColor = '#FFFFFF';
+                }
+                else if (status === 'answered') {
+                    bgColor = '#28A745';
+                    borderColor = '#28A745';
+                    textColor = '#FFFFFF';
+                }
+                else if (status === 'marked-for-review') {
+                    bgColor = '#6F42C1';
+                    borderColor = '#6F42C1';
+                    textColor = '#FFFFFF';
+                }
+                else if (status === 'answered-and-marked') {
+                    bgColor = '#28A745';
+                    borderColor = '#28A745';
+                    textColor = '#FFFFFF';
+                    // Add purple dot with marker class
+                    const dot = document.createElement('span');
+                    dot.className = 'status-dot';
+                    dot.style.cssText = 'position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: #6F42C1 !important; border-radius: 50%;';
+                    questionBtn.appendChild(dot);
+                }
+                
+                // Apply inline styles using setAttribute to preserve other styles
+                questionBtn.setAttribute('style', `background-color: ${bgColor} !important; background: ${bgColor} !important; border-color: ${borderColor} !important; color: ${textColor} !important;`);
+                
+                // Add current class if this is the current question
                 if (questionNumber === currentQuestion) {
                     questionBtn.classList.add('current');
+                } else {
+                    questionBtn.classList.remove('current');
                 }
+                
+                // Debug logging
+                console.log(`Updated question ${questionNumber} to status: ${status}, bg: ${bgColor}, classes: ${questionBtn.className}`);
+            } else {
+                console.error(`Question button not found for question ${questionNumber}`);
             }
         }
 
         function saveAnswerToServer(questionNumber, answer, markForReview = false) {
-            fetch('@Url.Action("SaveAnswer", "Student")', {
+            return fetch('@Url.Action("SaveAnswer", "Student")', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -965,9 +1143,11 @@
                 if (data.success) {
                     showAutoSaveIndicator();
                 }
+                return data;
             })
             .catch(error => {
                 console.error('Error saving answer:', error);
+                return { success: false };
             });
         }
 
@@ -999,7 +1179,12 @@
         }
 
         function submitExam() {
+            // Temporarily remove the warning for the confirmation dialog
+            window.removeEventListener('beforeunload', beforeUnloadHandler);
+            
             if (confirm('Are you sure you want to submit the exam? You cannot change your answers after submission.')) {
+                // User confirmed - keep the handler removed
+                
                 // Save current answer
                 saveCurrentAnswer();
 
@@ -1018,12 +1203,19 @@
                         window.location.href = '@Url.Action("TestList", "Student")';
                     } else {
                         alert('Error submitting exam. Please try again.');
+                        // Re-add the handler if submission failed
+                        window.addEventListener('beforeunload', beforeUnloadHandler);
                     }
                 })
                 .catch(error => {
                     console.error('Error submitting exam:', error);
                     alert('Error submitting exam. Please try again.');
+                    // Re-add the handler if submission failed
+                    window.addEventListener('beforeunload', beforeUnloadHandler);
                 });
+            } else {
+                // User cancelled - re-add the handler
+                window.addEventListener('beforeunload', beforeUnloadHandler);
             }
         }
 

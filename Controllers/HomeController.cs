@@ -45,10 +45,10 @@ namespace OnlineExamination.Controllers
                 ViewBag.UserRole = "ADMIN";
                 ViewBag.UserData = userData;
                 AdminService adminService = new AdminService();
-                DashboardStats Objadmin = adminService.AdminDashboard().FirstOrDefault();
-                return View("~/Views/Dashboard/AdminDashboard.cshtml", Objadmin);
-
                 
+                // Use advanced dashboard
+                AdminDashboardViewModel dashboardData = adminService.GetAdvancedDashboardData();
+                return View("~/Views/Dashboard/AdvancedAdminDashboard.cshtml", dashboardData);
             }
             else
             {
