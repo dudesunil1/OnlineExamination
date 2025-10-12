@@ -19,6 +19,20 @@
         }
     };
 }
+
+<!-- Professional Page Header -->
+<div class="exam-page-header-professional">
+    <div class="exam-header-content">
+        <div class="exam-header-text">
+            <h1 class="exam-page-title">Create Test</h1>
+            <p class="exam-page-description">Create and configure new examination tests efficiently</p>
+        </div>
+        <div class="exam-header-actions">
+            @Html.ActionLink("Back to Tests", "Index", null, new { @class = "exam-btn exam-btn-secondary exam-btn-lg" })
+        </div>
+    </div>
+</div>
+
 <html lang="en">
 <head>
 
@@ -203,13 +217,7 @@
                                 <span class="text-13 text-gray-400 fw-medium">(Required)</span>
                             </label>
                             <div class="position-relative">
-                                @Html.TextBoxFor(model => model.Test_Name, new { @class = "form-control py-11" 
-
-<!-- Page Header -->
-<div class="exam-page-header">
-    <h1 class="exam-page-title">Create Test</h1>
-    <p class="exam-page-description">Update Test.</p>
-</div>})
+                                @Html.TextBoxFor(model => model.Test_Name, new { @class = "form-control py-11" })
                                 @Html.ValidationMessageFor(model => model.Test_Name, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -334,14 +342,8 @@
                                     {
                                         <option value="@item.Key" data-question-count="@item.Value.QuestionCount">
                                             @item.Value.Name (ID: @item.Key, Questions: @item.Value.QuestionCount)
-                                        </option>
-                                    
-
-<!-- Page Header -->
-<div class="exam-page-header">
-    <h1 class="exam-page-title">Create Test</h1>
-    <p class="exam-page-description">Update Test.</p>
-</div>}
+                                        </option>                                    
+                                    }
                                 }
                             }
 
@@ -365,7 +367,10 @@
                                 <div class="modal-body" id="topicModalBody">
                                     <!-- Topics checkboxes will be injected here -->
                                 </div>
-
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" id="saveTopicsBtn">Save Topics</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -443,6 +448,7 @@
 
             $('#SelectedSubjectId').change(function () {
                 var subjectId = $(this).val();
+                console.log('Subject changed to:', subjectId);
                 $('#SelectedTopicId').empty();
                 $('#questionList').empty();
 
@@ -468,11 +474,13 @@
                         });
                     }
                 } else if (subjectId) {
+                    console.log('Making AJAX call to get topics for subject:', subjectId);
                     $.ajax({
                         url: '/TestMaster/GetTopicsBySubjectId',
                         type: 'GET',
                         data: { subjectId: subjectId },
                         success: function (data) {
+                            console.log('Topics received:', data);
                             if (Array.isArray(data)) {
                                 selectedDataBySubject[subjectId] = {
                                     topicsData: data,
@@ -492,14 +500,16 @@
                                 });
 
                                 $('#topicModalBody').html(modalContent);
+                                console.log('Showing modal with content:', modalContent);
                                 var modal = new bootstrap.Modal(document.getElementById('topicModal'));
                                 modal.show();
                             } else {
                                 alert("Unexpected data format received.");
                             }
                         },
-                        error: function () {
-                            alert('Failed to load topics.');
+                        error: function (xhr, status, error) {
+                            console.error('AJAX Error:', xhr, status, error);
+                            alert('Failed to load topics. Check console for details.');
                         }
                     });
                 }
@@ -545,6 +555,24 @@
                     selectedDataBySubject[subjectId].questionsHtml = '';
                     selectedDataBySubject[subjectId].selectedQuestions = [];
                 }
+            });
+
+            // Handle Save Topics button click
+            $('#saveTopicsBtn').click(function () {
+                var subjectId = $('#SelectedSubjectId').val();
+                if (!subjectId || !selectedDataBySubject[subjectId]) return;
+
+                var selectedTopicIds = selectedDataBySubject[subjectId].selectedTopics;
+                if (selectedTopicIds.length === 0) {
+                    alert('Please select at least one topic.');
+                    return;
+                }
+
+                // Close the modal
+                $('#topicModal').modal('hide');
+
+                // Trigger the topic change event to load questions
+                $('.topic-check:checked').trigger('change');
             });
 
             // Track selected questions per subject

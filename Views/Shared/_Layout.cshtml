@@ -239,10 +239,27 @@
             </div>
             
             <!-- Logout Button -->
-            <a href="@Url.Action("Logout", "Home")" class="exam-btn exam-btn-danger">
-                <i class="fas fa-sign-out-alt"></i>
-                Logout
-            </a>
+            @if (ViewBag.UserRole == "STUDENT")
+            {
+                <a href="@Url.Action("Logout", "Student")" class="exam-btn exam-btn-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            }
+            else if (ViewBag.UserRole == "ADMIN")
+            {
+                <a href="@Url.Action("Logout", "Admin")" class="exam-btn exam-btn-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("Logout", "Home")" class="exam-btn exam-btn-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            }
         </div>
     </div>
 
@@ -343,7 +360,7 @@
             {
                 <ul class="exam-sidebar-menu">
                     <li class="exam-menu-item">
-                        <a href="@Url.Action("Index", "Home")" class="exam-menu-link">
+                        <a href="@Url.Action("Index", "Student")" class="exam-menu-link">
                             <span class="icon">
                                 <i class="fas fa-home"></i>
                             </span>
@@ -363,7 +380,7 @@
                                 <a href="@Url.Action("TestList", "Student")" class="sidebar-submenu__link">Available Tests</a>
                             </li>
                             <li class="sidebar-submenu__item">
-                                <a href="@Url.Action("Index", "Home")" class="sidebar-submenu__link">Test History</a>
+                                <a href="@Url.Action("Index", "Student")" class="sidebar-submenu__link">Test History</a>
                             </li>
                         </ul>
                     </li>
@@ -409,6 +426,9 @@
     
     <!-- Exam App Theme JavaScript -->
     <script src="~/Scripts/exam-app-theme.js"></script>
+    
+    <!-- Exam Popup System -->
+    <script src="~/Scripts/exam-popup.js"></script>
     
     @RenderSection("scripts", required: false)
 </body>

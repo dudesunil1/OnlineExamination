@@ -141,42 +141,188 @@
         </label>
     </div>
 
+    <!-- Exam Status and Timer -->
+    <div class="exam-status-section">
+        <div class="exam-status-card" id="examStatusCard">
+            <div class="status-content">
+                <div class="status-icon">
+                    <i class="fas fa-clock" id="statusIcon"></i>
+                </div>
+                <div class="status-text">
+                    <h4 id="statusTitle">Exam Not Yet Started</h4>
+                    <p id="statusMessage">The exam will be available at the scheduled start time.</p>
+                    <div class="countdown-timer" id="countdownTimer">
+                        <span id="countdownDisplay">--:--:--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Start Exam Button -->
     <div class="start-button">
         <button id="startExamBtn" class="btn btn-success" disabled onclick="startExam()">
-            <i class="ph ph-play-circle"></i> Start Exam
+            <i class="ph ph-play-circle"></i> <span id="buttonText">Start Exam</span>
         </button>
-        <p class="start-note">Please check the box above to enable the Start button</p>
+        <p class="start-note" id="startNote">Please check the box above to enable the Start button</p>
     </div>
 </div>
 
 <script>
-    // Enable start button when checkbox is checked
-    document.getElementById('confirmInstructions').addEventListener('change', function() {
+    // Exam time data from server
+    const examStartTime = new Date('@Model.TestStartTime.ToString("yyyy-MM-ddTHH:mm:ss")');
+    const examEndTime = new Date('@Model.TestEndTime.ToString("yyyy-MM-ddTHH:mm:ss")');
+    const currentTime = new Date();
+    
+    let countdownInterval;
+    let examStatus = 'not-started'; // 'not-started', 'available', 'ended'
+
+    // Initialize exam status and timer
+    document.addEventListener('DOMContentLoaded', function() {
+        updateExamStatus();
+        startCountdown();
+        
+        // Update every second
+        countdownInterval = setInterval(function() {
+            updateExamStatus();
+        }, 1000);
+    });
+
+    function updateExamStatus() {
+        const now = new Date();
+        const timeUntilStart = examStartTime - now;
+        const timeUntilEnd = examEndTime - now;
+        
+        const statusCard = document.getElementById('examStatusCard');
+        const statusIcon = document.getElementById('statusIcon');
+        const statusTitle = document.getElementById('statusTitle');
+        const statusMessage = document.getElementById('statusMessage');
+        const countdownDisplay = document.getElementById('countdownDisplay');
         const startBtn = document.getElementById('startExamBtn');
-        if (this.checked) {
+        const startNote = document.getElementById('startNote');
+        const confirmCheckbox = document.getElementById('confirmInstructions');
+
+        if (now < examStartTime) {
+            // Exam not yet started
+            examStatus = 'not-started';
+            statusCard.className = 'exam-status-card';
+            statusIcon.className = 'fas fa-clock';
+            statusTitle.textContent = 'Exam Not Yet Started';
+            statusMessage.textContent = 'The exam will be available at the scheduled start time.';
+            countdownDisplay.textContent = formatTimeRemaining(timeUntilStart);
+            startBtn.disabled = true;
+            startNote.textContent = 'Exam will be available at: ' + examStartTime.toLocaleString();
+            
+        } else if (now >= examStartTime && now < examEndTime) {
+            // Exam is available
+            examStatus = 'available';
+            statusCard.className = 'exam-status-card available';
+            statusIcon.className = 'fas fa-play-circle';
+            statusTitle.textContent = 'Exam is Now Available!';
+            statusMessage.textContent = 'You can now start the exam. Please read the instructions and click Start Exam.';
+            countdownDisplay.textContent = 'Available Now';
+            
+            // Always enable the button when exam is available (remove checkbox requirement)
             startBtn.disabled = false;
             startBtn.classList.add('enabled');
+            startNote.textContent = 'Ready to start! Click the button above.';
+                
         } else {
-            startBtn.disabled = true;
-            startBtn.classList.remove('enabled');
+            // Exam has ended - show Start Now button
+            examStatus = 'ended';
+            statusCard.className = 'exam-status-card available';
+            statusIcon.className = 'fas fa-play-circle';
+            statusTitle.textContent = 'Exam Available';
+            statusMessage.textContent = 'You can start the exam now. Click the Start Exam button below.';
+            
+            // Hide the countdown timer
+            countdownDisplay.parentElement.classList.add('hidden');
+            
+            // Enable the button
+            startBtn.disabled = false;
+            startBtn.classList.add('enabled');
+            startNote.textContent = 'Ready to start! Click the button above.';
+            
+            // Clear the interval since exam has ended
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+        }
+    }
+
+    function formatTimeRemaining(milliseconds) {
+        if (milliseconds <= 0) return '00:00:00';
+        
+        const seconds = Math.floor(milliseconds / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        
+        const remainingSeconds = seconds % 60;
+        const remainingMinutes = minutes % 60;
+        const remainingHours = hours % 24;
+        
+        return `${remainingHours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    function startCountdown() {
+        updateExamStatus();
+    }
+
+    // Enable start button when checkbox is checked (only if exam is available)
+    document.getElementById('confirmInstructions').addEventListener('change', function() {
+        const startBtn = document.getElementById('startExamBtn');
+        const startNote = document.getElementById('startNote');
+        
+        if (examStatus === 'available' || examStatus === 'ended') {
+            // When exam is available or ended, checkbox doesn't affect button state
+            // Button is always enabled in these states
+            return;
+        }
+        
+        // Only for 'not-started' state, checkbox controls button
+        if (examStatus === 'not-started') {
+            const isChecked = this.checked;
+            startBtn.disabled = !isChecked;
+            
+            startNote.textContent = isChecked ? 
+                'Ready to start! Click the button above.' : 
+                'Please check the box above to enable the Start button';
         }
     });
 
     function startExam() {
+        // Double check that exam is available
+        const now = new Date();
+        if (now < examStartTime) {
+            showWarning('The exam has not started yet. Please wait for the scheduled start time.', 'Exam Not Available');
+            return;
+        }
+        
+        // Allow starting exam even after end time (as per user requirement)
+        // Remove the end time restriction
+
         // Validate test ID
         var testId = @Model.TestID;
         if (!testId || testId === 0) {
-            alert('Error: Invalid test ID. Please contact your administrator.');
+            showError('Error: Invalid test ID. Please contact your administrator.', 'System Error');
             console.error('Invalid TestID:', testId);
             return;
         }
 
-        // Show confirmation dialog
-        if (confirm('Are you ready to start the exam? Once started, the timer will begin immediately.')) {
-            console.log('Navigating to exam with testId:', testId);
-            window.location.href = '@Url.Action("TakeExam", "Student", new { testId = @Model.TestID })';
-        }
+        // Show custom confirmation popup
+        showConfirm(
+            'Are you ready to start the exam? Once started, the timer will begin immediately.',
+            'Start Exam',
+            function() {
+                // User confirmed
+                console.log('Navigating to exam with testId:', testId);
+                window.location.href = '@Url.Action("TakeExam", "Student", new { testId = @Model.TestID })';
+            },
+            function() {
+                // User cancelled
+                console.log('User cancelled starting exam');
+            }
+        );
     }
 </script>
 
@@ -484,6 +630,75 @@
         cursor: pointer;
     }
 
+    /* Exam Status Section */
+    .exam-status-section {
+        margin: 30px 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .exam-status-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        padding: 24px;
+        color: white;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        min-width: 400px;
+        max-width: 500px;
+        transition: all 0.3s ease;
+    }
+
+    .exam-status-card.available {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+    }
+
+    .exam-status-card.ended {
+        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+    }
+
+    .status-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .status-icon {
+        font-size: 48px;
+        opacity: 0.9;
+    }
+
+    .status-text h4 {
+        margin: 0 0 8px 0;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .status-text p {
+        margin: 0 0 12px 0;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    .countdown-timer {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 8px 16px;
+        display: inline-block;
+        font-family: 'Courier New', monospace;
+    }
+
+    .countdown-timer span {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    .countdown-timer.hidden {
+        display: none !important;
+    }
+
     /* Start Button */
     .start-button {
         text-align: center;
@@ -564,6 +779,29 @@
         .start-button .btn {
             padding: 15px 40px;
             font-size: 1.1em;
+        }
+
+        .exam-status-card {
+            min-width: 320px;
+            padding: 20px;
+        }
+
+        .status-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 15px;
+        }
+
+        .status-icon {
+            font-size: 36px;
+        }
+
+        .status-text h4 {
+            font-size: 18px;
+        }
+
+        .countdown-timer span {
+            font-size: 20px;
         }
     }
 </style>

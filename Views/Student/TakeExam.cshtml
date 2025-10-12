@@ -57,19 +57,108 @@
     }
 
     .exam-timer {
-        background: var(--exam-danger);
+        background: linear-gradient(135deg, #dc3545, #c82333);
         color: var(--exam-white);
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 16px;
-        min-width: 120px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: 700;
+        min-width: 140px;
         text-align: center;
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .exam-timer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        animation: timerShine 3s infinite;
     }
 
     .exam-timer.warning {
-        background: var(--exam-warning);
+        background: linear-gradient(135deg, #ffc107, #e0a800);
         color: var(--exam-dark);
+        animation: timerPulse 1s infinite;
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+    }
+
+    .exam-timer.critical {
+        background: linear-gradient(135deg, #dc3545, #bd2130);
+        color: var(--exam-white);
+        animation: timerBlink 0.5s infinite;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.5);
+    }
+
+    @@keyframes timerShine {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    @@keyframes timerPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    @@keyframes timerBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    @@keyframes warningFade {
+        0% { 
+            opacity: 0; 
+            transform: translate(-50%, -50%) scale(0.8); 
+        }
+        20% { 
+            opacity: 1; 
+            transform: translate(-50%, -50%) scale(1.1); 
+        }
+        80% { 
+            opacity: 1; 
+            transform: translate(-50%, -50%) scale(1); 
+        }
+        100% { 
+            opacity: 0; 
+            transform: translate(-50%, -50%) scale(0.9); 
+        }
+    }
+
+    .timer-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .timer-progress-container {
+        width: 140px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .timer-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #28a745, #ffc107, #dc3545);
+        width: 100%;
+        transition: width 1s linear;
+        border-radius: 2px;
+    }
+
+    .exam-timer.warning + .timer-container .timer-progress-bar {
+        background: linear-gradient(90deg, #ffc107, #dc3545);
+    }
+
+    .exam-timer.critical + .timer-container .timer-progress-bar {
+        background: #dc3545;
     }
 
     /* Main Content Area */
@@ -528,8 +617,14 @@
 <!-- Exam Header -->
 <div class="exam-header">
     <h1 class="exam-title">@Model.TestName - @Model.SubjectName</h1>
-    <div class="exam-timer" id="examTimer">
-        <span id="timerDisplay">@Model.TimeRemaining</span>
+    <div class="timer-container">
+        <div class="exam-timer" id="examTimer">
+            <i class="fas fa-clock" style="margin-right: 8px;"></i>
+            <span id="timerDisplay">@Model.TimeRemaining</span>
+        </div>
+        <div class="timer-progress-container">
+            <div class="timer-progress-bar" id="timerProgressBar"></div>
+        </div>
     </div>
 </div>
 
@@ -844,6 +939,8 @@
         function startTimer() {
             const timerElement = document.getElementById('timerDisplay');
             const timerContainer = document.getElementById('examTimer');
+            const progressBar = document.getElementById('timerProgressBar');
+            const totalTime = timeRemaining; // Store initial time for progress calculation
 
             const timer = setInterval(() => {
                 timeRemaining--;
@@ -852,22 +949,111 @@
                 const minutes = Math.floor((timeRemaining % 3600) / 60);
                 const seconds = timeRemaining % 60;
 
-                timerElement.textContent = 
-                    (hours > 0 ? hours + ':' : '') + 
-                    (minutes < 10 ? '0' : '') + minutes + ':' + 
-                    (seconds < 10 ? '0' : '') + seconds;
+                // Format time display
+                let timeString = '';
+                if (hours > 0) {
+                    timeString = hours + ':' + 
+                        (minutes < 10 ? '0' : '') + minutes + ':' + 
+                        (seconds < 10 ? '0' : '') + seconds;
+                } else {
+                    timeString = (minutes < 10 ? '0' : '') + minutes + ':' + 
+                        (seconds < 10 ? '0' : '') + seconds;
+                }
 
-                // Change color when time is running low
-                if (timeRemaining <= 300) { // 5 minutes
+                timerElement.textContent = timeString;
+
+                // Update progress bar
+                const progressPercentage = (timeRemaining / totalTime) * 100;
+                progressBar.style.width = Math.max(0, progressPercentage) + '%';
+
+                // Update timer styling based on remaining time
+                timerContainer.classList.remove('warning', 'critical');
+                
+                if (timeRemaining <= 60) { // Last minute - critical
+                    timerContainer.classList.add('critical');
+                    // Play warning sound (if browser allows)
+                    if (timeRemaining % 10 === 0) {
+                        playWarningSound();
+                    }
+                } else if (timeRemaining <= 300) { // Last 5 minutes - warning
                     timerContainer.classList.add('warning');
+                    // Play warning sound every 30 seconds
+                    if (timeRemaining % 30 === 0) {
+                        playWarningSound();
+                    }
+                }
+
+                // Show time warnings
+                if (timeRemaining === 300) { // 5 minutes warning
+                    showTimeWarning('5 minutes remaining!');
+                } else if (timeRemaining === 60) { // 1 minute warning
+                    showTimeWarning('1 minute remaining!');
+                } else if (timeRemaining === 30) { // 30 seconds warning
+                    showTimeWarning('30 seconds remaining!');
                 }
 
                 // Auto-submit when time runs out
                 if (timeRemaining <= 0) {
                     clearInterval(timer);
-                    submitExam();
+                    timerElement.textContent = '00:00';
+                    showTimeWarning('Time\'s up! Submitting exam...');
+                    setTimeout(() => {
+                        submitExam();
+                    }, 2000);
                 }
             }, 1000);
+        }
+
+        function playWarningSound() {
+            try {
+                // Create a simple beep sound using Web Audio API
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                // Browser doesn't support Web Audio API or user hasn't interacted with page
+                console.log('Audio not available');
+            }
+        }
+
+        function showTimeWarning(message) {
+            // Create a temporary warning notification
+            const warning = document.createElement('div');
+            warning.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #dc3545;
+                color: white;
+                padding: 20px 30px;
+                border-radius: 8px;
+                font-size: 18px;
+                font-weight: 600;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                animation: warningFade 3s ease-in-out;
+            `;
+            warning.textContent = message;
+            
+            document.body.appendChild(warning);
+            
+            // Remove warning after 3 seconds
+            setTimeout(() => {
+                if (warning.parentNode) {
+                    warning.parentNode.removeChild(warning);
+                }
+            }, 3000);
         }
 
         function setupEventListeners() {

@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using Microsoft.AspNetCore.Http;
 using PagedList;
+using OnlineExamination;
 
 namespace OnlineExamination.Controllers
 {
@@ -18,24 +20,44 @@ namespace OnlineExamination.Controllers
         StudentTestService objTestService = new StudentTestService();
        
 
-      
+        [HttpGet]
+        public ActionResult Index()
+        {
+            // Get student ID using the helper method (already validated by CheckSessionRole attribute)
+            int studentId = CurrentUser.GetStudentIdAsInt();
+            
+            // Get student dashboard data
+            StudentDashboardViewModel dashboardData = objStudentService.GetStudentDashboardData(studentId);
+            
+            return View(dashboardData);
+        }
 
         [HttpGet]
-      
-        public ActionResult TestList()
+        public ActionResult Profile()
         {
-            string studId = Session["StudentId"] as string;
-
-            if (string.IsNullOrEmpty(studId))
+            // Get student ID using the helper method (already validated by CheckSessionRole attribute)
+            int studentId = CurrentUser.GetStudentIdAsInt();
+            
+            // Get student information
+            List<StudentMasterModel> students = objStudentService.GetStudentById(studentId);
+            
+            if (students == null || !students.Any())
             {
-                return RedirectToAction("Login", "Home"); // Redirect to login if not found
+                TempData["ErrorMessage"] = "Student information not found.";
+                return RedirectToAction("Login", "Home");
             }
 
-            int studentId = int.Parse(studId);
+            StudentMasterModel student = students.FirstOrDefault();
+            return View(student);
+        }
+
+        [HttpGet]
+        public ActionResult TestList()
+        {
+            // Get student ID using the helper method (already validated by CheckSessionRole attribute)
+            int studentId = CurrentUser.GetStudentIdAsInt();
 
             List<TestStudent> objtestStudent = objTestService.GetstudetTest(studentId);
-
-
 
             return View(objtestStudent);
         }
@@ -43,21 +65,13 @@ namespace OnlineExamination.Controllers
         public ActionResult ShowTestQuestion(int id, int? page)
         {
             QuestionMasterService objTestService = new QuestionMasterService();
-            string studId = Session["StudentId"] as string;
-
-            if (string.IsNullOrEmpty(studId))
-            {
-                return RedirectToAction("Login", "Home"); // Redirect to login if not found
-            }
-
-            int studentId = int.Parse(studId);
+            
+            // Student ID is already validated by CheckSessionRole attribute
+            int studentId = CurrentUser.GetStudentIdAsInt();
 
             List<TestQuestionViewModel> objtestquestion = objTestService.GetTestQuestions(id);
             int pageSize = 1; // Show one question per page
             int pageNumber = (page ?? 1); // Default to page 1 if no page is specified
-
-            // Pass the paginated result to the view
-            
 
             if (objtestquestion == null)
             {
@@ -69,19 +83,12 @@ namespace OnlineExamination.Controllers
 
 
         [HttpGet]
-      
         public ActionResult TestDetails(int id)
         {
             try
             {
-                string studId = Session["StudentId"] as string;
-
-                if (string.IsNullOrEmpty(studId))
-                {
-                    return RedirectToAction("Login", "Home");
-                }
-
-                int studentId = int.Parse(studId);
+                // Student ID is already validated by CheckSessionRole attribute
+                int studentId = CurrentUser.GetStudentIdAsInt();
 
                 // First, get the student's test assignment to ensure they have access
                 List<TestStudent> studentTests = objTestService.GetstudetTest(studentId);
@@ -144,14 +151,8 @@ namespace OnlineExamination.Controllers
         [HttpGet]
         public ActionResult TakeExam(int testId, int question = 1)
         {
-            string studId = Session["StudentId"] as string;
-
-            if (string.IsNullOrEmpty(studId))
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            int studentId = int.Parse(studId);
+            // Student ID is already validated by CheckSessionRole attribute
+            int studentId = CurrentUser.GetStudentIdAsInt();
 
             // Verify student has access to this test
             List<TestStudent> studentTests = objTestService.GetstudetTest(studentId);
@@ -181,13 +182,8 @@ namespace OnlineExamination.Controllers
         {
             try
             {
-                string studId = Session["StudentId"] as string;
-                if (string.IsNullOrEmpty(studId))
-                {
-                    return Json(new { success = false, message = "Student not logged in" });
-                }
-
-                int studentId = int.Parse(studId);
+                // Student ID is already validated by CheckSessionRole attribute
+                int studentId = CurrentUser.GetStudentIdAsInt();
 
                 // Initialize exam session
                 StudentService studentService = new StudentService();
@@ -206,13 +202,8 @@ namespace OnlineExamination.Controllers
         {
             try
             {
-                string studId = Session["StudentId"] as string;
-                if (string.IsNullOrEmpty(studId))
-                {
-                    return Json(new { success = false, message = "Student not logged in" });
-                }
-
-                int studentId = int.Parse(studId);
+                // Student ID is already validated by CheckSessionRole attribute
+                int studentId = CurrentUser.GetStudentIdAsInt();
 
                 StudentService studentService = new StudentService();
                 bool saved = studentService.SaveStudentAnswer(testId, studentId, questionNumber, answer, markForReview);
@@ -230,13 +221,8 @@ namespace OnlineExamination.Controllers
         {
             try
             {
-                string studId = Session["StudentId"] as string;
-                if (string.IsNullOrEmpty(studId))
-                {
-                    return Json(new { success = false, message = "Student not logged in" });
-                }
-
-                int studentId = int.Parse(studId);
+                // Student ID is already validated by CheckSessionRole attribute
+                int studentId = CurrentUser.GetStudentIdAsInt();
 
                 StudentService studentService = new StudentService();
                 bool cleared = studentService.ClearStudentAnswer(testId, studentId, questionNumber);
@@ -254,13 +240,8 @@ namespace OnlineExamination.Controllers
         {
             try
             {
-                string studId = Session["StudentId"] as string;
-                if (string.IsNullOrEmpty(studId))
-                {
-                    return Json(new { success = false, message = "Student not logged in" });
-                }
-
-                int studentId = int.Parse(studId);
+                // Student ID is already validated by CheckSessionRole attribute
+                int studentId = CurrentUser.GetStudentIdAsInt();
 
                 StudentService studentService = new StudentService();
                 bool submitted = studentService.SubmitExam(testId, studentId);
@@ -276,14 +257,8 @@ namespace OnlineExamination.Controllers
         [HttpGet]
         public ActionResult QuestionPaper(int testId)
         {
-            string studId = Session["StudentId"] as string;
-
-            if (string.IsNullOrEmpty(studId))
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            int studentId = int.Parse(studId);
+            // Student ID is already validated by CheckSessionRole attribute
+            int studentId = CurrentUser.GetStudentIdAsInt();
 
             // Get all questions for the test
             QuestionMasterService questionService = new QuestionMasterService();
@@ -297,5 +272,17 @@ namespace OnlineExamination.Controllers
             return View(questions);
         }
 
+        public ActionResult Logout()
+        {
+            // Clear all session data
+            Session.Clear();
+            Session.Abandon();
+            
+            // Sign out from forms authentication
+            FormsAuthentication.SignOut();
+            
+            // Redirect to student login page
+            return RedirectToAction("Login", "Home");
+        }
     }
 }

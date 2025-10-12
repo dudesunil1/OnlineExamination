@@ -1722,3 +1722,350 @@ body {
 .exam-animate-pulse {
     animation: exam-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* ========================================
+   CUSTOM POPUP MODAL SYSTEM
+   ======================================== */
+
+/* Popup Modal Overlay */
+.exam-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.exam-popup-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Popup Modal Container */
+.exam-popup-modal {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.exam-popup-overlay.show .exam-popup-modal {
+    transform: scale(1) translateY(0);
+}
+
+/* Popup Header */
+.exam-popup-header {
+    padding: var(--space-6);
+    background: linear-gradient(135deg, var(--blue-500) 0%, var(--blue-600) 100%);
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+}
+
+.exam-popup-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    pointer-events: none;
+}
+
+.exam-popup-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.exam-popup-icon {
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+.exam-popup-close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: var(--white);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.1rem;
+}
+
+.exam-popup-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* Popup Body */
+.exam-popup-body {
+    padding: var(--space-6);
+    color: var(--gray-700);
+    line-height: 1.6;
+}
+
+.exam-popup-message {
+    font-size: 1rem;
+    margin: 0 0 var(--space-4) 0;
+}
+
+.exam-popup-details {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    background: var(--gray-50);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--blue-500);
+}
+
+/* Popup Footer */
+.exam-popup-footer {
+    padding: var(--space-4) var(--space-6) var(--space-6);
+    display: flex;
+    gap: var(--space-3);
+    justify-content: flex-end;
+}
+
+/* Popup Buttons */
+.exam-popup-btn {
+    padding: var(--space-3) var(--space-6);
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 100px;
+    justify-content: center;
+}
+
+.exam-popup-btn-primary {
+    background: linear-gradient(135deg, var(--blue-500) 0%, var(--blue-600) 100%);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.exam-popup-btn-primary:hover {
+    background: linear-gradient(135deg, var(--blue-600) 0%, var(--blue-700) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.exam-popup-btn-secondary {
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+}
+
+.exam-popup-btn-secondary:hover {
+    background: var(--gray-200);
+    transform: translateY(-1px);
+}
+
+.exam-popup-btn-danger {
+    background: linear-gradient(135deg, var(--red-500) 0%, var(--red-600) 100%);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.exam-popup-btn-danger:hover {
+    background: linear-gradient(135deg, var(--red-600) 0%, var(--red-700) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.exam-popup-btn-success {
+    background: linear-gradient(135deg, var(--green-500) 0%, var(--green-600) 100%);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.exam-popup-btn-success:hover {
+    background: linear-gradient(135deg, var(--green-600) 0%, var(--green-700) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+.exam-popup-btn-warning {
+    background: linear-gradient(135deg, var(--yellow-500) 0%, var(--yellow-600) 100%);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(234, 179, 8, 0.3);
+}
+
+.exam-popup-btn-warning:hover {
+    background: linear-gradient(135deg, var(--yellow-600) 0%, var(--yellow-700) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+}
+
+/* Popup Animation Classes */
+.exam-popup-overlay.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.exam-popup-overlay.fade-out .exam-popup-modal {
+    transform: scale(0.9) translateY(-20px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .exam-popup-modal {
+        width: 95%;
+        margin: var(--space-4);
+    }
+    
+    .exam-popup-header,
+    .exam-popup-body {
+        padding: var(--space-4);
+    }
+    
+    .exam-popup-footer {
+        padding: var(--space-3) var(--space-4) var(--space-4);
+        flex-direction: column;
+    }
+    
+    .exam-popup-btn {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   PROFILE PAGE SPECIFIC STYLES
+   ======================================== */
+
+/* Profile Photo Section */
+.exam-profile-photo-section {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+    padding: var(--space-6);
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+}
+
+.exam-profile-photo-container {
+    position: relative;
+}
+
+.exam-profile-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--white);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.exam-profile-photo:hover {
+    transform: scale(1.05);
+}
+
+.exam-no-profile-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid var(--white);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.exam-no-profile-photo i {
+    font-size: 3rem;
+    color: var(--gray-400);
+}
+
+.exam-profile-basic-info {
+    flex: 1;
+}
+
+.exam-profile-name {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--gray-900);
+    margin: 0 0 var(--space-2) 0;
+    line-height: 1.2;
+}
+
+.exam-profile-username {
+    font-size: var(--text-lg);
+    color: var(--gray-600);
+    margin: 0 0 var(--space-3) 0;
+    font-weight: 500;
+}
+
+.exam-profile-badge {
+    display: inline-block;
+    padding: var(--space-2) var(--space-3);
+    background: var(--blue-500);
+    color: var(--white);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive Profile Layout */
+@media (max-width: 768px) {
+    .exam-profile-photo-section {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-4);
+    }
+    
+    .exam-profile-photo,
+    .exam-no-profile-photo {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .exam-no-profile-photo i {
+        font-size: 2.5rem;
+    }
+    
+    .exam-profile-name {
+        font-size: var(--text-xl);
+    }
+    
+    .exam-profile-username {
+        font-size: var(--text-base);
+    }
+}

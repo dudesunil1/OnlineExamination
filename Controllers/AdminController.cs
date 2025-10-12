@@ -21,6 +21,16 @@ namespace OnlineExamination.Controllers
         [HttpGet]
         public ActionResult Login()
         {
+            // Check if admin is already logged in
+            string userRole = Session["UserRole"] as string;
+            var userData = Session["UserData"];
+            
+            if (userRole == "ADMIN" && userData != null)
+            {
+                // Admin is already logged in, redirect to dashboard
+                return RedirectToAction("Index", "Admin");
+            }
+            
             return View();
         }
 
@@ -48,58 +58,25 @@ namespace OnlineExamination.Controllers
                 return View();
             }
         }
-        public ActionResult Index()
-        {
-            string userRole = Session["UserRole"] as string;
-            var userData = Session["UserData"];
-            int studid = 0;  
-            if (Session["StudentId"] != null)
-            {
-                studid = Convert.ToInt32(Session["StudentId"]);
-            }
-
-            if (string.IsNullOrEmpty(userRole) || userData == null)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            if (userRole == "STUDENT")
-            {
-                ViewBag.UserRole = "STUDENT";
-                ViewBag.UserData = userData;
-                StudentService objStudentService = new StudentService();
-                StudentDashboardViewModel dashboardData = objStudentService.GetStudentDashboardData(studid);
-                return View("~/Views/Dashboard/StudentDashboard.cshtml", dashboardData);
-            }
-            else if (userRole == "ADMIN")
-            {
-                ViewBag.UserRole = "ADMIN";
-                ViewBag.UserData = userData;
-                AdminService adminService = new AdminService();
-                
-                // Use advanced dashboard
-                AdminDashboardViewModel dashboardData = adminService.GetAdvancedDashboardData();
-                return View("~/Views/Dashboard/AdvancedAdminDashboard.cshtml", dashboardData);
-            }
-            else
-            {
-                return RedirectToAction("Login", "Home");
-            }
-        }
+        
 
         public ActionResult Logout()
         {
             string userRole = Session["UserRole"] as string;
+            
+            // Clear all session data
+            Session.Clear();
+            Session.Abandon();
+            
+            // Sign out from forms authentication
+            FormsAuthentication.SignOut();
+            
             if (userRole == "ADMIN")
             {
-                Session.Clear();
-                FormsAuthentication.SignOut();
                 return RedirectToAction("Login", "Admin");
             }
             else
             {
-                Session.Clear();
-                FormsAuthentication.SignOut();
                 return RedirectToAction("Login", "Home");
             }
         }

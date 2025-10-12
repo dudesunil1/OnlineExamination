@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace OnlineExamination.Controllers
 {
@@ -19,6 +20,16 @@ namespace OnlineExamination.Controllers
         [HttpGet]
         public ActionResult Login()
         {
+            // Check if student is already logged in
+            string userRole = Session["UserRole"] as string;
+            string studentId = Session["StudentId"] as string;
+            
+            if (userRole == "STUDENT" && !string.IsNullOrEmpty(studentId))
+            {
+                // Student is already logged in, redirect to dashboard
+                return RedirectToAction("Index", "Student");
+            }
+            
             return View();
         }
 
@@ -31,7 +42,8 @@ namespace OnlineExamination.Controllers
                 bool isLogin = objStudentService.Login(objstudlogin.Stud_UserName, objstudlogin.Stud_Password);
                 if (isLogin)
                 {
-                    return RedirectToAction("Index", "Admin");
+                    // Redirect to Student Dashboard instead of Admin
+                    return RedirectToAction("Index", "Student");
                 }
                 else
                 {
@@ -42,6 +54,19 @@ namespace OnlineExamination.Controllers
             {
                 return View();
             }
+        }
+
+        public ActionResult Logout()
+        {
+            // Clear all session data
+            Session.Clear();
+            Session.Abandon();
+            
+            // Sign out from forms authentication
+            FormsAuthentication.SignOut();
+            
+            // Redirect to login page
+            return RedirectToAction("Login", "Home");
         }
     }
 }
