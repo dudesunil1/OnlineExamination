@@ -28,7 +28,7 @@ namespace OnlineExamination.Controllers
 
             if (string.IsNullOrEmpty(studId))
             {
-                return RedirectToAction("Login", "Login"); // Redirect to login if not found
+                return RedirectToAction("Login", "Home"); // Redirect to login if not found
             }
 
             int studentId = int.Parse(studId);
@@ -47,7 +47,7 @@ namespace OnlineExamination.Controllers
 
             if (string.IsNullOrEmpty(studId))
             {
-                return RedirectToAction("Login", "Login"); // Redirect to login if not found
+                return RedirectToAction("Login", "Home"); // Redirect to login if not found
             }
 
             int studentId = int.Parse(studId);
@@ -78,7 +78,7 @@ namespace OnlineExamination.Controllers
 
                 if (string.IsNullOrEmpty(studId))
                 {
-                    return RedirectToAction("Login", "Login");
+                    return RedirectToAction("Login", "Home");
                 }
 
                 int studentId = int.Parse(studId);
@@ -148,7 +148,7 @@ namespace OnlineExamination.Controllers
 
             if (string.IsNullOrEmpty(studId))
             {
-                return RedirectToAction("Login", "Login");
+                return RedirectToAction("Login", "Home");
             }
 
             int studentId = int.Parse(studId);
@@ -280,7 +280,7 @@ namespace OnlineExamination.Controllers
 
             if (string.IsNullOrEmpty(studId))
             {
-                return RedirectToAction("Login", "Login");
+                return RedirectToAction("Login", "Home");
             }
 
             int studentId = int.Parse(studId);

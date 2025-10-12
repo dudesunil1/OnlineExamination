@@ -16,39 +16,15 @@
     };
 }
 
-<!-- Page Header -->
-<div class="exam-page-header">
-    <h1 class="exam-page-title">Test Management</h1>
-    <p class="exam-page-description">Manage and organize examination tests for students.</p>
-</div>
-
-<!-- Action Buttons -->
-<div class="exam-card exam-mb-6">
-    <div class="exam-card-content">
-        <div class="exam-flex exam-justify-between exam-items-center">
-            <div class="exam-flex exam-gap-4">
-                <a href="@Url.Action("Create", "TestMaster")" class="exam-btn exam-btn-primary">
-                    <i class="fas fa-plus"></i>
-                    Create New Test
-                </a>
-                <button type="button" class="exam-btn exam-btn-secondary" onclick="refreshTests()">
-                    <i class="fas fa-sync-alt"></i>
-                    Refresh
-                </button>
-            </div>
-            
-            <div class="exam-flex exam-gap-4 exam-items-center">
-                <div class="exam-search-box">
-                    <input type="text" id="testSearch" placeholder="Search tests..." class="exam-form-control">
-                    <i class="fas fa-search exam-search-icon"></i>
-                </div>
-                <select id="statusFilter" class="exam-form-select exam-w-32">
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                    <option value="upcoming">Upcoming</option>
-                </select>
-            </div>
+<!-- Professional Page Header -->
+<div class="exam-page-header-professional">
+    <div class="exam-header-content">
+        <div class="exam-header-text">
+            <h1 class="exam-page-title">Test Management</h1>
+            <p class="exam-page-description">Manage and organize examination tests for students efficiently</p>
+        </div>
+        <div class="exam-header-actions">
+            @Html.ActionLink("Create New Test", "Create", null, new { @class = "exam-btn exam-btn-primary exam-btn-lg" })
         </div>
     </div>
 </div>

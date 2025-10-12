@@ -1,49 +1,78 @@
 @model IEnumerable<OnlineExamination.Models.QuestionMasterViewModel>
 
 @{
-    ViewBag.Title = "List";
+    ViewBag.Title = "Question Management";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    // Set breadcrumb items
+    ViewBag.BreadcrumbItems = new List<object>
+    {
+        new Dictionary<string, object>
+        {
+            {"Text", "Question Management"},
+            {"Url", Url.Action("Index", "Question")},
+            {"IsCurrent", true}
+        }
+    };
 }
 <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
-
-<div class="card shadow-lg border-light mb-4">
-    <div class="card-header border-bottom border-gray-100 d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Question Master</h5>
-        <div>
-            <button type="button" class="text-primary-600 text-md d-flex" data-bs-toggle="tooltip" data-bs-placement="top" title="Course Details">
-                <i class="ph ph-fill ph-question"></i>
-            </button>
-            @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary rounded-pill py-2" })
+<!-- Professional Page Header -->
+<div class="exam-page-header-professional">
+    <div class="exam-header-content">
+        <div class="exam-header-text">
+            <h1 class="exam-page-title">Question Management</h1>
+            <p class="exam-page-description">Manage and organize examination questions efficiently</p>
+        </div>
+        <div class="exam-header-actions">
+            @Html.ActionLink("Create New Question", "Create", null, new { @class = "exam-btn exam-btn-primary exam-btn-lg" })
         </div>
     </div>
+</div>
 
-    <div class="card-body">
-        <!-- Table to display questions -->
-        <table class="table table-bordered table-sm text-center">
-            <thead>
-                <tr>
-                    <th>@Html.DisplayNameFor(model => model.Ques_Id)</th>
-                    <th>@Html.DisplayNameFor(model => model.Ques_Question)</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
+<div class="exam-card">
+
+    <div class="exam-card-content">
+        <div class="exam-grid exam-grid-cols-1">
+            <div class="exam-table-responsive">
+                @if (Model == null || !Model.Any())
                 {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Ques_Id)</td>
-                        <td>@Html.Raw(item.Ques_Question)</td>
-                        <td>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.Ques_Id }, new { @class = "btn btn-warning btn-sm" }) |
-                            @Html.ActionLink("Details", "Details", new { id = item.Ques_Id }, new { @class = "btn btn-info btn-sm" }) |
-                            @*@Html.ActionLink("Delete", "Delete", new { id = item.Ques_Id }, new { @class = "btn btn-danger btn-sm" })*@
-                        </td>
-                    </tr>
+                    <div class="exam-alert exam-alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        No Questions Found
+                    </div>
                 }
-            </tbody>
-        </table>
+                else
+                {
+                    <table class="exam-table">
+                        <thead class="exam-table-header">
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.Ques_Id)</th>
+                                <th>@Html.DisplayNameFor(model => model.Ques_Question)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="exam-table-body">
+                            @foreach (var item in Model)
+                            {
+                                <tr class="exam-table-row">
+                                    <td>@Html.DisplayFor(modelItem => item.Ques_Id)</td>
+                                    <td>@Html.Raw(item.Ques_Question)</td>
+                                    <td>
+                                        <div class="exam-flex exam-gap-2">
+                                            @Html.ActionLink("Edit", "Edit", new { id = item.Ques_Id }, new { @class = "exam-btn exam-btn-sm exam-btn-warning" }) 
+                                            @Html.ActionLink("Details", "Details", new { id = item.Ques_Id }, new { @class = "exam-btn exam-btn-sm exam-btn-info" }) 
+                                            @*@Html.ActionLink("Delete", "Delete", new { id = item.Ques_Id }, new { @class = "exam-btn exam-btn-sm exam-btn-danger" })*@
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
     </div>
 </div>
 

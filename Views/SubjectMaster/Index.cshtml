@@ -1,57 +1,70 @@
 @model IEnumerable<OnlineExamination.Models.SubjectsViewModel>
 
 @{
-    ViewBag.Title = "List of Subjects";
+    ViewBag.Title = "Subject Management";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    // Set breadcrumb items
+    ViewBag.BreadcrumbItems = new List<object>
+    {
+        new Dictionary<string, object>
+        {
+            {"Text", "Subject Management"},
+            {"Url", Url.Action("Index", "SubjectMaster")},
+            {"IsCurrent", true}
+        }
+    };
 }
 
-
-<div class="card">
-    <div class="card-header border-bottom border-gray-100 flex-align gap-8">
-        <h5 class="mb-0">Subject Master</h5>
-        <button type="button" class="text-main-600 text-md d-flex" data-bs-toggle="tooltip" data-bs-placement="top" title="Subject Details">
-            <i class="ph-fill ph-question"></i>
-        </button>
-
-        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-main rounded-pill py-9" })
+<!-- Professional Page Header -->
+<div class="exam-page-header-professional">
+    <div class="exam-header-content">
+        <div class="exam-header-text">
+            <h1 class="exam-page-title">Subject Management</h1>
+            <p class="exam-page-description">Manage and organize examination subjects efficiently</p>
+        </div>
+        <div class="exam-header-actions">
+            @Html.ActionLink("Create New Subject", "Create", null, new { @class = "exam-btn exam-btn-primary exam-btn-lg" })
+        </div>
     </div>
-    <div class="card-body">
-        <div class="row gy-20">
-            <div class="col-xxl-12 col-md-12 col-sm-12">
+</div>
 
+<div class="exam-card">
+    <div class="exam-card-content">
+        <div class="exam-grid exam-grid-cols-1">
+            <div class="exam-table-responsive">
                 @if (Model == null || !Model.Any())
                 {
-
-
-<div class="alert alert-warning">
-                        No Data Found
+                    <div class="exam-alert exam-alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        No Subjects Found
                     </div>
                 }
                 else
                 {
-            <table class="table table-striped table-hover text-center" id="tblSuntech">
-
-                <thead class="table-dark">
-                    <tr>
-                        <th>@Html.DisplayNameFor(model => model.First().Sub_Id)</th>
-                        <th>@Html.DisplayNameFor(model => model.First().Sub_Name)</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@Html.DisplayFor(modelItem => item.Sub_Id)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Sub_Name)</td>
-                            <td>
-                                @Html.ActionLink("Edit", "Edit", new { id = item.Sub_Id })
-
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    <table class="exam-table" id="tblSuntech">
+                        <thead class="exam-table-header">
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.First().Sub_Id)</th>
+                                <th>@Html.DisplayNameFor(model => model.First().Sub_Name)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="exam-table-body">
+                            @foreach (var item in Model)
+                            {
+                                <tr class="exam-table-row">
+                                    <td>@Html.DisplayFor(modelItem => item.Sub_Id)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Sub_Name)</td>
+                                    <td>
+                                        <div class="exam-flex exam-gap-2">
+                                            @Html.ActionLink("Edit", "Edit", new { id = item.Sub_Id }, new { @class = "exam-btn exam-btn-sm exam-btn-warning" })
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 }
             </div>
         </div>

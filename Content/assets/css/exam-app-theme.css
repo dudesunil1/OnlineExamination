@@ -362,6 +362,7 @@ body {
     margin: 0 auto;
 }
 
+/* Legacy header styles - keeping for backward compatibility */
 .exam-page-header {
     margin-bottom: var(--space-4);
     background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
@@ -371,17 +372,104 @@ body {
     border-left: 4px solid #22c55e;
 }
 
+/* New Professional Header Styles */
+.exam-page-header-professional {
+    margin-bottom: var(--space-4);
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
+}
+
+.exam-page-header-professional::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    pointer-events: none;
+}
+
+.exam-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    position: relative;
+    z-index: 1;
+}
+
+.exam-header-text {
+    flex: 1;
+}
+
+.exam-header-actions {
+    flex-shrink: 0;
+}
+
 .exam-page-title {
     font-size: 1.5rem;
     font-weight: 700;
     color: #ffffff;
-    margin-bottom: var(--space-1);
+    margin-bottom: 0.25rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    letter-spacing: -0.025em;
 }
 
 .exam-page-description {
-    color: var(--gray-600);
+    color: rgba(255, 255, 255, 0.85);
     font-size: 0.875rem;
     line-height: 1.4;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* Professional Button Enhancement */
+.exam-btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    text-transform: none;
+    letter-spacing: 0.025em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.exam-btn-lg:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design for Professional Header */
+@media (max-width: 768px) {
+    .exam-page-header-professional {
+        padding: var(--space-3) var(--space-4);
+    }
+    
+    .exam-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+    
+    .exam-header-actions {
+        width: 100%;
+    }
+    
+    .exam-page-title {
+        font-size: 1.375rem;
+    }
+    
+    .exam-page-description {
+        font-size: 0.8125rem;
+    }
 }
 
 .exam-mandatory-text {
@@ -417,18 +505,34 @@ body {
 }
 
 .exam-table-header {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    background: #277acd;
     color: #ffffff;
+    border-bottom: 2px solid #e5e7eb;
 }
 
 .exam-table-header th {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-4) var(--space-4);
     text-align: left;
     font-weight: 600;
     font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border: none;
+    position: relative;
+    background: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.exam-table-header th:first-child {
+    border-top-left-radius: var(--radius-md);
+}
+
+.exam-table-header th:last-child {
+    border-top-right-radius: var(--radius-md);
+}
+
+.exam-table-header th:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .exam-table-body {
@@ -440,8 +544,16 @@ body {
     transition: background-color 0.15s ease-in-out;
 }
 
+.exam-table-row:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+.exam-table-row:nth-child(odd) {
+    background-color: #ffffff;
+}
+
 .exam-table-row:hover {
-    background-color: #f9fafb;
+    background-color: #e0f2fe !important;
 }
 
 .exam-table-row:last-child {
@@ -524,12 +636,12 @@ body {
    ======================================== */
 
 .exam-form-group {
-    margin-bottom: var(--space-2);
+    margin-bottom: 0.25rem; /* Reduced from 0.5rem to 0.25rem (4px) */
 }
 
 .exam-form-label {
     display: block;
-    margin-bottom: var(--space-1);
+    margin-bottom: 0.25rem; /* Reduced from var(--space-1) to 0.25rem (4px) */
     font-weight: 600;
     color: var(--gray-700);
     font-size: 0.8125rem;
@@ -538,6 +650,52 @@ body {
 .exam-form-label .required {
     color: #dc2626;
     margin-left: 2px;
+}
+
+.exam-form-display {
+    padding: 0.75rem 1rem;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    color: var(--gray-700);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+}
+
+.exam-student-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    border: 2px solid #e2e8f0;
+}
+
+.exam-no-photo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: #f1f5f9;
+    border: 2px dashed #cbd5e1;
+    border-radius: var(--radius-md);
+    color: var(--gray-500);
+    font-size: 0.875rem;
+}
+
+.exam-no-photo i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--gray-400);
+}
+
+.exam-password-masked {
+    font-family: monospace;
+    letter-spacing: 0.1em;
+    color: var(--gray-600);
 }
 
 .exam-mandatory-text .required {
@@ -713,6 +871,7 @@ body {
 
 .exam-btn-primary:hover:not(:disabled) {
     background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    color: #ffffff;
     border-color: #2563eb;
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
@@ -875,11 +1034,11 @@ body {
 }
 
 .exam-table th {
-    background: var(--gray-50);
+    background: #277acd;
     padding: var(--space-4);
     text-align: left;
     font-weight: 600;
-    color: var(--gray-900);
+    color: #ffffff;
     border-bottom: 1px solid var(--gray-200);
 }
 
@@ -976,7 +1135,7 @@ body {
 
 .exam-grid {
     display: grid;
-    gap: var(--space-4);
+    gap: 0.75rem; /* Reduced from 1rem to 0.75rem (12px) */
 }
 
 .exam-grid-cols-1 { grid-template-columns: repeat(1, 1fr); }

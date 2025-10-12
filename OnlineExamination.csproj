@@ -170,7 +170,6 @@
     <Compile Include="Controllers\AssignTestController.cs" />
     <Compile Include="Controllers\TestResultController.cs" />
     <Compile Include="BLL\StudentTestService.cs" />
-    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Models\TestMasterModel.cs" />
     <Compile Include="Controllers\GroupDetailController.cs" />
     <Compile Include="Controllers\MasterController.cs" />
@@ -356,6 +355,7 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\PublicationMaster\Index.cshtml" />
     <Content Include="Views\PublicationMaster\Create.cshtml" />
@@ -390,7 +390,6 @@
     <Content Include="Views\Student\ShowTestQuestion.cshtml" />
     <Content Include="Views\Dashboard\StudentDashboard.cshtml" />
     <Content Include="Views\Dashboard\AdminDashboard.cshtml" />
-    <Content Include="Views\Login\Login.cshtml" />
     <Content Include="Views\Question\Demo.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Exam\Index.cshtml" />

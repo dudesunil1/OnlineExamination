@@ -20,7 +20,7 @@ namespace OnlineExamination
             if (string.IsNullOrEmpty(userRole) || userData == null)
             {
                 filterContext.Result = new RedirectToRouteResult(
-                    new System.Web.Routing.RouteValueDictionary(new { controller = "Student", action = "Login" })
+                    new System.Web.Routing.RouteValueDictionary(new { controller = "Home", action = "Login" })
                 );
             }
             else

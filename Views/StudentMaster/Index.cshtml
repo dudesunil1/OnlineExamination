@@ -16,18 +16,20 @@
     };
 }
 
-<!-- Page Header -->
-<div class="exam-page-header">
-    <h1 class="exam-page-title">Student Master</h1>
-    <p class="exam-page-description">Manage student records and information.</p>
+<!-- Professional Page Header -->
+<div class="exam-page-header-professional">
+    <div class="exam-header-content">
+        <div class="exam-header-text">
+            <h1 class="exam-page-title">Student Management</h1>
+            <p class="exam-page-description">Manage student records and information efficiently</p>
+        </div>
+        <div class="exam-header-actions">
+            @Html.ActionLink("Create New Student", "Create", null, new { @class = "exam-btn exam-btn-primary exam-btn-lg" })
+        </div>
+    </div>
 </div>
 
 <div class="exam-card">
-    <div class="exam-card-header">
-        <h2 class="exam-card-title">Student List</h2>
-        <p class="exam-card-subtitle">View and manage all student records.</p>
-        @Html.ActionLink("Create New", "Create", null, new { @class = "exam-btn exam-btn-primary" })
-    </div>
     <div class="exam-card-content">
         <div class="exam-grid exam-grid-cols-1">
             <div class="exam-table-responsive">
