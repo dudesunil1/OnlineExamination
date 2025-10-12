@@ -698,6 +698,23 @@ body {
     color: var(--gray-600);
 }
 
+.exam-form-section {
+    margin-bottom: var(--space-6);
+    padding: var(--space-4);
+    background-color: #f8fafc;
+    border-radius: var(--radius-md);
+    border: 1px solid #e2e8f0;
+}
+
+.exam-form-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid #e2e8f0;
+}
+
 .exam-mandatory-text .required {
     color: #dc2626; /* Red asterisk in mandatory text */
     font-weight: 700;
