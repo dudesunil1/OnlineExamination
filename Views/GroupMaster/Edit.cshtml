@@ -3,6 +3,22 @@
 @{
     ViewBag.Title = "Edit Group";
     Layout = "~/Views/Shared/_Layout.cshtml";
+        // Set breadcrumb items
+    ViewBag.BreadcrumbItems = new List<object>
+    {
+        new Dictionary<string, object>
+        {
+            {"Text", "Group Management"},
+            {"Url", Url.Action("Index", "GroupMaster")},
+            {"IsCurrent", false}
+        },
+        new Dictionary<string, object>
+        {
+            {"Text", "Edit Group"},
+            {"Url", Url.Action("Edit", "GroupMaster")},
+            {"IsCurrent", true}
+        }
+    };
 }
 
 <h2>Edit Group</h2>
@@ -11,17 +27,6 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-        <!-- Breadcrumb Start -->
-        <div class="breadcrumb mb-24">
-            <ul class="flex-align gap-4">
-                <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-                <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-                <li><span class="text-main-600 fw-normal text-15">Edit Group</span></li>
-            </ul>
-        </div>
-        <!-- Breadcrumb End -->
-    </div>
 
     <!-- Group Edit Tab Start -->
     <div class="card">
@@ -44,7 +49,13 @@
                                 <span class="text-13 text-gray-400 fw-medium">(Required)</span>
                             </label>
                             <div class="position-relative">
-                                @Html.DisplayFor(model => model.Grp_Id, new { @class = "text-counter placeholder-13 form-control py-11 pe-76" })
+                                @Html.DisplayFor(model => model.Grp_Id, new { @class = "text-counter placeholder-13 form-control py-11 pe-76" 
+
+<!-- Page Header -->
+<div class="exam-page-header">
+    <h1 class="exam-page-title">Edit Group</h1>
+    <p class="exam-page-description">Update Group.</p>
+</div>})
                                 @Html.HiddenFor(model => model.Grp_Id)
                                 @Html.ValidationMessageFor(model => model.Grp_Id, "", new { @class = "text-danger" })
                             </div>
@@ -149,3 +160,4 @@
         });
     </script>
 }
+

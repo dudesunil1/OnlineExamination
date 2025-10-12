@@ -1,75 +1,77 @@
-﻿@model IEnumerable<OnlineExamination.Models.StudentMasterModel>
+@model IEnumerable<OnlineExamination.Models.StudentMasterModel>
 
 @{
     ViewBag.Title = "Student Master List";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    // Set breadcrumb items
+    ViewBag.BreadcrumbItems = new List<object>
+    {
+        new Dictionary<string, object>
+        {
+            {"Text", "Student Management"},
+            {"Url", Url.Action("Index", "StudentMaster")},
+            {"IsCurrent", true}
+        }
+    };
 }
 
-<div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-    <!-- Breadcrumb Start -->
-    <div class="breadcrumb mb-24">
-        <ul class="flex-align gap-4">
-            <li><a href="@Url.Action("Index", "Home")" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-            <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-            <li><span class="text-main-600 fw-normal text-15">Student Master</span></li>
-        </ul>
-    </div>
-    <!-- Breadcrumb End -->
+<!-- Page Header -->
+<div class="exam-page-header">
+    <h1 class="exam-page-title">Student Master</h1>
+    <p class="exam-page-description">Manage student records and information.</p>
 </div>
 
-<div class="card shadow-lg border-0">
-    <div class="card-header border-bottom border-gray-100 flex-align gap-8">
-        <h5 class="mb-0 text-primary">Student Master</h5>
-        <button type="button" class="text-main-600 text-md d-flex" data-bs-toggle="tooltip" data-bs-placement="top" title="Student Details">
-            <i class="ph-fill ph-question"></i>
-        </button>
-
-        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-main rounded-pill py-2 px-4" })
+<div class="exam-card">
+    <div class="exam-card-header">
+        <h2 class="exam-card-title">Student List</h2>
+        <p class="exam-card-subtitle">View and manage all student records.</p>
+        @Html.ActionLink("Create New", "Create", null, new { @class = "exam-btn exam-btn-primary" })
     </div>
-    <div class="card-body">
-
-        <div class="row gy-20">
-            <div class="col-12">
-                <div class="table-responsive">
-                    @if (Model == null || !Model.Any())
-                    {
-                        <div class="alert alert-warning">
-                            No Data Found
-                        </div>
-                    }
-                    else
-                    {
-                        <table class="table table-striped table-hover text-center" id="tblSuntech">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Mobile</th>
-                                    <th>DOB</th>
-                                    <th>Gender</th>
-                                    <th>Actions</th>
+    <div class="exam-card-content">
+        <div class="exam-grid exam-grid-cols-1">
+            <div class="exam-table-responsive">
+                @if (Model == null || !Model.Any())
+                {
+                    <div class="exam-alert exam-alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        No Data Found
+                    </div>
+                }
+                else
+                {
+                    <table class="exam-table" id="tblSuntech">
+                        <thead class="exam-table-header">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Mobile</th>
+                                <th>DOB</th>
+                                <th>Gender</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="exam-table-body">
+                            @foreach (var item in Model)
+                            {
+                                <tr class="exam-table-row">
+                                    <td>@Html.DisplayFor(modelItem => item.Stud_Id)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Stud_Name)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Stud_Mobile)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.FormattedStudDOB)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Stud_Gender)</td>
+                                    <td>
+                                        <div class="exam-flex exam-gap-2">
+                                            @Html.ActionLink("Edit", "Edit", new { id = item.Stud_Id }, new { @class = "exam-btn exam-btn-sm exam-btn-warning" }) 
+                                            @Html.ActionLink("Details", "Details", new { id = item.Stud_Id }, new { @class = "exam-btn exam-btn-sm exam-btn-info" }) 
+                                            @* @Html.ActionLink("Delete", "Delete", new { id = item.Stud_Id }, new { @class = "exam-btn exam-btn-sm exam-btn-danger" }) *@
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>@Html.DisplayFor(modelItem => item.Stud_Id)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.Stud_Name)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.Stud_Mobile)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.FormattedStudDOB)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.Stud_Gender)</td>
-                                        <td>
-                                            @Html.ActionLink("Edit", "Edit", new { id = item.Stud_Id }, new { @class = "btn btn-warning btn-sm me-2" }) 
-                                            @Html.ActionLink("Details", "Details", new { id = item.Stud_Id }, new { @class = "btn btn-info btn-sm me-2" }) 
-                                            @* @Html.ActionLink("Delete", "Delete", new { id = item.Stud_Id }, new { @class = "btn btn-danger btn-sm" }) *@
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
-                </div>
+                            }
+                        </tbody>
+                    </table>
+                }
             </div>
         </div>
     </div>

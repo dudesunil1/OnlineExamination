@@ -3,23 +3,28 @@
 @{
     ViewBag.Title = "Create Group Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+        // Set breadcrumb items
+    ViewBag.BreadcrumbItems = new List<object>
+    {
+        new Dictionary<string, object>
+        {
+            {"Text", "Group Details Management"},
+            {"Url", Url.Action("Index", "GroupDetail")},
+            {"IsCurrent", false}
+        },
+        new Dictionary<string, object>
+        {
+            {"Text", "Create Group Details"},
+            {"Url", Url.Action("Create", "GroupDetail")},
+            {"IsCurrent", true}
+        }
+    };
 }
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
-    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-        <!-- Breadcrumb Start -->
-        <div class="breadcrumb mb-24">
-            <ul class="flex-align gap-4">
-                <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-                <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-                <li><span class="text-main-600 fw-normal text-15">Create Group Details</span></li>
-            </ul>
-        </div>
-        <!-- Breadcrumb End -->
-    </div>
 
     <!-- Group Details Form Start -->
     <div class="card">
@@ -45,7 +50,13 @@
                                     model => model.GD_GrpId,
                                     new SelectList(ViewBag.GroupList, "Value", "Text"),
                                     "Select Group",
-                                    new { @class = "form-control", id = "GroupDropdown" }
+                                    new { @class = "form-control", id = "GroupDropdown" 
+
+<!-- Page Header -->
+<div class="exam-page-header">
+    <h1 class="exam-page-title">Create Group Details</h1>
+    <p class="exam-page-description">Update Group Details.</p>
+</div>}
                                 )
                                 @Html.ValidationMessageFor(model => model.GD_GrpId, "", new { @class = "text-danger" })
                             </div>
@@ -90,3 +101,4 @@
         // If needed, add custom JavaScript for additional functionality, such as AJAX calls or UI enhancements.
     </script>
 }
+

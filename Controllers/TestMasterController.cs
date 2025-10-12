@@ -19,7 +19,19 @@ namespace OnlineExamination.Controllers
         TestService objtestService = new TestService();
         public ActionResult Index()
         {
-            return View();
+            try
+            {
+                // Get all tests
+                List<TestMasterModel> tests = objtestService.GetTests();
+                
+                
+                return View(tests);
+            }
+            catch (Exception ex)
+            {
+                TempData["MessageModel"] = MessageModel.Error("An error occurred while loading tests: " + ex.Message);
+                return View(new List<TestMasterModel>());
+            }
         }
 
         // GET: TestMaster/Create

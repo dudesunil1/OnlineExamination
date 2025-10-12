@@ -1,100 +1,106 @@
-﻿@model OnlineExamination.Models.QuestionMasterViewModel
+@model OnlineExamination.Models.QuestionMasterViewModel
 
 @{
     ViewBag.Title = "Edit Question";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    // Set breadcrumb items
+    ViewBag.BreadcrumbItems = new List<object>
+    {
+        new Dictionary<string, object>
+        {
+            {"Text", "Question Management"},
+            {"Url", Url.Action("Index", "Question")},
+            {"IsCurrent", false}
+        },
+        new Dictionary<string, object>
+        {
+            {"Text", "Edit Question"},
+            {"Url", Url.Action("Edit", "Question")},
+            {"IsCurrent", true}
+        }
+    };
 }
 <script src="https://cdn.tiny.cloud/1/@ViewData["ApiKey"]/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.min.css">
 <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
 
-<h2>Edit Question</h2>
+<!-- Page Header -->
+<div class="exam-page-header">
+    <h1 class="exam-page-title">Edit Question</h1>
+    <p class="exam-page-description">Update question information and answer details.</p>
+</div>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
-    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-        <!-- Breadcrumb Start -->
-        <div class="breadcrumb mb-24">
-            <ul class="flex-align gap-4">
-                <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-                <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-                <li><span class="text-main-600 fw-normal text-15">Edit Question</span></li>
-            </ul>
+    
+    <!-- Question Form Start -->
+    <div class="exam-card">
+        <div class="exam-card-header">
+            <h2 class="exam-card-title">Question Master</h2>
+            <p class="exam-card-subtitle">Fields marked with <span class="exam-text-red-600">*</span> are mandatory.</p>
         </div>
-        <!-- Breadcrumb End -->
-    </div>
+        <div class="exam-card-content">
 
-    <!-- Course Tab Start -->
-    <div class="card">
-        <div class="card-header border-bottom border-gray-100 flex-align gap-8">
-            <h5 class="mb-0">Question Master</h5>
-            <button type="button" class="text-main-600 text-md d-flex" data-bs-toggle="tooltip" data-bs-placement="top" title="Question Details">
-                <i class="ph-fill ph-question"></i>
-            </button>
-        </div>
-        <div class="card-body">
+            <div class="exam-grid exam-grid-cols-2">
+                <!-- Subject Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        Subject <span class="required">*</span>
+                    </label>
+                    @Html.DropDownListFor(
+                        model => model.Ques_SubId,
+                        new SelectList(ViewBag.SubjectList, "Value", "Text"),
+                        "Select Subject",
+                        new { @class = "exam-form-select", id = "Ques_SubId" }
+                    )
+                    @Html.ValidationMessageFor(model => model.Ques_SubId, "", new { @class = "text-danger" })
+                </div>
 
-            <div class="row gy-20">
-                <div class="col-xxl-12 col-md-12 col-sm-12">
-                    <div class="row g-20">
-                        <div class="col-sm-12">
-                            <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
-                                Subject
-                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
-                            </label>
-                            <div class="position-relative">
-                                @Html.DropDownListFor(
-                                 model => model.Ques_SubId,
-                                 new SelectList(ViewBag.SubjectList, "Value", "Text"),
-                                 "Select Subject",
-                                 new { @class = "form-control", id = "Ques_SubId" }
-                                 )
+                <!-- Class Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        Class <span class="required">*</span>
+                    </label>
+                    @Html.DropDownListFor(
+                        model => model.Ques_ClassId,
+                        new SelectList(ViewBag.ClassList, "Value", "Text"),
+                        "Select Class",
+                        new { @class = "exam-form-select", id = "Ques_ClassId" }
+                    )
+                    @Html.ValidationMessageFor(model => model.Ques_ClassId, "", new { @class = "text-danger" })
+                </div>
 
-                            </div>
-                            <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
-                                Class
-                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
-                            </label>
-                            <div class="position-relative">
-                                @Html.DropDownListFor(
-                                model => model.Ques_ClassId,
-                                 new SelectList(ViewBag.ClassList, "Value", "Text"),
-                                 "Select Class",
-                                 new { @class = "form-control", id = "Ques_ClassId" }
-                                 )
-                            </div>
+                <!-- Topic Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        Topic <span class="required">*</span>
+                    </label>
+                    @Html.HiddenFor(model => model.Ques_TopId)
+                    @Html.DropDownListFor(
+                        model => model.Ques_TopId,
+                        new SelectList(ViewBag.TopicList, "Value", "Text"),
+                        "Select Topic",
+                        new { @class = "exam-form-select", id = "Ques_TopId" }
+                    )
+                    @Html.ValidationMessageFor(model => model.Ques_TopId, "", new { @class = "text-danger" })
+                </div>
 
-                            <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
-                                Topic
-                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
-                            </label>
-                            @Html.HiddenFor(model => model.Ques_TopId)
-                            <div class="position-relative">
-                                @Html.DropDownListFor(
-                                 model => model.Ques_TopId,
-                                 new SelectList(ViewBag.TopicList, "Value", "Text"),
-                                 "Select Topic",
-                                 new { @class = "form-control", id = "Ques_TopId" }
-                                 )
-                            </div>
-
-                            <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
-                                Publication
-                                <span class="text-13 text-gray-400 fw-medium">(Required)</span>
-                            </label>
-
-
-                            <div class="position-relative">
-                                @Html.DropDownListFor(
-                                 model => model.Ques_PubId,
-                                 new SelectList(ViewBag.PublicationList, "Value", "Text"),
-                                 "Select Publication",
-                                 new { @class = "form-control", id = "Ques_PubId" }
-                                 )
-
-                            </div>
+                <!-- Publication Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        Publication <span class="required">*</span>
+                    </label>
+                    @Html.DropDownListFor(
+                        model => model.Ques_PubId,
+                        new SelectList(ViewBag.PublicationList, "Value", "Text"),
+                        "Select Publication",
+                        new { @class = "exam-form-select", id = "Ques_PubId" }
+                    )
+                    @Html.ValidationMessageFor(model => model.Ques_PubId, "", new { @class = "text-danger" })
+                </div>
+            </div>
                             <label for="courseTitle" class="h5 mb-8 fw-semibold font-heading">
                                 CET Marks
                                 <span class="text-13 text-gray-400 fw-medium">(Required)</span>

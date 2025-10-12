@@ -1,169 +1,172 @@
-﻿@model OnlineExamination.Models.StudentMasterModel
+@model OnlineExamination.Models.StudentMasterModel
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Create Student";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    // Set breadcrumb items
+    ViewBag.BreadcrumbItems = new List<object>
+    {
+        new Dictionary<string, object>
+        {
+            {"Text", "Student Management"},
+            {"Url", Url.Action("Index", "StudentMaster")},
+            {"IsCurrent", false}
+        },
+        new Dictionary<string, object>
+        {
+            {"Text", "Create Student"},
+            {"Url", Url.Action("Create", "StudentMaster")},
+            {"IsCurrent", true}
+        }
+    };
 }
+
+<!-- Page Header -->
+<div class="exam-page-header">
+    <h1 class="exam-page-title">Create Student</h1>
+    <p class="exam-page-description">Add new student information and academic details.</p>
+</div>
 
 @using (Html.BeginForm("Create", "StudentMaster", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    <div class="dashboard-body">
-
-        <!-- Breadcrumb -->
-        <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-            <div class="breadcrumb mb-24">
-                <ul class="flex-align gap-4">
-                    <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-                    <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-                    <li><span class="text-main-600 fw-normal text-15">Create Student</span></li>
-                </ul>
-            </div>
+    
+    <!-- Student Form Start -->
+    <div class="exam-card">
+        <div class="exam-card-header">
+            <h2 class="exam-card-title">Student Information</h2>
+            <p class="exam-card-subtitle">Fields marked with <span class="exam-text-red-600">*</span> are mandatory.</p>
         </div>
+        <div class="exam-card-content">
 
-        <!-- Student Form -->
-        <div class="card shadow-lg border-0">
-            <div class="card-header border-bottom border-gray-100 flex-align gap-8">
-                <h5 class="mb-0">@ViewBag.Title</h5>
-            </div>
-            <div class="card-body">
+            <div class="exam-grid exam-grid-cols-2">
+                <!-- Name Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        @Html.LabelFor(model => model.Stud_Name)
+                        <span class="required">*</span>
+                    </label>
+                    @Html.TextBoxFor(model => model.Stud_Name, new { @class = "exam-form-control" })
+                    @Html.ValidationMessageFor(model => model.Stud_Name, "", new { @class = "text-danger" })
+                </div>
 
-                <div class="row gy-20">
-                    <!-- Name Field -->
-                    <div class="col-sm-6">
-                        <label for="Stud_Name" class="h5 mb-8 fw-semibold font-heading">
-                           Student Name
-                            <span class="text-13 text-gray-400 fw-medium">(Required)</span>
-                        </label>
-                        <div class="position-relative">
-                            @Html.TextBoxFor(model => model.Stud_Name, new { @class = "form-control py-11" })
-                            @Html.ValidationMessageFor(model => model.Stud_Name, "", new { @class = "text-danger" })
-                        </div>
+                <!-- Mobile Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        @Html.LabelFor(model => model.Stud_Mobile)
+                        <span class="required">*</span>
+                    </label>
+                    @Html.TextBoxFor(model => model.Stud_Mobile, new { type = "number", @class = "exam-form-control" })
+                    @Html.ValidationMessageFor(model => model.Stud_Mobile, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Date of Birth Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        @Html.LabelFor(model => model.Stud_DOB)
+                    </label>
+                    @Html.TextBoxFor(model => model.Stud_DOB, "{0:yyyy-MM-dd}", new { @type = "date", @class = "exam-form-control" })
+                    @Html.ValidationMessageFor(model => model.Stud_DOB, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Gender Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        @Html.LabelFor(model => model.Stud_Gender)
+                    </label>
+                    @Html.DropDownListFor(model => model.Stud_Gender, new SelectList(new[] { "Male", "Female", "Other" }), "- Select Gender -", new { @class = "exam-form-select" })
+                    @Html.ValidationMessageFor(model => model.Stud_Gender, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Photo Field -->
+                <div class="exam-form-group exam-col-span-2">
+                    <label class="exam-form-label">
+                        @Html.LabelFor(model => model.Stud_Photo)
+                    </label>
+                    <input type="file" class="exam-form-control" id="imageUpload" name="Stud_Photo" accept="image/*">
+                    @Html.ValidationMessageFor(model => model.Stud_Photo, "", new { @class = "text-danger" })
+                    <div class="exam-mt-3">
+                        <label class="exam-form-label">Image Preview</label>
+                        <img id="imagePreview" src="#" alt="Image Preview" style="display:none; width: 150px; height: 150px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db;">
                     </div>
+                </div>
 
-                    <!-- Mobile Field -->
-                    <div class="col-sm-6">
-                        <label for="Stud_Mobile" class="h5 mb-8 fw-semibold font-heading">
-                           Mobile No
-                            <span class="text-13 text-gray-400 fw-medium">(Required)</span>
-                        </label>
-                        <div class="position-relative">
-                            @Html.TextBoxFor(model => model.Stud_Mobile, new { type = "number", @class = "form-control py-11" })
-                            @Html.ValidationMessageFor(model => model.Stud_Mobile, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
+                <!-- Username Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        @Html.LabelFor(model => model.Stud_UserName)
+                    </label>
+                    @Html.TextBoxFor(model => model.Stud_UserName, new { @class = "exam-form-control" })
+                    @Html.ValidationMessageFor(model => model.Stud_UserName, "", new { @class = "text-danger" })
+                </div>
 
-                    <!-- Date of Birth Field -->
-                    <div class="col-sm-6">
-                        <label for="Stud_DOB" class="h5 mb-8 fw-semibold font-heading">
-                          DOB
-                        </label>
-                        <div class="position-relative">
-                            @Html.TextBoxFor(model => model.Stud_DOB, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control py-11" })
-                            @Html.ValidationMessageFor(model => model.Stud_DOB, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
+                <!-- Password Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        @Html.LabelFor(model => model.Stud_Password)
+                        <span class="required">*</span>
+                    </label>
+                    @Html.TextBoxFor(model => model.Stud_Password, new { type = "password", @class = "exam-form-control" })
+                    @Html.ValidationMessageFor(model => model.Stud_Password, "", new { @class = "text-danger" })
+                </div>
 
-                    <!-- Gender Field -->
-                    <div class="col-sm-6">
-                        <label for="Stud_Gender" class="h5 mb-8 fw-semibold font-heading">
-                            Gender
-                        </label>
-                        <div class="position-relative">
-                            @Html.DropDownListFor(model => model.Stud_Gender, new SelectList(new[] { "Male", "Female", "Other" }), "- Select Gender -", new { @class = "form-select py-9" })
-                            @Html.ValidationMessageFor(model => model.Stud_Gender, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
+                <!-- Admission Date Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        @Html.LabelFor(model => model.Stud_AdmissionDate)
+                    </label>
+                    @Html.TextBoxFor(model => model.Stud_AdmissionDate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "exam-form-control" })
+                    @Html.ValidationMessageFor(model => model.Stud_AdmissionDate, "", new { @class = "text-danger" })
+                </div>
 
-                    <!-- Photo Field -->
-                    <div class="col-sm-6">
-                        <label for="Stud_Photo" class="h5 mb-8 fw-semibold font-heading">
-                           Photo
-                        </label>
-                        <div class="position-relative">
-                            <input type="file" class="form-control" id="imageUpload" name="Stud_Photo" accept="image/*">
-                            @Html.ValidationMessageFor(model => model.Stud_Photo, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="mb-3">
-                            <label for="imagePreview" class="form-label">Image Preview</label>
-                            <img id="imagePreview" src="#" alt="Image Preview" style="display:none; width: 150px; height: 150px; object-fit: cover;">
-                        </div>
-                    </div>
+                <!-- Group Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        @Html.LabelFor(model => model.Stud_Group)
+                        <span class="required">*</span>
+                    </label>
+                    @Html.DropDownListFor(model => model.Stud_Group, new SelectList(ViewBag.GroupList, "Value", "Text"), "Select Group", new { @class = "exam-form-select" })
+                    @Html.ValidationMessageFor(model => model.Stud_Group, "", new { @class = "text-danger" })
+                </div>
 
-                    <!-- Username Field -->
-                    <div class="col-sm-6">
-                        <label for="Stud_UserName" class="h5 mb-8 fw-semibold font-heading">
-                            User Name
-                        </label>
-                        <div class="position-relative">
-                            @Html.TextBoxFor(model => model.Stud_UserName, new { @class = "form-control py-11" })
-                            @Html.ValidationMessageFor(model => model.Stud_UserName, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <!-- Password Field -->
-                    <div class="col-sm-6">
-                        <label for="Stud_Password" class="h5 mb-8 fw-semibold font-heading">
-                            Password
-                            <span class="text-13 text-gray-400 fw-medium">(Required)</span>
-                        </label>
-                        <div class="position-relative">
-                            @Html.TextBoxFor(model => model.Stud_Password, new { type = "password", @class = "form-control py-11" })
-                            @Html.ValidationMessageFor(model => model.Stud_Password, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <!-- Admission Date Field -->
-                    <div class="col-sm-6">
-                        <label for="Stud_AdmissionDate" class="h5 mb-8 fw-semibold font-heading">
-                            Admission Date
-                        </label>
-                        <div class="position-relative">
-                            @Html.TextBoxFor(model => model.Stud_AdmissionDate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control py-11" })
-                            @Html.ValidationMessageFor(model => model.Stud_AdmissionDate, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <!-- Group Field -->
-                    <div class="col-sm-6">
-                        <label for="Stud_Group" class="h5 mb-8 fw-semibold font-heading">
-                           Group
-                            <span class="text-13 text-gray-400 fw-medium">(Required)</span>
-                        </label>
-                        <div class="position-relative">
-                            @Html.DropDownListFor(model => model.Stud_Group, new SelectList(ViewBag.GroupList, "Value", "Text"), "Select Group", new { @class = "form-select py-9" })
-                            @Html.ValidationMessageFor(model => model.Stud_Group, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <!-- Class Field -->
-                    <div class="col-sm-6">
-                        <label for="Stud_Class" class="h5 mb-8 fw-semibold font-heading">
-                           Class
-                        </label>
-                        <div class="position-relative">
-                            @if (ViewBag.Classlist != null)
-                            {
-                                @Html.DropDownListFor(model => model.Stud_Class, new SelectList(ViewBag.Classlist, "Value", "Text"), "Select Class", new { @class = "form-select py-9" })
-                            }
-                            else
-                            {
-                                <p>No classes available.</p>
-                            }
-                            @Html.ValidationMessageFor(model => model.Stud_Class, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <!-- Form Actions -->
-                    <div class="flex-align justify-content-end gap-8 mt-4">
-                        <input type="submit" name="Action" value="Back To List" class="btn btn-outline-main rounded-pill py-9" />
-                        <input type="submit" name="Action" value="Cancel" class="btn btn-outline-main rounded-pill py-9" />
-                        <input type="submit" name="Action" value="Create" class="btn btn-main rounded-pill py-9" />
-                    </div>
+                <!-- Class Field -->
+                <div class="exam-form-group">
+                    <label class="exam-form-label">
+                        @Html.LabelFor(model => model.Stud_Class)
+                    </label>
+                    @if (ViewBag.Classlist != null)
+                    {
+                        @Html.DropDownListFor(model => model.Stud_Class, new SelectList(ViewBag.Classlist, "Value", "Text"), "Select Class", new { @class = "exam-form-select" })
+                    }
+                    else
+                    {
+                        <p>No classes available.</p>
+                    }
+                    @Html.ValidationMessageFor(model => model.Stud_Class, "", new { @class = "text-danger" })
                 </div>
             </div>
         </div>
+        
+        <!-- Form Actions -->
+        <div class="exam-card-footer">
+            <div class="exam-flex exam-justify-end exam-gap-4">
+                <button type="submit" name="Action" value="Back To List" class="exam-btn exam-btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back To List
+                </button>
+                <button type="submit" name="Action" value="Cancel" class="exam-btn exam-btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button type="submit" name="Action" value="Create" class="exam-btn exam-btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Create Student
+                </button>
+            </div>
+        </div>
     </div>
+}
 
     @section Scripts {
         <partial name="_ValidationScriptsPartial" />

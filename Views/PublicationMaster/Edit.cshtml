@@ -3,23 +3,28 @@
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
+        // Set breadcrumb items
+    ViewBag.BreadcrumbItems = new List<object>
+    {
+        new Dictionary<string, object>
+        {
+            {"Text", "Edit Management"},
+            {"Url", Url.Action("Index", "PublicationMaster")},
+            {"IsCurrent", false}
+        },
+        new Dictionary<string, object>
+        {
+            {"Text", "Edit"},
+            {"Url", Url.Action("Edit", "PublicationMaster")},
+            {"IsCurrent", true}
+        }
+    };
 }
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
-    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-        <!-- Breadcrumb Start -->
-        <div class="breadcrumb mb-24">
-            <ul class="flex-align gap-4">
-                <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-                <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-                <li><span class="text-main-600 fw-normal text-15">Edit Publication</span></li>
-            </ul>
-        </div>
-        <!-- Breadcrumb End -->
-    </div>
 
     <!-- Publication Edit Form Start -->
     <div class="card">
@@ -42,7 +47,13 @@
                             <div>
                                 @Html.DisplayFor(model => model.Pub_Id)
                                 @Html.HiddenFor(model => model.Pub_Id)
-                                @Html.ValidationMessageFor(model => model.Pub_Id, "", new { @class = "text-danger" })
+                                @Html.ValidationMessageFor(model => model.Pub_Id, "", new { @class = "text-danger" 
+
+<!-- Page Header -->
+<div class="exam-page-header">
+    <h1 class="exam-page-title">Edit</h1>
+    <p class="exam-page-description">Update.</p>
+</div>})
                             </div>
                         </div>
 
@@ -74,3 +85,4 @@
         @Scripts.Render("~/bundles/jqueryval")
     }
 }
+

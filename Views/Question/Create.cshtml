@@ -1,8 +1,25 @@
-﻿ @model OnlineExamination.Models.QuestionMasterViewModel
+ @model OnlineExamination.Models.QuestionMasterViewModel
 
 @{
     ViewBag.Title = "Create Question";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    // Set breadcrumb items
+    ViewBag.BreadcrumbItems = new List<object>
+    {
+        new Dictionary<string, object>
+        {
+            {"Text", "Question Management"},
+            {"Url", Url.Action("Index", "Question")},
+            {"IsCurrent", false}
+        },
+        new Dictionary<string, object>
+        {
+            {"Text", "Create Question"},
+            {"Url", Url.Action("Create", "Question")},
+            {"IsCurrent", true}
+        }
+    };
 }
 
 <head>
@@ -18,47 +35,37 @@
     <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
 </head>
 
+<!-- Page Header -->
+<div class="exam-page-header">
+    <h1 class="exam-page-title">Create Question</h1>
+    <p class="exam-page-description">Add new question with options and correct answer details.</p>
+</div>
+
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
-    <div class="container-fluid">
-        <!-- Breadcrumb -->
-                                                                        <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-                                                                            <div class="breadcrumb mb-24">
-                                                                                <ul class="flex-align gap-4">
-                    <li><a href="@Url.Action("Index", "Home")" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-                                                                                    <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-                                                                                    <li><span class="text-main-600 fw-normal text-15">Create Question</span></li>
-                                                                                </ul>
-                                                                            </div>
-                                                                        </div>
-
-        <!-- Main Card -->
-                                                                        <div class="card">
-                                                                            <div class="card-header border-bottom border-gray-100 flex-align gap-8">
-                                                                                <h5 class="mb-0">Question Master</h5>
-                                                                                <button type="button" class="text-main-600 text-md d-flex" data-bs-toggle="tooltip" data-bs-placement="top" title="Question Details">
-                                                                                    <i class="ph-fill ph-question"></i>
-                                                                                </button>
-                                                                            </div>
-            
-                                                                            <div class="card-body">
-                <!-- Basic Information Section -->
-                <div class="row gy-20 mb-4">
-                    <div class="col-12">
-                        <h6 class="text-primary mb-3">Basic Information</h6>
-                    </div>
-                    
-                    <div class="col-md-6 col-sm-12">
-                        <label for="Ques_SubId" class="form-label fw-semibold">
-                            Subject <span class="text-danger">*</span>
-                                                                                                </label>
-                                                                                                    @Html.DropDownListFor(
-                                                                                                     model => model.Ques_SubId,
-                                                                                                     new SelectList(ViewBag.SubjectList, "Value", "Text"),
-                                                                                                     "Select Subject",
-                            new { @class = "form-select", id = "Ques_SubId", required = "required" }
+    
+    <!-- Question Form Start -->
+    <div class="exam-card">
+        <div class="exam-card-header">
+            <h2 class="exam-card-title">Question Master</h2>
+            <p class="exam-card-subtitle">Fields marked with <span class="exam-text-red-600">*</span> are mandatory.</p>
+        </div>
+        <div class="exam-card-content">
+            <!-- Basic Information Section -->
+            <div class="exam-form-section">
+                <h3 class="exam-form-section-title">Basic Information</h3>
+                <div class="exam-grid exam-grid-cols-2">
+                    <!-- Subject Field -->
+                    <div class="exam-form-group">
+                        <label class="exam-form-label">
+                            Subject <span class="required">*</span>
+                        </label>
+                        @Html.DropDownListFor(
+                            model => model.Ques_SubId,
+                            new SelectList(ViewBag.SubjectList, "Value", "Text"),
+                            "Select Subject",
+                            new { @class = "exam-form-select", id = "Ques_SubId", required = "required" }
                         )
                         @Html.ValidationMessageFor(model => model.Ques_SubId, "", new { @class = "text-danger" })
                     </div>
